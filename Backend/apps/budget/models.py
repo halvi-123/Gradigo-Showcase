@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
 class Budget(models.Model):
     """
     Represents a user's budget for a specific month.
@@ -15,9 +16,11 @@ class Budget(models.Model):
         net_income: Decimal value representing the user's income.
         month: Date representing the month the budget applies to.
     """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     net_income = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.DateField()
+
 
 class Category(models.Model):
     """
@@ -31,9 +34,11 @@ class Category(models.Model):
         category_name: Name of the spending category (e.g., "Groceries", "Rent").
         allocated_amount: Decimal value representing the amount allocated to this category.
     """
+
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     category_name = models.CharField(max_length=100)
     allocated_amount = models.DecimalField(max_digits=10, decimal_places=2)
+
 
 class CategoryLimit(models.Model):
     """
@@ -47,9 +52,11 @@ class CategoryLimit(models.Model):
         limit_amount: Decimal value representing the spending limit for the category.
         limit_type: Char field indicating the type of limit (e.g., "daily", "weekly").
     """
+
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     limit_amount = models.DecimalField(max_digits=10, decimal_places=2)
     limit_type = models.CharField(max_length=20)
+
 
 class Transaction(models.Model):
     """
@@ -64,10 +71,12 @@ class Transaction(models.Model):
         amount: Decimal value representing the amount spent in the transaction.
         date: Date of the transaction.
     """
+
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
+
 
 class SavingsGoal(models.Model):
     """
@@ -81,6 +90,7 @@ class SavingsGoal(models.Model):
         target_amount: Decimal value representing the target amount for the savings goal.
         target_date: Optional date field indicating when the user aims to achieve the savings goal.
     """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     target_date = models.DateField(null=True, blank=True)
