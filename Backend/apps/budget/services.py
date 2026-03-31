@@ -1,6 +1,6 @@
 from decimal import Decimal
 from datetime import date
-from .models import Budget, Category, SavingsGoal
+from .models import Budget, Category, Transaction, SavingsGoal
 
 default_categories = [
     "Rent",
@@ -11,37 +11,45 @@ default_categories = [
     "Transport",
 ]
 
-def get_or_create_budget(user, net_income):
-    #gets user's saved budget or creates it for first time
+def get_or_create_budget(user, net_income): #get the user's current budget or create if doesnt exist
     today = date.today()
     first_day_of_month = today.replace(day=1)
 
     budget, created = Budget.objects.get_or_create(
         user=user,
         month=first_day_of_month,
-        defaults={"net_income": net_income}
+        defaults={"net_income": Decimal(str(net_income))}
     )
-
     return budget
 
-def create_default_categories(budget):
-    #makes rent, bills, groceries etc..
+def create_default_categories(budget): #create default budget categories
     for name in default_categories:
         Category.objects.get_or_create(
             budget=budget,
-            Category_name=name,
-            defaults={"allocated_amount": Decimal("0.00")}
+            category_name=name,
+            defaults={
+                "allocated_amount": Decimal("0.00"),
+                "limit_amount": None,
+            }
         )
 
-def update_category_amount(budget, category_name, amount): 
-    #updates category allocations
+def create_transaction(budget, category_name, name, amount, transaction_date=None):
+    #creates a new spending transaction within a category
     category = Category.objects.get(budget=budget, category_name=category_name)
-    category = category.allocated_amount = Decimal(str(amount))
-    category.save()
-    return category
 
-def create_savings_goal(user, name, target_amount, current_amount = 0, target_date=None):
-    #creates savings pots
+    if transaction_date is None:
+        transaction_date = date.today()
+
+    return Transaction.objects.create(
+        budget=budget,
+        category=category,
+        name=name,
+        amount=Decimal(str(amount)),
+        date=transaction_date,
+    )
+
+def create_savings_goal(user, name, target_amount, current_amount=0, target_date=None):
+    #creates new savings pot for user
     return SavingsGoal.objects.create(
         user=user,
         name=name,
@@ -50,107 +58,157 @@ def create_savings_goal(user, name, target_amount, current_amount = 0, target_da
         target_date=target_date
     )
 
-def update_savings_goal(goal_id, name=None, target_amount=None, current_amount=None, target_date=None):
-    #updates the savings pots values
-    goal = SavingsGoal.objects.get(id=goal_id)
-
-    if name is not None:
-        goal.name = name
-    if target_amount is not None:
-        goal.target_amount = Decimal(str(target_amount))
-    if current_amount is not None:
-        goal.current_amount = Decimal(str(current_amount))
-    if target_date is not None:
-        goal.target_date = target_date
-
-    goal.save()
-    return goal
-
-def calculate_total_allocated(budget):#total category allocations
+def calculate_total_allocated(budget):
+    #caclulates the total of all category allocated amounts in the budget
     categories = Category.objects.filter(budget=budget)
-    total = sum(category.allocated_amount for category in categories)
-    return total
+    return sum((category.allocated_amount for category in categories), Decimal("0.00"))
 
-def calculate_remaining_income(budget):#shows money left
-    total_allocated = calculate_total_allocated(budget)
-    remaining = budget.net_income - total_allocated
+def calculate_total_spent(budget):
+    #calculates all transaction amounts within the budget
+    transactions = Transaction.objects.filter(budget=budget)
+    return sum((transaction.amount for transaction in transactions), Decimal("0.00"))
+
+def calculate_total_saved(user):
+    #calculates users total savings among all saving pots
+    goals = SavingsGoal.objects.filter(user=user)
+    return sum((goal.current_amount for goal in goals), Decimal("0.00"))
+
+def calculate_remaining_income(budget):
+    #calculates how much income is left after spendings/savings
+    total_spent = calculate_total_spent(budget)
+    total_saved = calculate_total_saved(budget.user)
+    remaining = budget.net_income - total_spent - total_saved
     return remaining
 
-def calculate_category_breakdown(budget):#gives chart percentages/data
+def calculate_category_spent(category):
+    #totals how much has been spent in one category
+    transactions = Transaction.objects.filter(category=category)
+    return sum((transaction.amount for transaction in transactions), Decimal("0.00"))
+
+def calculate_category_breakdown(budget):
+    #returns per category spending breakdown for charts
     categories = Category.objects.filter(budget=budget)
-    total_allocated = calculate_total_allocated(budget=budget)
+    total_spent = calculate_total_spent(budget)
     breakdown = []
 
     for category in categories:
-        if total_allocated > 0:
-            percentage = (category.allocated_amount / total_allocated) * 100
+        spent = calculate_category_spent(category)
+
+        if total_spent > 0:
+            percentage = (spent / total_spent) * 100
         else:
-            percentage = 0
+            percentage = Decimal("0.00")
 
         breakdown.append({
             "category_name": category.category_name,
-            "allocated_amount": float(category.allocated_amount),
-            "percentage": round(float(percentage), 2)
+            "spent_amount": float(spent),
+            "limit_amount": float(category.limit_amount) if category.limit_amount is not None else None,
+            "percentage": round(float(percentage), 2),
         })
 
     return breakdown
 
-def check_overspending_alerts(budget): #checks for overspending
+def check_overspending_alerts(budget):
+    #check whether any category has went over its limit
     alerts = []
     categories = Category.objects.filter(budget=budget)
 
     for category in categories:
-        if budget.net_income > 0:
-            percent_of_income = (category.allocated_amount / budget.net_income) * 100
-        else:
-            percent_of_income = 0
+        spent = calculate_category_spent(category)
 
-        if category.category_name == "Rent" and percent_of_income > 50:
-            alerts.append("Your rent is more than 50% of your income.")
+        if category.limit_amount is not None and spent > category.limit_amount:
+            alerts.append(
+                f"You have exceeded your {category.category_name} limit by £{spent - category.limit_amount:.2f}."
+            )
 
-        if category.category_name == "Entertainment" and percent_of_income > 20:
-            alerts.append("Your entertainment spending looks quite high.")
+        if category.category_name == "Rent" and budget.net_income > 0:
+            percent_of_income = (spent / budget.net_income) * 100
+            if percent_of_income > 50:
+                alerts.append("Your rent spending is more than 50% of your income.")
 
-        if category.allocated_amount < 0:
-            alerts.append(f"{category.category_name} has an invalid amount.")
+        if category.category_name == "Entertainment" and budget.net_income > 0:
+            percent_of_income = (spent / budget.net_income) * 100
+            if percent_of_income > 20:
+                alerts.append("Your entertainment spending looks quite high.")
 
     if calculate_remaining_income(budget) < 0:
-        alerts.append("You have allocated more than your monthly income.")
+        alerts.append("You have spent and saved more than your monthly income.")
 
     return alerts
 
-
-def calculate_financial_snapshot_score(budget): #generates financial snapshot score out of 100 for user
+def calculate_financial_snapshot_score(budget):
+    # generates user's budget health score out of 100
     score = 100
+
+    net_income = budget.net_income
     remaining = calculate_remaining_income(budget)
-    alerts = check_overspending_alerts(budget)
+    total_saved = calculate_total_saved(budget.user)
+    categories = Category.objects.filter(budget=budget)
 
-    if remaining < 0:
-        score -= 40
-    elif remaining == 0:
-        score -= 10
+    rent_spent = Decimal("0.00")
+    entertainment_spent = Decimal("0.00")
 
-    score -= len(alerts) * 10
+    # remaining income ratio
+    if net_income > 0:
+        remaining_ratio = remaining / net_income
+        if remaining_ratio < 0:
+            score -= 30
+        elif remaining_ratio < Decimal("0.1"):
+            score -= 15
+        elif remaining_ratio < Decimal("0.2"):
+            score -= 5
 
-    if score < 0:
-        score = 0
+    # per category overspend ratio
+    for category in categories:
+        spent = calculate_category_spent(category)
 
+        if category.limit_amount and spent > category.limit_amount:
+            overspend_ratio = (spent - category.limit_amount) / category.limit_amount
+            score -= min(20, float(overspend_ratio * 20))
+
+        if category.category_name == "Rent":
+            rent_spent = spent
+
+        if category.category_name == "Entertainment":
+            entertainment_spent = spent
+
+    # rent burden ratio
+    if net_income > 0:
+        if rent_spent / net_income > Decimal("0.5"):
+            score -= 15
+        elif rent_spent / net_income > Decimal("0.35"):
+            score -= 8
+
+        if entertainment_spent / net_income > Decimal("0.2"):
+            score -= 8
+
+    if total_saved > 0:
+        score += 5
+
+    score = max(0, min(100, round(score)))
     return score
 
-
-def generate_budget_summary(budget): #Short personalized summary for user depending on their circumstances
+def generate_budget_summary(budget):
+    #creates short personalised summary of the user's budget status
     remaining = calculate_remaining_income(budget)
+    total_spent = calculate_total_spent(budget)
+    total_saved = calculate_total_saved(budget.user)
     alerts = check_overspending_alerts(budget)
     score = calculate_financial_snapshot_score(budget)
 
-    summary_parts = []
+    summary_parts = [
+        f"You have spent £{total_spent:.2f} this month."
+    ]
+
+    if total_saved > 0:
+        summary_parts.append(f"You have put £{total_saved:.2f} into savings goals.")
 
     if remaining > 0:
-        summary_parts.append(f"You have £{remaining:.2f} left after your allocations.")
+        summary_parts.append(f"You have £{remaining:.2f} left.")
     elif remaining == 0:
-        summary_parts.append("You have allocated all of your monthly income.")
+        summary_parts.append("You have used all of your monthly income.")
     else:
-        summary_parts.append(f"You have gone over budget by £{abs(remaining):.2f}.")
+        summary_parts.append(f"You are over budget by £{abs(remaining):.2f}.")
 
     if score >= 80:
         summary_parts.append("Your budget looks healthy overall.")
