@@ -39,7 +39,7 @@ class Category(models.Model):
         limit_amount: Optional decimal value representing a spending limit for this category.
     """
 
-    budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
+    budget = models.ForeignKey(Budget, on_delete=models.CASCADE, related_name='categories')
     category_name = models.CharField(max_length=100)
     allocated_amount = models.DecimalField(max_digits=10, decimal_places=2)
     limit_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
