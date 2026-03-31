@@ -21,6 +21,9 @@ class Budget(models.Model):
     net_income = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.DateField()
 
+    class Meta:
+        unique_together = ["user", "month"]
+
 
 class Category(models.Model):
     """
@@ -33,29 +36,17 @@ class Category(models.Model):
         budget: Foreign key linking the category to a budget.
         category_name: Name of the spending category (e.g., "Groceries", "Rent").
         allocated_amount: Decimal value representing the amount allocated to this category.
+        limit_amount: Optional decimal value representing a spending limit for this category.
     """
 
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     category_name = models.CharField(max_length=100)
     allocated_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    limit_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
+    class Meta:
+        unique_together = ["budget", "category_name"]
 
-class CategoryLimit(models.Model):
-    """
-    Represents a spending limit for a specific category.
-
-    Each category limit is linked to a category and defines the maximum amount
-    that can be spent in that category. A category can have multiple limits (e.g., daily, weekly).
-
-    Attributes:
-        category: Foreign key linking the limit to a category.
-        limit_amount: Decimal value representing the spending limit for the category.
-        limit_type: Char field indicating the type of limit (e.g., "daily", "weekly").
-    """
-
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    limit_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    limit_type = models.CharField(max_length=20)
 
 
 class Transaction(models.Model):
@@ -63,17 +54,19 @@ class Transaction(models.Model):
     Represents a financial transaction within a category.
 
     Each transaction is linked to a specific category and includes details such as
-    the amount spent, the date of the transaction, and an optional description.
+    the amount spent, the date of the transaction.
 
     Attributes:
         budget: Foreign key linking the transaction to a budget.
         category: Foreign key linking the transaction to a category.
+        name: Name or description of the transaction (e.g., "Grocery shopping").
         amount: Decimal value representing the amount spent in the transaction.
         date: Date of the transaction.
     """
 
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
 
@@ -87,10 +80,14 @@ class SavingsGoal(models.Model):
 
     Attributes:
         user: Foreign key linking the savings goal to a user.
+        name: Name or description of the savings goal (e.g., "Vacation Fund").
+        current_amount: Decimal value representing the current amount saved towards the goal.
         target_amount: Decimal value representing the target amount for the savings goal.
         target_date: Optional date field indicating when the user aims to achieve the savings goal.
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    current_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     target_date = models.DateField(null=True, blank=True)
