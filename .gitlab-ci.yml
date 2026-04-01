@@ -55,7 +55,7 @@ django-tests:
   script:
     - cd Backend
     - python3.11 -m pip install -r requirements.txt
-    - python3.11 manage.py test
+    - pytest
 
 deploy:
   stage: deploy
