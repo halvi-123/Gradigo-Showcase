@@ -6,7 +6,7 @@ variables:
   MYSQL_PASSWORD: $MYSQL_PASS
 
 default:
-  image: ubuntu:20.04
+  image: ubuntu:22.04
   services:
     - mysql:8.0
   cache:
@@ -15,8 +15,8 @@ default:
       - ~/.cache/pip/
   before_script:
     - apt -y update
-    - apt -y install apt-utils net-tools python3.8 python3-pip mysql-client libmysqlclient-dev
-    - apt -y upgrade
+    - apt-get install -y python3.11 python3.11-venv python3-pip mysql-client libmysqlclient-dev
+    - python3.11 -m pip install --upgrade pip
     # - cd Backend
     # - pip3 install -r requirements.txt
 
@@ -24,17 +24,17 @@ migrations:
   stage: build
   script:
     - cd Backend
-    - pip3 install -r requirements.txt
-    - python3 manage.py migrate
-    - python3 manage.py check
+    - python3.11 -mpip install -r requirements.txt
+    - python3.11 manage.py migrate
+    - python3.11 manage.py check
 
 django-tests:
   stage: test
   script:
     - cd Backend
-    - pip3 install -r requirements.txt
+    - python3.11 -m pip install -r requirements.txt
     - echo "GRANT ALL on *.* to '${MYSQL_USER}';" | mysql -u root --password="${MYSQL_ROOT_PASSWORD}" -h mysql
-    - python3 manage.py test
+    - python3.11 manage.py test
 
 deploy:
   stage: deploy
