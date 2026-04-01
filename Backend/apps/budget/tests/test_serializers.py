@@ -1,10 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from decimal import Decimal
 from datetime import date, timedelta
 
-from Backend.apps.budget.tests.test_views import user
-from apps.budget.models import Budget, Category, Transaction, SavingsGoal
 from apps.budget.serializers import (
     BudgetSerializer,
     CategorySerializer,
