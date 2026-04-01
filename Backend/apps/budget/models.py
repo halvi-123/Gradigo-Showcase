@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 
@@ -17,7 +17,7 @@ class Budget(models.Model):
         month: Date representing the month the budget applies to.
     """
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     net_income = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.DateField()
 
@@ -86,7 +86,7 @@ class SavingsGoal(models.Model):
         target_date: Optional date field indicating when the user aims to achieve the savings goal.
     """
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     current_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
