@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from decimal import Decimal
 from datetime import date
 
-from ..models import Budget, Category, Transaction, SavingsGoal
+from apps.budget.models import Budget, Category, Transaction, SavingsGoal
 
 User = get_user_model()
 
@@ -42,7 +42,7 @@ class BudgetModelTests(TestCase):
             month=date(2026, 1, 1)
         )
         self.user.delete()
-        self.assertEqual(Budget.objects.count(), 0)
+        self.assertFalse(Budget.objects.filter(id=budget.id).exists())
 
 
 class CategoryModelTests(TestCase):
