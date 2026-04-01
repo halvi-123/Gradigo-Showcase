@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from decimal import Decimal
 from datetime import date, timedelta
 
+from Backend.apps.budget.tests.test_views import user
 from apps.budget.models import Budget, Category, Transaction, SavingsGoal
 from apps.budget.serializers import (
     BudgetSerializer,
@@ -100,12 +101,20 @@ class SavingsGoalSerializerTests(TestCase):
         self.assertFalse(serializer.is_valid())
 
     def test_valid_goal(self):
-        future = date.today() + timedelta(days=10)
+        user = User.objects.create_user(
+            email="user5@test.com",
+            full_name="User Five",
+            password="testpass123"
+        )
+
+        future = date.today() + timedelta(days=30)
+
         serializer = SavingsGoalSerializer(data={
-            "user": 1,
+            "user": user.id,
             "name": "Trip",
             "current_amount": 10,
             "target_amount": 100,
             "target_date": future
         })
+
         self.assertTrue(serializer.is_valid())

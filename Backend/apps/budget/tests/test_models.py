@@ -12,7 +12,11 @@ User = get_user_model()
 class BudgetModelTests(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="user1", password="pass")
+        self.user = User.objects.create_user(
+            email="user1@test.com",
+            full_name="User One",
+            password="testpass123"
+    )
 
     def test_create_budget(self):
         budget = Budget.objects.create(
@@ -48,7 +52,11 @@ class BudgetModelTests(TestCase):
 class CategoryModelTests(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="user2")
+        self.user = User.objects.create_user(
+            email="user2@test.com",
+            full_name="User Two",
+            password="testpass123"
+        )
         self.budget = Budget.objects.create(
             user=self.user,
             net_income=2000,
@@ -88,7 +96,11 @@ class CategoryModelTests(TestCase):
 class TransactionModelTests(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="user3")
+        self.user = User.objects.create_user(
+            email="user3@test.com",
+            full_name="User Three",
+            password="testpass123"
+        )
         self.budget = Budget.objects.create(
             user=self.user,
             net_income=3000,
@@ -125,7 +137,11 @@ class TransactionModelTests(TestCase):
 class SavingsGoalModelTests(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="user4")
+        self.user = User.objects.create_user(
+            email="user4@test.com",
+            full_name="User Four",
+            password="testpass123"
+        )
 
     def test_create_goal(self):
         goal = SavingsGoal.objects.create(
