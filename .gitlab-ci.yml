@@ -10,6 +10,7 @@ default:
   services:
     - mysql:8.0
   cache:
+    # only one cache definition
     paths:
       - ~/.cache/pip/
   before_script:
@@ -38,8 +39,3 @@ deploy:
   script:
     - echo "Define your deployment script!"
   environment: production
-
-# Ignore frontend folder
-cache:
-  paths:
-    - Backend/.cache/pip/
