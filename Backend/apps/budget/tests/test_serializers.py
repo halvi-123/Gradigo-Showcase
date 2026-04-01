@@ -107,7 +107,7 @@ class SavingsGoalSerializerTests(TestCase):
         future = date.today() + timedelta(days=30)
 
         serializer = SavingsGoalSerializer(data={
-            "user": user.id,
+            "user": user.pk,
             "name": "Trip",
             "current_amount": 10,
             "target_amount": 100,
