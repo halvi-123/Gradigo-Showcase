@@ -13,7 +13,8 @@ variables:
 default:
   image: ubuntu:22.04
   services:
-    - mysql:8.0
+    - name: mysql:8.0
+      alias: mysql
   cache:
     paths:
       - ~/.cache/pip/
@@ -29,6 +30,8 @@ migrations:
   script:
     - cd Backend
     - python3.11 -m pip install -r requirements.txt
+    - echo "Waiting for MYSQL..."
+    - until mysqladmin ping -h "mysql" --silent; do sleep 2; done
     - python3.11 manage.py migrate
     - python3.11 manage.py check
 
