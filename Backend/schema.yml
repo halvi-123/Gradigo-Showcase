@@ -1,0 +1,254 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/accounts/login/:
+    post:
+      operationId: accounts_login_create
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/accounts/logout/:
+    post:
+      operationId: accounts_logout_create
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/accounts/me/:
+    get:
+      operationId: accounts_me_retrieve
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/accounts/register/:
+    post:
+      operationId: accounts_register_create
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/budget/budget/:
+    get:
+      operationId: budget_budget_retrieve
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: budget_budget_update
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/budget/categories/{id}/:
+    put:
+      operationId: budget_categories_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: budget_categories_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/budget/dashboard/:
+    get:
+      operationId: budget_dashboard_retrieve
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/budget/savings-goals/:
+    get:
+      operationId: budget_savings_goals_retrieve
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: budget_savings_goals_create
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/budget/savings-goals/{id}/:
+    get:
+      operationId: budget_savings_goals_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: budget_savings_goals_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: budget_savings_goals_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/budget/transactions/:
+    get:
+      operationId: budget_transactions_retrieve
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: budget_transactions_create
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/budget/transactions/{id}/:
+    get:
+      operationId: budget_transactions_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: budget_transactions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: budget_transactions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - budget
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/salary/calculate/:
+    post:
+      operationId: salary_calculate_create
+      tags:
+      - salary
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
