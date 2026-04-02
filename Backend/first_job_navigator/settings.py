@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "apps.accounts",
+    "apps.calculators",
 ]
 
 MIDDLEWARE = [
@@ -92,6 +93,9 @@ DATABASES = {
         "PORT": os.getenv("DB_PORT", "3306"),
         "OPTIONS": {
             "charset": "utf8mb4",
+        },
+        "TEST": {
+            "NAME": "test_first_job_navigator",
         },
     }
 }
