@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'apps.accounts',
     'apps.budget',
+    'apps.calculators',
 ]
 
 MIDDLEWARE = [
