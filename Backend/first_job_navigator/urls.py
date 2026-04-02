@@ -22,5 +22,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/accounts/", include("apps.accounts.urls")),
     path("api/budget/", include("apps.budget.urls")),
+<<<<<<< HEAD
     path("api/salary/", include("apps.calculators.urls")),
+=======
+    path("api/calculators/", include("apps.calculators.urls"))
+>>>>>>> main
 ]
