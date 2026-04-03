@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.budget",
     "apps.calculators",
+    "apps.pension",
     'drf_spectacular',
 ]
 

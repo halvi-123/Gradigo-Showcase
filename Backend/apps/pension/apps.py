@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class PensionConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "pension"
+    name = "apps.pension"
