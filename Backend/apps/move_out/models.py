@@ -14,11 +14,9 @@ class MoveOutPlan(models.Model):
         on_delete=models.CASCADE,
         related_name="move_out_plan",
     )
-
     target_postcode = models.CharField(max_length=10)
     area_name = models.CharField(max_length=255, blank=True)
-    area_code = models.CharField(max_length=32, blank = True)
-
+    area_code = models.CharField(max_length=32, blank=True)
     monthly_income = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -34,7 +32,6 @@ class MoveOutPlan(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0)],
     )
-
     disposable_income = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -52,8 +49,9 @@ class MoveOutPlan(models.Model):
         choices=ReadinessStatus.choices,
         default=ReadinessStatus.not_ready,
     )
+    crime_level = models.CharField(max_length=20, blank=True, default="")
+    property_listings = models.JSONField(default=list, blank=True)
     summary = models.TextField(blank=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

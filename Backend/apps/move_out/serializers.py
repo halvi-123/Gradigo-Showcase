@@ -23,7 +23,6 @@ class MoveOutCheckSerializer(serializers.Serializer):
             raise serializers.ValidationError("Monthly expenses cannot be negative")
         return value
 
-
 class MoveOutPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = MoveOutPlan
@@ -39,6 +38,8 @@ class MoveOutPlanSerializer(serializers.ModelSerializer):
             "rent_ratio_percent",
             "readiness_score",
             "status",
+            "crime_level",
+            "property_listings",
             "summary",
             "created_at",
             "updated_at",
@@ -51,6 +52,8 @@ class MoveOutPlanSerializer(serializers.ModelSerializer):
             "rent_ratio_percent",
             "readiness_score",
             "status",
+            "crime_level",
+            "property_listings",
             "summary",
             "created_at",
             "updated_at",
