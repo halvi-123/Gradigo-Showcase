@@ -21,11 +21,12 @@ class QuizAdmin(admin.ModelAdmin):
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [AnswerInline]
 
+
 @admin.register(QuizAttempt)
 class QuizAttemptAdmin(admin.ModelAdmin):
     list_display = ("user", "quiz", "score", "passed", "completed_at")
 
+
 admin.site.register(Article)
 admin.site.register(Video)
 admin.site.register(ArticleProgress)
-admin.site.register(QuizAttempt)
