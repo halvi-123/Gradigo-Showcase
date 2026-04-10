@@ -174,3 +174,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+FRONTEND_URL = "http://localhost:3000"
+DEFAULT_FROM_EMAIL = "noreply@firstjobnavigator.com"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
