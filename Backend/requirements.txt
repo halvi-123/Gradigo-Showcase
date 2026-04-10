@@ -33,3 +33,5 @@ sqlparse==0.5.3
 tzdata==2025.3
 urllib3==2.6.3
 drf_spectacular
+beautifulsoup4
+openpyxl
