@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "apps.calculators",
     "apps.pension",
     "apps.move_out",
+    "apps.learning",
     'drf_spectacular',
 ]
 
