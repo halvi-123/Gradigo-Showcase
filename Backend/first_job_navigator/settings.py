@@ -176,6 +176,11 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 FRONTEND_URL = "http://localhost:3000"
 DEFAULT_FROM_EMAIL = "noreply@firstjobnavigator.com"
 
