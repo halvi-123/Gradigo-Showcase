@@ -54,10 +54,10 @@ migrations:
 Backend-lint:
   stage: lint
   script:
-    -cd Backend
-    -python3.11 -m pip install -r requirements.txt
-    -python3.11 -m pip install flake8
-    -flake8 . 
+    - cd Backend
+    - python3.11 -m pip install -r requirements.txt
+    - python3.11 -m pip install flake8
+    - flake8 . 
 
 
 django-tests:
