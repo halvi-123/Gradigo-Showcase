@@ -18,14 +18,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import type { Region, SalaryCalculationInput, StudentLoanType } from "@/lib/salary-calculator/types"
 import { CalculatorIcon, CircleHelpIcon } from "lucide-react"
 
 const MIN_SALARY = 1
 const MAX_SALARY = 999_000_000
 const MAX_SLIDER_SALARY = 500_000
 
-type Region = "england" | "scotland"
-type StudentLoanType = "none" | "plan-1" | "plan-2" | "plan-4" | "postgraduate"
+type SalaryInputCardProps = {
+  onCalculate?: (payload: SalaryCalculationInput) => Promise<void> | void
+  isCalculating?: boolean
+}
 
 function clampSalary(value: number) {
   if (Number.isNaN(value)) return MIN_SALARY
@@ -79,7 +82,7 @@ function FieldHeading({
   )
 }
 
-export function SalaryInputCard() {
+export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryInputCardProps) {
   const [region, setRegion] = useState<Region>("england")
   const [annualSalary, setAnnualSalary] = useState<number>(30000)
   const [annualSalaryInput, setAnnualSalaryInput] = useState<string>("30000")
@@ -152,7 +155,7 @@ export function SalaryInputCard() {
     setPensionContributionInput(parsedValue.toString())
   }
 
-  function handleCalculate() {
+  async function handleCalculate() {
     const payload = {
       region,
       grossAnnualSalary: annualSalary,
@@ -160,7 +163,11 @@ export function SalaryInputCard() {
       studentLoanType,
     }
 
-    // Placeholder for backend integration: replace with fetch/axios when API is ready.
+    if (onCalculate) {
+      await onCalculate(payload)
+      return
+    }
+
     console.log("Salary calculation payload", payload)
   }
 
@@ -326,10 +333,10 @@ export function SalaryInputCard() {
               </SelectTrigger>
               <SelectContent className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]">
                 <SelectItem value="none">No student loan</SelectItem>
-                <SelectItem value="plan-1">Plan 1</SelectItem>
-                <SelectItem value="plan-2">Plan 2</SelectItem>
-                <SelectItem value="plan-4">Plan 4</SelectItem>
-                <SelectItem value="postgraduate">Postgraduate loan</SelectItem>
+                <SelectItem value="plan1">Plan 1</SelectItem>
+                <SelectItem value="plan2">Plan 2</SelectItem>
+                <SelectItem value="plan4">Plan 4</SelectItem>
+                <SelectItem value="plan5">Plan 5</SelectItem>
               </SelectContent>
             </Select>
           </Field>
@@ -338,10 +345,11 @@ export function SalaryInputCard() {
             <Button
               type="button"
               onClick={handleCalculate}
+              disabled={isCalculating}
               className="group h-12 w-full rounded-xl border border-[#748cab]/50 bg-[#748cab] text-base font-semibold text-white shadow-[0_10px_24px_rgba(0,0,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#3e5c76] active:translate-y-0 active:bg-[#1d2d44]"
             >
               <CalculatorIcon className="h-4 w-4 transition-transform duration-200 group-hover:rotate-6" />
-              Calculate Take-Home Pay
+              {isCalculating ? "Calculating..." : "Calculate Take-Home Pay"}
             </Button>
           </div>
         </FieldGroup>
