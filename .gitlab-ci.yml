@@ -57,7 +57,7 @@ Backend-lint:
     - cd Backend
     - python3.11 -m pip install -r requirements.txt
     - python3.11 -m pip install flake8
-    - flake8 . 
+    - flake8 . --exclude=migrations,__pycache__ --count --select=E9,F63,F7,F82 --show-source --statistics
 
 
 django-tests:
