@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 type PayFrequency = "hourly" | "weekly" | "monthly" | "yearly"
 
 type TakeHomePayCardProps = {
-  annualTakeHomePay?: number
+  annualTakeHomePay: number
   hoursPerWeek?: number
 }
 
@@ -20,7 +20,7 @@ function formatCurrency(value: number) {
 }
 
 export function TakeHomePayCard({
-  annualTakeHomePay = 28_400,
+  annualTakeHomePay,
   hoursPerWeek = 40,
 }: TakeHomePayCardProps) {
   const [payFrequency, setPayFrequency] = useState<PayFrequency>("monthly")
@@ -60,7 +60,7 @@ export function TakeHomePayCard({
         <p className="text-sm text-muted-foreground">Estimated take-home ({payFrequency})</p>
         <p className="mt-1 text-3xl font-bold tracking-tight text-primary">{formatCurrency(displayValue)}</p>
         <p className="mt-4 text-xs text-muted-foreground">
-          Placeholder values for us to replace later. Do replace it with API-backed annual results.
+          Currently powered by mock service data. I will wire API response data here from backend once whole feature is ready.
         </p>
       </CardContent>
     </Card>
