@@ -27,10 +27,10 @@ export function SalaryBreakdownChart({ result }: Props) {
   ].filter((item) => item.value > 0)
 
   const chartConfig = {
-    takeHome: { label: `Take Home (${Math.round((result.netAnnualPay / total) * 100)}%)`, color: "#3e5c76" },
+    takeHome: { label: `Take Home (${Math.round((result.netAnnualPay / total) * 100)}%)`, color: "#f0ebd8" },
     incomeTax: { label: `Income Tax (${Math.round((result.incomeTax / total) * 100)}%)`, color: "#1d2d44" },
-    nationalInsurance: { label: `NI (${Math.round((result.nationalInsurance / total) * 100)}%)`, color: "#748cab" },
-    pension: { label: `Pension (${Math.round((result.pensionContribution / total) * 100)}%)`, color: "#f0ebd8" },
+    nationalInsurance: { label: `NI (${Math.round((result.nationalInsurance / total) * 100)}%)`, color: "#3e5c76" },
+    pension: { label: `Pension (${Math.round((result.pensionContribution / total) * 100)}%)`, color: "#748cab" },
     studentLoan: { label: `Student Loan (${Math.round((result.studentLoanRepayment / total) * 100)}%)`, color: "#0d1321" },
   }
 
