@@ -33,7 +33,7 @@ export function TakeHomePayCard({
   }, [annualTakeHomePay, payFrequency, hoursPerWeek])
 
   return (
-    <Card className="border border-border/60 bg-transparent shadow-none">
+    <Card className="border border-border/60 bg-[#0d1321] text-white shadow-none">
       <CardHeader className="space-y-3">
         <CardTitle>Take Home Pay</CardTitle>
         <CardDescription>
@@ -56,10 +56,10 @@ export function TakeHomePayCard({
           </TabsList>
         </Tabs>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">Estimated take-home ({payFrequency})</p>
-        <p className="mt-1 text-3xl font-bold tracking-tight text-primary">{formatCurrency(displayValue)}</p>
-        <p className="mt-4 text-xs text-muted-foreground">
+        <CardContent>
+        <p className="text-sm text-[#f0ebd8]/70">Estimated take-home ({payFrequency})</p>
+        <p className="mt-1 text-3xl font-bold tracking-tight text-white">{formatCurrency(displayValue)}</p>
+        <p className="mt-4 text-xs text-[#f0ebd8]/70">
           Currently powered by mock service data. I will wire API response data here from backend once whole feature is ready.
         </p>
       </CardContent>

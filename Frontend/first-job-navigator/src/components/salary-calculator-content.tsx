@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sidebar"
 import { calculateSalary, getDefaultSalaryCalculationResult } from "@/lib/salary-calculator/service"
 import type { SalaryCalculationInput } from "@/lib/salary-calculator/types"
+import { SalaryBreakdownChart } from "@/components/salary-breakdown-chart"
 
 export function SalaryCalculatorContent() {
   const [result, setResult] = useState(getDefaultSalaryCalculationResult)
@@ -72,6 +73,7 @@ export function SalaryCalculatorContent() {
 
               <div className="grid gap-4 content-start">
                 <TakeHomePayCard annualTakeHomePay={result.netAnnualPay} />
+                <SalaryBreakdownChart result={result} />
 
                 <Card className="border border-border/60 bg-transparent shadow-none">
                   <CardHeader>
