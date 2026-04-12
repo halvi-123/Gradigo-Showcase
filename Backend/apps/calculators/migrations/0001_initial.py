@@ -26,10 +26,12 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("gross_salary", models.DecimalField(decimal_places=2, max_digits=12)),
+                ("gross_salary", models.DecimalField(
+                    decimal_places=2, max_digits=12)),
                 (
                     "pension_percent",
-                    models.DecimalField(decimal_places=2, default=0, max_digits=5),
+                    models.DecimalField(
+                        decimal_places=2, default=0, max_digits=5),
                 ),
                 (
                     "student_loan_plan",
@@ -48,30 +50,36 @@ class Migration(migrations.Migration):
                 (
                     "tax_region",
                     models.CharField(
-                        choices=[("england", "England"), ("scotland", "Scotland")],
+                        choices=[("england", "England"),
+                                 ("scotland", "Scotland")],
                         default="england",
                         max_length=20,
                     ),
                 ),
-                ("income_tax", models.DecimalField(decimal_places=2, max_digits=12)),
+                ("income_tax", models.DecimalField(
+                    decimal_places=2, max_digits=12)),
                 (
                     "national_insurance",
                     models.DecimalField(decimal_places=2, max_digits=12),
                 ),
                 (
                     "student_loan",
-                    models.DecimalField(decimal_places=2, default=0, max_digits=12),
+                    models.DecimalField(
+                        decimal_places=2, default=0, max_digits=12),
                 ),
                 (
                     "pension",
-                    models.DecimalField(decimal_places=2, default=0, max_digits=12),
+                    models.DecimalField(
+                        decimal_places=2, default=0, max_digits=12),
                 ),
                 (
                     "total_deductions",
                     models.DecimalField(decimal_places=2, max_digits=12),
                 ),
-                ("net_annual", models.DecimalField(decimal_places=2, max_digits=12)),
-                ("net_monthly", models.DecimalField(decimal_places=2, max_digits=12)),
+                ("net_annual", models.DecimalField(
+                    decimal_places=2, max_digits=12)),
+                ("net_monthly", models.DecimalField(
+                    decimal_places=2, max_digits=12)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 (
                     "user",

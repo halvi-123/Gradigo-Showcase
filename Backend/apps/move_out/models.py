@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
+
 class MoveOutPlan(models.Model):
     class ReadinessStatus(models.TextChoices):
         ready = "ready", "Ready"

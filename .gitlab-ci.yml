@@ -28,6 +28,7 @@ default:
 
 stages:
   - build
+  - lint
   - test
   - deploy
 
@@ -49,6 +50,15 @@ migrations:
       done
     - python3.11 manage.py migrate
     - python3.11 manage.py check
+
+Backend-lint:
+  stage: lint
+  script:
+    - cd Backend
+    - python3.11 -m pip install -r requirements.txt
+    - python3.11 -m pip install flake8
+    - flake8 . --exclude=migrations,__pycache__ --show-source --statistics
+
 
 django-tests:
   stage: test

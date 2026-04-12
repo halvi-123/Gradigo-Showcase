@@ -46,8 +46,10 @@ class LearningViewTests(TestCase):
             description="desc",
         )
 
-        self.quiz_easy = Quiz.objects.create(title="Easy Quiz", difficulty="easy")
-        self.quiz_medium = Quiz.objects.create(title="Medium Quiz", difficulty="medium")
+        self.quiz_easy = Quiz.objects.create(
+            title="Easy Quiz", difficulty="easy")
+        self.quiz_medium = Quiz.objects.create(
+            title="Medium Quiz", difficulty="medium")
 
         self.question = Question.objects.create(
             quiz=self.quiz_easy,
@@ -90,13 +92,15 @@ class LearningViewTests(TestCase):
         self.assertEqual(response.data[0]["difficulty"], "easy")
 
     def test_complete_article_view_requires_authentication(self):
-        request = self.factory.post(f"/learning/articles/{self.article.id}/complete/")
+        request = self.factory.post(
+            f"/learning/articles/{self.article.id}/complete/")
         response = CompleteArticleView.as_view()(request, pk=self.article.id)
 
         self.assertEqual(response.status_code, 401)
 
     def test_complete_article_view_marks_progress_when_authenticated(self):
-        request = self.factory.post(f"/learning/articles/{self.article.id}/complete/")
+        request = self.factory.post(
+            f"/learning/articles/{self.article.id}/complete/")
         force_authenticate(request, user=self.user)
 
         response = CompleteArticleView.as_view()(request, pk=self.article.id)

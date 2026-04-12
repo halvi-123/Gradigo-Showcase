@@ -23,7 +23,9 @@ from apps.move_out.services import (
     save_move_out_plan,
     get_saved_move_out_plan,
 )
+
 User = get_user_model()
+
 
 @pytest.fixture
 def user(db):
@@ -32,6 +34,7 @@ def user(db):
         full_name="Move Out Services User",
         password="securepassword123",
     )
+
 
 @pytest.fixture
 def postcode_data():
@@ -45,6 +48,7 @@ def postcode_data():
         "longitude": -0.59,
     }
 
+
 @pytest.fixture
 def sample_workbook():
     workbook = Workbook()
@@ -54,6 +58,7 @@ def sample_workbook():
     sheet.append(["South East", "February 2026", 1400])
     sheet.append(["England", "March 2026", 1300])
     return workbook
+
 
 @pytest.mark.django_db
 class TestMoveOutServices:
@@ -115,7 +120,9 @@ class TestMoveOutServices:
         assert rent == Decimal("1500")
 
     @patch("apps.move_out.services._download_ons_workbook")
-    def test_get_average_rent_from_ons(self, mock_download, postcode_data, sample_workbook):
+    def test_get_average_rent_from_ons(
+        self, mock_download, postcode_data, sample_workbook
+    ):
         mock_download.return_value = sample_workbook
 
         rent = get_average_rent_from_ons(postcode_data)
@@ -134,8 +141,11 @@ class TestMoveOutServices:
         assert result == "Moderate"
 
     @patch("apps.move_out.services.requests.get")
-    def test_get_crime_level_returns_unknown_on_request_error(self, mock_get, postcode_data):
+    def test_get_crime_level_returns_unknown_on_request_error(
+        self, mock_get, postcode_data
+    ):
         import requests
+
         mock_get.side_effect = requests.RequestException("boom")
 
         result = get_crime_level(postcode_data)
@@ -191,20 +201,26 @@ class TestMoveOutServices:
         assert results[0]["listing_id"] == "2"
 
     def test_calculate_disposable_income(self):
-        result = calculate_disposable_income(Decimal("2500.00"), Decimal("800.00"))
+        result = calculate_disposable_income(
+            Decimal("2500.00"), Decimal("800.00"))
         assert result == Decimal("1700.00")
 
     def test_calculate_rent_ratio_percent(self):
-        result = calculate_rent_ratio_percent(Decimal("2500.00"), Decimal("1000.00"))
+        result = calculate_rent_ratio_percent(
+            Decimal("2500.00"), Decimal("1000.00"))
         assert result == Decimal("40.00")
 
     def test_calculate_readiness_ready(self):
-        result = calculate_readiness(Decimal("4000.00"), Decimal("1000.00"), Decimal("1000.00"))
+        result = calculate_readiness(
+            Decimal("4000.00"), Decimal("1000.00"), Decimal("1000.00")
+        )
         assert result["status"] == MoveOutPlan.ReadinessStatus.ready
         assert result["readiness_score"] == 85
 
     def test_calculate_readiness_needs_improvement(self):
-        result = calculate_readiness(Decimal("2000.00"), Decimal("1000.00"), Decimal("1500.00"))
+        result = calculate_readiness(
+            Decimal("2000.00"), Decimal("1000.00"), Decimal("1500.00")
+        )
         assert result["status"] == MoveOutPlan.ReadinessStatus.needs_improvement
         assert result["readiness_score"] == 35
 

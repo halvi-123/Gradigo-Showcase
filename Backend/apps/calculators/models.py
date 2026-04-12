@@ -21,7 +21,8 @@ class SalaryCalculation(models.Model):
         related_name="salary_calculations",
     )
     gross_salary = models.DecimalField(max_digits=12, decimal_places=2)
-    pension_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    pension_percent = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0)
     student_loan_plan = models.CharField(
         max_length=10,
         choices=STUDENT_LOAN_CHOICES,
@@ -36,7 +37,8 @@ class SalaryCalculation(models.Model):
 
     income_tax = models.DecimalField(max_digits=12, decimal_places=2)
     national_insurance = models.DecimalField(max_digits=12, decimal_places=2)
-    student_loan = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    student_loan = models.DecimalField(
+        max_digits=12, decimal_places=2, default=0)
     pension = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_deductions = models.DecimalField(max_digits=12, decimal_places=2)
     net_annual = models.DecimalField(max_digits=12, decimal_places=2)

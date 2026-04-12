@@ -10,11 +10,17 @@ from openpyxl import load_workbook
 
 from .models import MoveOutPlan
 
-POSTCODES_API_BASE_URL = getattr(settings, "POSTCODES_API_BASE_URL", "https://api.postcodes.io")
+POSTCODES_API_BASE_URL = getattr(
+    settings, "POSTCODES_API_BASE_URL", "https://api.postcodes.io"
+)
 ONS_PIPR_XLSX_URL = getattr(
     settings,
     "ONS_PIPR_XLSX_URL",
-    "https://www.ons.gov.uk/file?uri=%2Feconomy%2Finflationandpriceindices%2Fdatasets%2Fpriceindexofprivaterentsukmonthlypricestatistics%2F25march2026%2Fpriceindexofprivaterentsukmonthlypricestatistics.xlsx",
+    (
+        "https://www.ons.gov.uk/file?uri=%2Feconomy%2Finflationandpriceindices"
+        "%2Fdatasets%2Fpriceindexofprivaterentsukmonthlypricestatistics"
+        "%2F25march2026%2Fpriceindexofprivaterentsukmonthlypricestatistics.xlsx"
+    ),
 )
 POLICE_API_BASE_URL = "https://data.police.uk/api"
 APIFY_API_BASE_URL = "https://api.apify.com/v2"
@@ -24,13 +30,24 @@ TIMEOUT = 15
 MONEY = Decimal("0.01")
 
 MONTH_NAMES = {
-    "january": 1, "february": 2, "march": 3, "april": 4,
-    "may": 5, "june": 6, "july": 7, "august": 8,
-    "september": 9, "october": 10, "november": 11, "december": 12,
+    "january": 1,
+    "february": 2,
+    "march": 3,
+    "april": 4,
+    "may": 5,
+    "june": 6,
+    "july": 7,
+    "august": 8,
+    "september": 9,
+    "october": 10,
+    "november": 11,
+    "december": 12,
 }
+
 
 class MoveOutServiceError(Exception):
     pass
+
 
 def lookup_postcode(postcode: str) -> dict:
     postcode = postcode.strip().upper()
@@ -38,7 +55,9 @@ def lookup_postcode(postcode: str) -> dict:
         raise MoveOutServiceError("Postcode is needed")
 
     try:
-        resp = requests.get(f"{POSTCODES_API_BASE_URL}/postcodes/{postcode}", timeout=TIMEOUT)
+        resp = requests.get(
+            f"{POSTCODES_API_BASE_URL}/postcodes/{postcode}", timeout=TIMEOUT
+        )
         resp.raise_for_status()
         result = resp.json().get("result")
     except requests.RequestException as e:
@@ -57,8 +76,10 @@ def lookup_postcode(postcode: str) -> dict:
         "longitude": result.get("longitude"),
     }
 
+
 def _to_text(value) -> str:
     return "" if value is None else str(value).strip().lower()
+
 
 def _parse_date_from_row(values) -> date | None:
     for v in values:
@@ -68,7 +89,10 @@ def _parse_date_from_row(values) -> date | None:
             return date(v.year, v.month, 1)
         if isinstance(v, str):
             match = re.search(
-                r"(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{4})",
+                (
+                    r"(january|february|march|april|may|june|july|august|"
+                    r"september|october|november|december)\s+(\d{4})"
+                ),
                 v.strip().lower(),
             )
             if match:
@@ -85,6 +109,7 @@ def _parse_date_from_row(values) -> date | None:
 
     return date(year, month, 1) if year and month else None
 
+
 def _find_rent_values(values) -> list[Decimal]:
     results = []
     for v in values:
@@ -100,6 +125,7 @@ def _find_rent_values(values) -> list[Decimal]:
             results.append(n)
     return results
 
+
 def _get_geography_name(postcode_data: dict) -> str:
     country = postcode_data.get("country")
     region = postcode_data.get("region")
@@ -109,6 +135,7 @@ def _get_geography_name(postcode_data: dict) -> str:
         return country
     raise MoveOutServiceError("Could not determine geography for rent lookup")
 
+
 def _download_ons_workbook():
     try:
         resp = requests.get(ONS_PIPR_XLSX_URL, timeout=TIMEOUT)
@@ -116,9 +143,12 @@ def _download_ons_workbook():
     except requests.RequestException as e:
         raise MoveOutServiceError("Failed to fetch ONS rent dataset") from e
     try:
-        return load_workbook(filename=BytesIO(resp.content), read_only=True, data_only=True)
+        return load_workbook(
+            filename=BytesIO(resp.content), read_only=True, data_only=True
+        )
     except Exception as e:
         raise MoveOutServiceError("Could not open ONS rent dataset") from e
+
 
 def _find_rent_for_area(workbook, area_name: str) -> Decimal | None:
     target = area_name.strip().lower()
@@ -146,6 +176,7 @@ def _find_rent_for_area(workbook, area_name: str) -> Decimal | None:
 
     return best_rent
 
+
 def get_average_rent_from_ons(postcode_data: dict) -> Decimal:
     workbook = _download_ons_workbook()
     area = _get_geography_name(postcode_data)
@@ -155,9 +186,12 @@ def get_average_rent_from_ons(postcode_data: dict) -> Decimal:
         rent = _find_rent_for_area(workbook, postcode_data["country"])
 
     if rent is None:
-        raise MoveOutServiceError("Could not find rent data in ONS dataset for this area")
+        raise MoveOutServiceError(
+            "Could not find rent data in ONS dataset for this area"
+        )
 
     return rent.quantize(MONEY, rounding=ROUND_HALF_UP)
+
 
 def get_crime_level(postcode_data: dict) -> str:
     lat = postcode_data.get("latitude")
@@ -176,11 +210,16 @@ def get_crime_level(postcode_data: dict) -> str:
     except (requests.RequestException, ValueError):
         return "Unknown"
 
-    if count < 25:   return "Very Low"
-    if count < 60:   return "Low"
-    if count < 110:  return "Moderate"
-    if count < 180:  return "High"
+    if count < 25:
+        return "Very Low"
+    if count < 60:
+        return "Low"
+    if count < 110:
+        return "Moderate"
+    if count < 180:
+        return "High"
     return "Very High"
+
 
 def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
     if not APIFY_API_TOKEN or not search_location:
@@ -200,7 +239,10 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
 
     try:
         resp = requests.post(
-            f"{APIFY_API_BASE_URL}/acts/dhrumil~rightmove-scraper/run-sync-get-dataset-items",
+            (
+                f"{APIFY_API_BASE_URL}/acts/"
+                "dhrumil~rightmove-scraper/run-sync-get-dataset-items"
+            ),
             params={"token": APIFY_API_TOKEN},
             json=run_input,
             timeout=180,
@@ -224,22 +266,24 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
             except Exception:
                 pass
 
-        listings.append({
-            "listing_id":        item.get("id") or item.get("propertyId"),
-            "display_address":   item.get("displayAddress") or item.get("address"),
-            "latest_price":      price,
-            "display_price":     item.get("displayPrice"),
-            "bedrooms":          item.get("bedrooms"),
-            "bathrooms":         item.get("bathrooms"),
-            "property_type":     item.get("propertyType"),
-            "property_sub_type": item.get("propertySubType"),
-            "agent":             item.get("agent"),
-            "agent_branch":      item.get("agentBranch"),
-            "added_date":        item.get("addedOn"),
-            "image_url":         item.get("imageUrl"),
-            "listing_url":       item.get("url"),
-            "source":            "Rightmove via Apify",
-        })
+        listings.append(
+            {
+                "listing_id": item.get("id") or item.get("propertyId"),
+                "display_address": item.get("displayAddress") or item.get("address"),
+                "latest_price": price,
+                "display_price": item.get("displayPrice"),
+                "bedrooms": item.get("bedrooms"),
+                "bathrooms": item.get("bathrooms"),
+                "property_type": item.get("propertyType"),
+                "property_sub_type": item.get("propertySubType"),
+                "agent": item.get("agent"),
+                "agent_branch": item.get("agentBranch"),
+                "added_date": item.get("addedOn"),
+                "image_url": item.get("imageUrl"),
+                "listing_url": item.get("url"),
+                "source": "Rightmove via Apify",
+            }
+        )
 
         if len(listings) == 6:
             break
@@ -247,13 +291,16 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
     print("FINAL LISTINGS:", listings)
     return listings
 
+
 def calculate_disposable_income(income: Decimal, expenses: Decimal) -> Decimal:
     return (income - expenses).quantize(MONEY, rounding=ROUND_HALF_UP)
+
 
 def calculate_rent_ratio_percent(income: Decimal, rent: Decimal) -> Decimal:
     if income <= 0:
         return Decimal("0.00")
     return (rent / income * 100).quantize(MONEY, rounding=ROUND_HALF_UP)
+
 
 def calculate_readiness(income: Decimal, expenses: Decimal, rent: Decimal) -> dict:
     disposable = calculate_disposable_income(income, expenses)
@@ -275,71 +322,100 @@ def calculate_readiness(income: Decimal, expenses: Decimal, rent: Decimal) -> di
         "readiness_score": score,
     }
 
+
 def generate_summary(status: str, estimated_rent: Decimal, crime_level: str) -> str:
-    crime_text = f" Crime level in the area appears to be {crime_level.lower()}."
+    crime_text = (
+        f" Crime level in the area appears to be {crime_level.lower()}."
+    )
 
     messages = {
-        MoveOutPlan.ReadinessStatus.ready:
-            f"You appear ready to move out. Your finances look strong compared with the estimated local rent of £{estimated_rent}.{crime_text}",
-        MoveOutPlan.ReadinessStatus.borderline:
-            f"You may be able to move out, but affordability looks tight compared with the estimated local rent of £{estimated_rent}.{crime_text}",
-        MoveOutPlan.ReadinessStatus.needs_improvement:
-            f"Your remaining monthly income is currently below the estimated rent of £{estimated_rent}, so moving out may be difficult right now.{crime_text}",
+        MoveOutPlan.ReadinessStatus.ready: (
+            "You appear ready to move out. Your finances look strong compared "
+            f"with the estimated local rent of £{estimated_rent}.{crime_text}"
+        ),
+        MoveOutPlan.ReadinessStatus.borderline: (
+            "You may be able to move out, but affordability looks tight compared "
+            f"with the estimated local rent of £{estimated_rent}.{crime_text}"
+        ),
+        MoveOutPlan.ReadinessStatus.needs_improvement: (
+            "Your remaining monthly income is currently below the estimated rent "
+            f"of £{estimated_rent}, so moving out may be difficult right now."
+            f"{crime_text}"
+        ),
     }
 
     return messages.get(
         status,
-        f"You are not currently in a strong position to move out based on your income, expenses, and the rent estimate for your area.{crime_text}",
+        (
+            "You are not currently in a strong position to move out based on "
+            "your income, expenses, and the rent estimate for your area."
+            f"{crime_text}"
+        ),
     )
 
-def save_move_out_plan(user, postcode: str, monthly_income, monthly_expenses) -> MoveOutPlan:
+
+def save_move_out_plan(
+    user, postcode: str, monthly_income, monthly_expenses
+) -> MoveOutPlan:
     try:
         monthly_income = Decimal(str(monthly_income))
         monthly_expenses = Decimal(str(monthly_expenses))
     except (InvalidOperation, TypeError) as e:
-        raise MoveOutServiceError("Income and expenses must be valid numbers") from e
+        raise MoveOutServiceError(
+            "Income and expenses must be valid numbers") from e
 
     postcode_data = lookup_postcode(postcode)
     estimated_rent = get_average_rent_from_ons(postcode_data)
     crime_level = get_crime_level(postcode_data)
-    readiness = calculate_readiness(monthly_income, monthly_expenses, estimated_rent)
+    readiness = calculate_readiness(
+        monthly_income, monthly_expenses, estimated_rent)
 
     existing = get_saved_move_out_plan(user)
-    postcode_changed = not existing or existing.target_postcode != postcode_data["postcode"]
-    stale = not existing or (timezone.now() - existing.updated_at) > timedelta(days=3)
+    postcode_changed = (
+        not existing or existing.target_postcode != postcode_data["postcode"]
+    )
+    stale = not existing or (
+        timezone.now() - existing.updated_at) > timedelta(days=3)
 
     if postcode_changed or stale:
         search_location = (
-            postcode_data.get("postcode") or
-            postcode_data.get("admin_district") or
-            postcode_data.get("region") or ""
+            postcode_data.get("postcode")
+            or postcode_data.get("admin_district")
+            or postcode_data.get("region")
+            or ""
         )
-        listings = get_rental_listings(search_location, readiness["disposable_income"])
+        listings = get_rental_listings(
+            search_location, readiness["disposable_income"])
     else:
         listings = existing.property_listings
 
-    summary = generate_summary(readiness["status"], estimated_rent, crime_level)
+    summary = generate_summary(
+        readiness["status"], estimated_rent, crime_level)
 
     plan, _ = MoveOutPlan.objects.update_or_create(
         user=user,
         defaults={
-            "target_postcode":        postcode_data["postcode"],
-            "area_name":              postcode_data.get("admin_district") or postcode_data.get("region") or postcode_data.get("country") or "",
-            "area_code":              postcode_data.get("area_code") or "",
-            "monthly_income":         monthly_income,
-            "monthly_expenses":       monthly_expenses,
+            "target_postcode": postcode_data["postcode"],
+            "area_name": postcode_data.get("admin_district")
+            or postcode_data.get("region")
+            or postcode_data.get("country")
+            or "",
+            "area_code": postcode_data.get("area_code") or "",
+            "monthly_income": monthly_income,
+            "monthly_expenses": monthly_expenses,
             "estimated_monthly_rent": estimated_rent,
-            "disposable_income":      readiness["disposable_income"],
-            "rent_ratio_percent":     readiness["rent_ratio_percent"],
-            "readiness_score":        readiness["readiness_score"],
-            "status":                 readiness["status"],
-            "crime_level":            crime_level,
-            "property_listings":      listings,
-            "summary":                summary,
+            "disposable_income": readiness["disposable_income"],
+            "rent_ratio_percent": readiness["rent_ratio_percent"],
+            "readiness_score": readiness["readiness_score"],
+            "status": readiness["status"],
+            "crime_level": crime_level,
+            "property_listings": listings,
+            "summary": summary,
         },
     )
 
     return plan
+
 
 def get_saved_move_out_plan(user):
     try:

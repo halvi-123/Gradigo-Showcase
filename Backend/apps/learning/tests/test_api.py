@@ -38,8 +38,10 @@ class LearningAPITests(TestCase):
             description="Video description",
         )
 
-        self.quiz_easy = Quiz.objects.create(title="Easy Quiz", difficulty="easy")
-        self.quiz_hard = Quiz.objects.create(title="Hard Quiz", difficulty="hard")
+        self.quiz_easy = Quiz.objects.create(
+            title="Easy Quiz", difficulty="easy")
+        self.quiz_hard = Quiz.objects.create(
+            title="Hard Quiz", difficulty="hard")
 
         self.question = Question.objects.create(
             quiz=self.quiz_easy,
@@ -79,14 +81,18 @@ class LearningAPITests(TestCase):
         self.assertEqual(response.data[0]["difficulty"], "easy")
 
     def test_complete_article_endpoint_requires_auth(self):
-        response = self.client.post(f"/api/learning/articles/{self.article.id}/complete/")
+        response = self.client.post(
+            f"/api/learning/articles/{self.article.id}/complete/"
+        )
 
         self.assertEqual(response.status_code, 401)
 
     def test_complete_article_endpoint_success(self):
         self.client.force_authenticate(user=self.user)
 
-        response = self.client.post(f"/api/learning/articles/{self.article.id}/complete/")
+        response = self.client.post(
+            f"/api/learning/articles/{self.article.id}/complete/"
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["status"], "completed")

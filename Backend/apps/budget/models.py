@@ -17,7 +17,8 @@ class Budget(models.Model):
         month: Date representing the month the budget applies to.
     """
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     net_income = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.DateField()
 
@@ -35,18 +36,21 @@ class Category(models.Model):
     Attributes:
         budget: Foreign key linking the category to a budget.
         category_name: Name of the spending category (e.g., "Groceries", "Rent").
-        allocated_amount: Decimal value representing the amount allocated to this category.
-        limit_amount: Optional decimal value representing a spending limit for this category.
+        allocated_amount: Decimal value representing the amount allocated.
+        limit_amount: Optional decimal value representing a spending limit.
     """
 
-    budget = models.ForeignKey(Budget, on_delete=models.CASCADE, related_name='categories')
+    budget = models.ForeignKey(
+        Budget, on_delete=models.CASCADE, related_name="categories"
+    )
     category_name = models.CharField(max_length=100)
     allocated_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    limit_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    limit_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
     class Meta:
         unique_together = ["budget", "category_name"]
-
 
 
 class Transaction(models.Model):
@@ -81,13 +85,15 @@ class SavingsGoal(models.Model):
     Attributes:
         user: Foreign key linking the savings goal to a user.
         name: Name or description of the savings goal (e.g., "Vacation Fund").
-        current_amount: Decimal value representing the current amount saved towards the goal.
-        target_amount: Decimal value representing the target amount for the savings goal.
-        target_date: Optional date field indicating when the user aims to achieve the savings goal.
+        current_amount: Decimal value representing the current amount saved.
+        target_amount: Decimal value representing the target amount.
+        target_date: Optional date field indicating target date.
     """
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    current_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    current_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     target_date = models.DateField(null=True, blank=True)
