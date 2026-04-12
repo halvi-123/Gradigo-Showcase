@@ -54,6 +54,24 @@ export function SalaryBreakdownChart({ result }: Props) {
             <ChartLegend content={<ChartLegendContent />} />
           </PieChart>
         </ChartContainer>
+
+        <div className="mt-4 space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-[#f0ebd8]/70">Personal Allowance Used</span>
+            <span className="text-white font-medium">
+              {Math.min(Math.round((result.grossAnnualSalary / 12570) * 100), 100)}%
+            </span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-white/10">
+            <div
+              className="h-2 rounded-full bg-[#748cab] transition-all duration-300"
+              style={{ width: `${Math.min((result.grossAnnualSalary / 12570) * 100, 100)}%` }}
+            />
+          </div>
+          <p className="text-xs text-[#f0ebd8]/50">
+            Standard personal allowance: £12,570
+          </p>
+        </div>
       </CardContent>
     </Card>
   )
