@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SalaryInputCard } from "@/components/salary-input-card"
-import { TakeHomePayCard } from "@/components/take-home-pay-card"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/sidebar"
 import { calculateSalary, getDefaultSalaryCalculationResult } from "@/lib/salary-calculator/service"
 import type { SalaryCalculationInput } from "@/lib/salary-calculator/types"
+import { SalaryResultsCard } from "@/components/salary-results-card"
 
 export function SalaryCalculatorContent() {
   const [result, setResult] = useState(getDefaultSalaryCalculationResult)
@@ -71,7 +71,7 @@ export function SalaryCalculatorContent() {
               <SalaryInputCard onCalculate={handleCalculate} isCalculating={isCalculating} />
 
               <div className="grid gap-4 content-start">
-                <TakeHomePayCard annualTakeHomePay={result.netAnnualPay} />
+                <SalaryResultsCard result={result} />
 
                 <Card className="border border-border/60 bg-transparent shadow-none">
                   <CardHeader>
