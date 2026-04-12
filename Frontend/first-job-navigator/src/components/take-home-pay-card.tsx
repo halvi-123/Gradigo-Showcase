@@ -23,7 +23,7 @@ export function TakeHomePayCard({
   annualTakeHomePay,
   hoursPerWeek = 40,
 }: TakeHomePayCardProps) {
-  const [payFrequency, setPayFrequency] = useState<PayFrequency>("monthly")
+  const [payFrequency, setPayFrequency] = useState<PayFrequency>("yearly")
 
   const displayValue = useMemo(() => {
     if (payFrequency === "yearly") return annualTakeHomePay

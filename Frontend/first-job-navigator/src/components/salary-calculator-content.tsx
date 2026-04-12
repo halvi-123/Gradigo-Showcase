@@ -5,7 +5,6 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SalaryInputCard } from "@/components/salary-input-card"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,12 +18,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { calculateSalary } from "@/lib/salary-calculator/service"
-import type { SalaryCalculationInput } from "@/lib/salary-calculator/types"
+import { calculateSalary, getDefaultSalaryCalculationResult } from "@/lib/salary-calculator/service"
+import type { SalaryCalculationInput, SalaryCalculationResult } from "@/lib/salary-calculator/types"
 import { SalaryResultsCard } from "@/components/salary-results-card"
+import { PayBreakdownTable } from "@/components/pay-breakdown-table"
 
 export function SalaryCalculatorContent() {
-  const [result, setResult] = useState<SalaryCalculationResult | null>(null)
+  const [result, setResult] = useState<SalaryCalculationResult>(getDefaultSalaryCalculationResult)
   const [isCalculating, setIsCalculating] = useState(false)
 
   async function handleCalculate(input: SalaryCalculationInput) {
@@ -78,10 +78,7 @@ export function SalaryCalculatorContent() {
 
               <div className="grid gap-4 content-start">
                 <SalaryResultsCard result={result} />
-
-                <div className={`transition-all duration-300 ${result ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
-                  {result && <PayBreakdownTable result={result} />}
-                </div>
+                <PayBreakdownTable result={result} />
               </div>
             </div>
           </div>

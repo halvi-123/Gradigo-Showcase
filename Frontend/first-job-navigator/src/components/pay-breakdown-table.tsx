@@ -8,16 +8,7 @@ import {
 } from "@/components/ui/table"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-type SalaryCalculationResult = {
-  grossAnnualSalary: number
-  totalDeductions: number
-  incomeTax: number
-  nationalInsurance: number
-  pensionContribution: number
-  studentLoanRepayment: number
-  netAnnualPay: number
-}
+import type { SalaryCalculationResult } from "@/lib/salary-calculator/types"
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("en-GB", {
