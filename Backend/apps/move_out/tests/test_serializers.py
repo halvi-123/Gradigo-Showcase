@@ -3,7 +3,9 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from apps.move_out.models import MoveOutPlan
 from apps.move_out.serializers import MoveOutCheckSerializer, MoveOutPlanSerializer
+
 User = get_user_model()
+
 
 @pytest.fixture
 def user(db):
@@ -12,6 +14,7 @@ def user(db):
         full_name="Move Out Serializers User",
         password="securepassword123",
     )
+
 
 @pytest.fixture
 def move_out_plan(user):
@@ -37,6 +40,7 @@ def move_out_plan(user):
         ],
         summary="You may be able to move out.",
     )
+
 
 class TestMoveOutCheckSerializer:
     def test_valid_data(self):
@@ -86,6 +90,7 @@ class TestMoveOutCheckSerializer:
 
         assert not serializer.is_valid()
         assert "monthly_expenses" in serializer.errors
+
 
 @pytest.mark.django_db
 class TestMoveOutPlanSerializer:

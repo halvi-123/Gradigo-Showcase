@@ -77,7 +77,8 @@ class LearningSerializerTests(TestCase):
         data = VideoSerializer(self.video).data
 
         self.assertEqual(data["title"], "Video 1")
-        self.assertEqual(data["youtube_url"], "https://youtube.com/watch?v=abc")
+        self.assertEqual(data["youtube_url"],
+                         "https://youtube.com/watch?v=abc")
         self.assertEqual(data["description"], "Video description")
 
     def test_dashboard_serializer_valid_data(self):

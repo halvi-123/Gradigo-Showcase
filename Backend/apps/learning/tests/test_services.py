@@ -70,7 +70,9 @@ class LearningServiceTests(TestCase):
         self.assertTrue(progress.completed)
         self.assertIsNotNone(progress.completed_at)
         self.assertEqual(
-            ArticleProgress.objects.filter(user=self.user, article=self.article1).count(),
+            ArticleProgress.objects.filter(
+                user=self.user, article=self.article1
+            ).count(),
             1,
         )
 
@@ -86,7 +88,9 @@ class LearningServiceTests(TestCase):
         self.assertTrue(progress.completed)
         self.assertIsNotNone(progress.completed_at)
         self.assertEqual(
-            ArticleProgress.objects.filter(user=self.user, article=self.article1).count(),
+            ArticleProgress.objects.filter(
+                user=self.user, article=self.article1
+            ).count(),
             1,
         )
 

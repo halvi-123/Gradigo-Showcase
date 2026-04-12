@@ -4,7 +4,6 @@ from rest_framework.test import APIClient
 
 from apps.calculators.models import SalaryCalculation
 
-
 User = get_user_model()
 
 
@@ -41,14 +40,19 @@ def valid_payload():
 
 @pytest.mark.django_db
 def test_unauthenticated_user_cannot_access_salary_calculate(api_client, valid_payload):
-    response = api_client.post("/api/salary/calculate/", valid_payload, format="json")
+    response = api_client.post(
+        "/api/salary/calculate/", valid_payload, format="json")
 
     assert response.status_code in [401, 403]
 
 
 @pytest.mark.django_db
-def test_authenticated_user_can_access_salary_calculate(authenticated_client, valid_payload):
-    response = authenticated_client.post("/api/salary/calculate/", valid_payload, format="json")
+def test_authenticated_user_can_access_salary_calculate(
+    authenticated_client, valid_payload
+):
+    response = authenticated_client.post(
+        "/api/salary/calculate/", valid_payload, format="json"
+    )
 
     assert response.status_code == 200
     assert "gross_salary" in response.data
@@ -62,10 +66,14 @@ def test_authenticated_user_can_access_salary_calculate(authenticated_client, va
 
 
 @pytest.mark.django_db
-def test_authenticated_post_creates_salary_calculation(authenticated_client, user, valid_payload):
+def test_authenticated_post_creates_salary_calculation(
+    authenticated_client, user, valid_payload
+):
     before_count = SalaryCalculation.objects.count()
 
-    response = authenticated_client.post("/api/salary/calculate/", valid_payload, format="json")
+    response = authenticated_client.post(
+        "/api/salary/calculate/", valid_payload, format="json"
+    )
 
     after_count = SalaryCalculation.objects.count()
 
@@ -87,7 +95,9 @@ def test_invalid_payload_returns_400(authenticated_client):
         "tax_region": "england",
     }
 
-    response = authenticated_client.post("/api/salary/calculate/", invalid_payload, format="json")
+    response = authenticated_client.post(
+        "/api/salary/calculate/", invalid_payload, format="json"
+    )
 
     assert response.status_code == 400
     assert "gross_salary" in response.data
@@ -102,7 +112,9 @@ def test_invalid_student_loan_plan_returns_400(authenticated_client):
         "tax_region": "england",
     }
 
-    response = authenticated_client.post("/api/salary/calculate/", invalid_payload, format="json")
+    response = authenticated_client.post(
+        "/api/salary/calculate/", invalid_payload, format="json"
+    )
 
     assert response.status_code == 400
     assert "student_loan_plan" in response.data

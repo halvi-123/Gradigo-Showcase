@@ -130,7 +130,8 @@ class TestBudgetServices:
         create_default_categories(budget)
 
         categories = Category.objects.filter(budget=budget)
-        category_names = set(categories.values_list("category_name", flat=True))
+        category_names = set(categories.values_list(
+            "category_name", flat=True))
 
         assert categories.count() == len(default_categories)
         assert set(default_categories) == category_names
@@ -272,7 +273,9 @@ class TestBudgetServices:
         assert isinstance(alerts, list)
         assert any("Rent" in alert for alert in alerts)
 
-    def test_calculate_financial_snapshot_score_returns_valid_range(self, populated_budget):
+    def test_calculate_financial_snapshot_score_returns_valid_range(
+        self, populated_budget
+    ):
         score = calculate_financial_snapshot_score(populated_budget)
 
         assert isinstance(score, int)
@@ -284,7 +287,9 @@ class TestBudgetServices:
         assert isinstance(summary, str)
         assert "You have spent" in summary
 
-    def test_generate_budget_summary_mentions_savings_when_present(self, populated_budget):
+    def test_generate_budget_summary_mentions_savings_when_present(
+        self, populated_budget
+    ):
         summary = generate_budget_summary(populated_budget)
 
         assert "savings goals" in summary
@@ -292,4 +297,8 @@ class TestBudgetServices:
     def test_generate_budget_summary_mentions_remaining_income(self, populated_budget):
         summary = generate_budget_summary(populated_budget)
 
-        assert "left" in summary or "over budget" in summary or "used all of your monthly income" in summary
+        assert (
+            "left" in summary
+            or "over budget" in summary
+            or "used all of your monthly income" in summary
+        )
