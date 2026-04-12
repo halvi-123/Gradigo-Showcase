@@ -55,7 +55,8 @@ export function SalaryResultsCard({ result, hoursPerWeek = 40 }: Props) {
     studentLoan: { label: `Student Loan (${Math.round((result.studentLoanRepayment / total) * 100)}%)`, color: "#0d1321" },
   }
 
-  const Legend = ({ horizontal = false }: { horizontal?: boolean }) => (
+  function renderLegend(horizontal = false) {
+    return (
     <div className={`pt-4 ${horizontal ? "flex flex-wrap gap-x-4 gap-y-1" : "space-y-1"}`}>
       {data.map((entry) => (
         <div key={entry.name} className="flex items-center gap-2 text-xs text-[#f0ebd8]/70">
@@ -67,7 +68,8 @@ export function SalaryResultsCard({ result, hoursPerWeek = 40 }: Props) {
         </div>
       ))}
     </div>
-  )
+    )
+  }
 
   return (
     <Card className="border border-border/60 bg-[#0d1321] text-white shadow-none">
@@ -91,7 +93,7 @@ export function SalaryResultsCard({ result, hoursPerWeek = 40 }: Props) {
             <p className="text-4xl font-bold tracking-tight text-white">{formatCurrency(displayValue)}</p>
             <p className="text-xs text-[#f0ebd8]/50">Currently powered by mock service data.</p>
             <div className="hidden md:block mt-auto">
-              <Legend />
+              {renderLegend()}
             </div>
           </div>
 
@@ -111,7 +113,7 @@ export function SalaryResultsCard({ result, hoursPerWeek = 40 }: Props) {
               </PieChart>
             </ChartContainer>
             <div className="block md:hidden">
-              <Legend horizontal />
+              {renderLegend(true)}
             </div>
           </div>
 
