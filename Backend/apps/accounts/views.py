@@ -18,6 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
+
 class RegisterView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -28,6 +29,7 @@ class RegisterView(APIView):
                 status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -54,6 +56,7 @@ class LoginView(APIView):
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
+
 class LogoutView(APIView):
     def post(self, request):
         try:
@@ -72,6 +75,7 @@ class LogoutView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -86,6 +90,7 @@ class MeView(APIView):
             }
         )
 
+
 class ForgotPasswordView(APIView):
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
@@ -99,15 +104,12 @@ class ForgotPasswordView(APIView):
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
             token = PasswordResetTokenGenerator().make_token(user)
 
-            reset_url = (
-                f"{settings.FRONTEND_URL}/reset-password/{uidb64}/{token}"
-            )
+            reset_url = f"{settings.FRONTEND_URL}/reset-password/{uidb64}/{token}"
 
             send_mail(
                 subject="Reset your password",
                 message=(
-                    "Use the link below to reset your password:\n\n"
-                    f"{reset_url}"
+                    "Use the link below to reset your password:\n\n" f"{reset_url}"
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
@@ -125,6 +127,7 @@ class ForgotPasswordView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
 
 class ResetPasswordView(APIView):
     def post(self, request):

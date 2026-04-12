@@ -2,7 +2,9 @@ import pytest
 from decimal import Decimal
 from django.contrib.auth import get_user_model
 from apps.move_out.models import MoveOutPlan
+
 User = get_user_model()
+
 
 @pytest.fixture
 def user(db):
@@ -11,6 +13,7 @@ def user(db):
         full_name="Move Out Models User",
         password="securepassword123",
     )
+
 
 @pytest.mark.django_db
 class TestMoveOutPlanModel:

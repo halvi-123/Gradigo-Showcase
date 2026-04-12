@@ -29,9 +29,7 @@ class Quiz(models.Model):
 
     title = models.CharField(max_length=255)
     difficulty = models.CharField(
-        max_length=10,
-        choices=Difficulty.choices,
-        default=Difficulty.EASY
+        max_length=10, choices=Difficulty.choices, default=Difficulty.EASY
     )
 
     def __str__(self):
@@ -40,10 +38,7 @@ class Quiz(models.Model):
 
 class Question(models.Model):
     quiz = models.ForeignKey(
-        Quiz,
-        on_delete=models.CASCADE,
-        related_name="questions"
-    )
+        Quiz, on_delete=models.CASCADE, related_name="questions")
     text = models.TextField()
 
     def __str__(self):
@@ -52,9 +47,7 @@ class Question(models.Model):
 
 class Answer(models.Model):
     question = models.ForeignKey(
-        Question,
-        on_delete=models.CASCADE,
-        related_name="answers"
+        Question, on_delete=models.CASCADE, related_name="answers"
     )
     text = models.CharField(max_length=255)
     is_correct = models.BooleanField(default=False)

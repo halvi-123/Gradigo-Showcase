@@ -4,11 +4,14 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIRequestFactory, force_authenticate
 from apps.move_out.models import MoveOutPlan
 from apps.move_out.views import MoveOutCheckView
+
 User = get_user_model()
+
 
 @pytest.fixture
 def factory():
     return APIRequestFactory()
+
 
 @pytest.fixture
 def user(db):
@@ -17,6 +20,7 @@ def user(db):
         full_name="Move Out Views User",
         password="securepassword123",
     )
+
 
 @pytest.fixture
 def move_out_plan(user):
@@ -36,6 +40,7 @@ def move_out_plan(user):
         property_listings=[],
         summary="You may be able to move out.",
     )
+
 
 @pytest.mark.django_db
 class TestMoveOutCheckView:

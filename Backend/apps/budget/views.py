@@ -6,7 +6,13 @@ from rest_framework import status, permissions
 
 from .models import Category, Transaction, SavingsGoal
 
-from .serializers import BudgetSerializer, CategorySerializer, TransactionSerializer, SavingsGoalSerializer, CategoryUpdateSerializer
+from .serializers import (
+    BudgetSerializer,
+    CategorySerializer,
+    TransactionSerializer,
+    SavingsGoalSerializer,
+    CategoryUpdateSerializer,
+)
 
 from .services import (
     get_or_create_budget,
@@ -19,6 +25,7 @@ from .services import (
     calculate_financial_snapshot_score,
     generate_budget_summary,
 )
+
 
 # Transaction List and Create View
 class TransactionListCreateView(APIView):
@@ -40,16 +47,13 @@ class TransactionListCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#Transaction Detail CRUD
+
+# Transaction Detail CRUD
 class TransactionDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk, user):
-        return get_object_or_404(
-            Transaction,
-            pk=pk,
-            budget__user=user
-        )
+        return get_object_or_404(Transaction, pk=pk, budget__user=user)
 
     def get(self, request, pk):
         transaction = self.get_object(pk, request.user)
@@ -71,7 +75,8 @@ class TransactionDetailView(APIView):
         transaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#Savings Goal List/Create View
+
+# Savings Goal List/Create View
 class SavingsGoalListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -89,16 +94,13 @@ class SavingsGoalListCreateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#Savings Goal Detail CRUD
+
+# Savings Goal Detail CRUD
 class SavingsGoalDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk, user):
-        return get_object_or_404(
-            SavingsGoal,
-            pk=pk,
-            user=user
-        )
+        return get_object_or_404(SavingsGoal, pk=pk, user=user)
 
     def get(self, request, pk):
         savings_goal = self.get_object(pk, request.user)
@@ -119,8 +121,9 @@ class SavingsGoalDetailView(APIView):
         savings_goal = self.get_object(pk, request.user)
         savings_goal.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-#budget detail view
+
+
+# budget detail view
 class BudgetDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -129,17 +132,18 @@ class BudgetDetailView(APIView):
         create_default_categories(budget)
         serializer = BudgetSerializer(budget)
         return Response(serializer.data)
-    
+
     def put(self, request):
         budget = get_or_create_budget(request.user, 0)
         create_default_categories(budget)
-        serializer = BudgetSerializer(budget, data=request.data, partial = True)
+        serializer = BudgetSerializer(budget, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save(user=request.user, month=budget.month)
             return Response(serializer.data)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # category update views
 class CategoryUpdateView(APIView):
@@ -164,7 +168,8 @@ class CategoryUpdateView(APIView):
 
     def patch(self, request, pk):
         category = self.get_object(pk, request.user)
-        serializer = CategoryUpdateSerializer(category, data=request.data, partial=True)
+        serializer = CategoryUpdateSerializer(
+            category, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -172,7 +177,8 @@ class CategoryUpdateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#budget dashboard views
+
+# budget dashboard views
 class BudgetDashboardView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

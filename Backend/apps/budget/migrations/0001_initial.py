@@ -26,7 +26,8 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("net_income", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("net_income", models.DecimalField(
+                    decimal_places=2, max_digits=10)),
                 ("month", models.DateField()),
                 (
                     "user",
@@ -91,9 +92,11 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=255)),
                 (
                     "current_amount",
-                    models.DecimalField(decimal_places=2, default=0, max_digits=10),
+                    models.DecimalField(
+                        decimal_places=2, default=0, max_digits=10),
                 ),
-                ("target_amount", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("target_amount", models.DecimalField(
+                    decimal_places=2, max_digits=10)),
                 ("target_date", models.DateField(blank=True, null=True)),
                 (
                     "user",

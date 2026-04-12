@@ -5,6 +5,7 @@ from rest_framework import status, permissions
 from .serializers import MoveOutCheckSerializer, MoveOutPlanSerializer
 from .services import save_move_out_plan, get_saved_move_out_plan, MoveOutServiceError
 
+
 class MoveOutCheckView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
