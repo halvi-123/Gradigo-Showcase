@@ -4,6 +4,7 @@ import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SalaryInputCard } from "@/components/salary-input-card"
 import { TakeHomePayCard } from "@/components/take-home-pay-card"
+import { PayBreakdownTable } from "@/components/pay-breakdown-table"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,11 +21,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { calculateSalary, getDefaultSalaryCalculationResult } from "@/lib/salary-calculator/service"
+import { calculateSalary } from "@/lib/salary-calculator/service"
 import type { SalaryCalculationInput } from "@/lib/salary-calculator/types"
+import type { SalaryCalculationResult } from "@/lib/salary-calculator/types"
 
 export function SalaryCalculatorContent() {
-  const [result, setResult] = useState(getDefaultSalaryCalculationResult)
+  const [result, setResult] = useState<SalaryCalculationResult | null>(null)
   const [isCalculating, setIsCalculating] = useState(false)
 
   async function handleCalculate(input: SalaryCalculationInput) {
@@ -52,11 +54,13 @@ export function SalaryCalculatorContent() {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                      First Job Navigator
+                    First Job Navigator
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage className="text-primary text-lg font-semibold">Salary Calculator</BreadcrumbPage>
+                    <BreadcrumbPage className="text-primary text-lg font-semibold">
+                      Salary Calculator
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
@@ -66,39 +70,22 @@ export function SalaryCalculatorContent() {
               Login / Signup
             </Button>
           </header>
+
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <div className="grid gap-4 xl:grid-cols-[minmax(420px,560px)_1fr]">
-              <SalaryInputCard onCalculate={handleCalculate} isCalculating={isCalculating} />
+              <SalaryInputCard
+                onCalculate={handleCalculate}
+                isCalculating={isCalculating}
+              />
 
               <div className="grid gap-4 content-start">
-                <TakeHomePayCard annualTakeHomePay={result.netAnnualPay} />
+                <TakeHomePayCard annualTakeHomePay={result?.netAnnualPay ?? 0} />
 
-                <Card className="border border-border/60 bg-transparent shadow-none">
-                  <CardHeader>
-                    <CardTitle>Disposable Income Tracker (Uses random expense values or user-defined inputs)</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="min-h-56 rounded-xl border border-dashed border-border/70" />
-                  </CardContent>
-                </Card>
+                <div className={`transition-all duration-300 ${result ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
+                  {result && <PayBreakdownTable result={result} />}
+                </div>
               </div>
             </div>
-
-            <Card className="border border-border/60 bg-transparent shadow-none">
-              <CardHeader>
-                <CardTitle>Pay Breakdown Table</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
-                  <p>Gross Annual Salary: £{result.grossAnnualSalary.toLocaleString("en-GB")}</p>
-                  <p>Total Deductions: £{result.totalDeductions.toLocaleString("en-GB")}</p>
-                  <p>Income Tax: £{result.incomeTax.toLocaleString("en-GB")}</p>
-                  <p>National Insurance: £{result.nationalInsurance.toLocaleString("en-GB")}</p>
-                  <p>Pension: £{result.pensionContribution.toLocaleString("en-GB")}</p>
-                  <p>Student Loan: £{result.studentLoanRepayment.toLocaleString("en-GB")}</p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </SidebarInset>
       </SidebarProvider>
