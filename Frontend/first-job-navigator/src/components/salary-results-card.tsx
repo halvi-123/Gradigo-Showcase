@@ -29,7 +29,7 @@ function formatCurrency(value: number) {
 }
 
 export function SalaryResultsCard({ result, hoursPerWeek = 40 }: Props) {
-  const [payFrequency, setPayFrequency] = useState<PayFrequency>("monthly")
+  const [payFrequency, setPayFrequency] = useState<PayFrequency>("yearly")
   const total = result.grossAnnualSalary
 
   const displayValue = useMemo(() => {
