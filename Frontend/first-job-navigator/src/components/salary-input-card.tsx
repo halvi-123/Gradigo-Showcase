@@ -1,6 +1,5 @@
 "use client"
 
-import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -19,30 +18,12 @@ import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import type { Region, SalaryCalculationInput, StudentLoanType } from "@/lib/salary-calculator/types"
+import { salaryInputLimits, useSalaryInputForm } from "@/hooks/use-salary-input-form"
 import { CalculatorIcon, CircleHelpIcon } from "lucide-react"
-
-const MIN_SALARY = 1
-const MAX_SALARY = 999_000_000
-const MAX_SLIDER_SALARY = 500_000
 
 type SalaryInputCardProps = {
   onCalculate?: (payload: SalaryCalculationInput) => Promise<void> | void
   isCalculating?: boolean
-}
-
-function clampSalary(value: number) {
-  if (Number.isNaN(value)) return MIN_SALARY
-  return Math.min(MAX_SALARY, Math.max(MIN_SALARY, value))
-}
-
-function normalizeSliderSalary(value: number) {
-  if (value <= MIN_SALARY) return MIN_SALARY
-  return Math.round(value / 1000) * 1000
-}
-
-function clampPercentage(value: number) {
-  if (Number.isNaN(value)) return 0
-  return Math.min(100, Math.max(0, value))
 }
 
 function FieldHeading({
@@ -83,93 +64,35 @@ function FieldHeading({
 }
 
 export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryInputCardProps) {
-  const [region, setRegion] = useState<Region>("england")
-  const [annualSalary, setAnnualSalary] = useState<number>(30000)
-  const [annualSalaryInput, setAnnualSalaryInput] = useState<string>("30000")
-  const [hoursWorked, setHoursWorked] = useState<number>(40)
-  const [hourlyRate, setHourlyRate] = useState<number>(15)
-  const [pensionContribution, setPensionContribution] = useState<number>(5)
-  const [pensionContributionInput, setPensionContributionInput] = useState<string>("5")
-  const [studentLoanType, setStudentLoanType] = useState<StudentLoanType>("none")
-  const [estimatorOpen, setEstimatorOpen] = useState(false)
-
-  const estimatedAnnualSalary = useMemo(() => {
-    return clampSalary(Math.round(hourlyRate * hoursWorked * 52))
-  }, [hourlyRate, hoursWorked])
-
-  const annualSalaryText = useMemo(() => {
-    return new Intl.NumberFormat("en-GB", {
-      maximumFractionDigits: 0,
-    }).format(annualSalary)
-  }, [annualSalary])
-
-  const sliderSalary = normalizeSliderSalary(Math.min(annualSalary, MAX_SLIDER_SALARY))
-
-  function handleAnnualSalaryChange(rawValue: string) {
-    const digitsOnly = rawValue.replace(/\D/g, "")
-    if (digitsOnly === "") {
-      setAnnualSalaryInput("")
-      return
-    }
-
-    const normalizedInput = digitsOnly.replace(/^0+(?=\d)/, "")
-    const parsedValue = clampSalary(Number(normalizedInput))
-    setAnnualSalary(parsedValue)
-    setAnnualSalaryInput(parsedValue.toString())
-  }
-
-  function handleAnnualSalaryBlur() {
-    if (annualSalaryInput === "") {
-      setAnnualSalary(MIN_SALARY)
-      setAnnualSalaryInput(MIN_SALARY.toString())
-      return
-    }
-
-    const parsedValue = clampSalary(Number(annualSalaryInput))
-    setAnnualSalary(parsedValue)
-    setAnnualSalaryInput(parsedValue.toString())
-  }
-
-  function handlePensionContributionChange(rawValue: string) {
-    const digitsOnly = rawValue.replace(/\D/g, "")
-    if (digitsOnly === "") {
-      setPensionContributionInput("")
-      return
-    }
-
-    const normalizedInput = digitsOnly.replace(/^0+(?=\d)/, "")
-    const parsedValue = clampPercentage(Number(normalizedInput))
-    setPensionContribution(parsedValue)
-    setPensionContributionInput(parsedValue.toString())
-  }
-
-  function handlePensionContributionBlur() {
-    if (pensionContributionInput === "") {
-      setPensionContribution(0)
-      setPensionContributionInput("0")
-      return
-    }
-
-    const parsedValue = clampPercentage(Number(pensionContributionInput))
-    setPensionContribution(parsedValue)
-    setPensionContributionInput(parsedValue.toString())
-  }
-
-  async function handleCalculate() {
-    const payload = {
-      region,
-      grossAnnualSalary: annualSalary,
-      pensionContributionPercent: pensionContribution,
-      studentLoanType,
-    }
-
-    if (onCalculate) {
-      await onCalculate(payload)
-      return
-    }
-
-    console.log("Salary calculation payload", payload)
-  }
+  const {
+    annualSalary,
+    annualSalaryInput,
+    annualSalaryText,
+    applyEstimatedSalary,
+    estimatorOpen,
+    estimatedAnnualSalary,
+    handleAnnualSalaryBlur,
+    handleAnnualSalaryChange,
+    handleCalculate,
+    handleHoursWorkedBlur,
+    handleHoursWorkedChange,
+    handleHourlyRateBlur,
+    handleHourlyRateChange,
+    handlePensionContributionBlur,
+    handlePensionContributionChange,
+    handleSliderChange,
+    hourlyRate,
+    hourlyRateInput,
+    hoursWorked,
+    hoursWorkedInput,
+    pensionContributionInput,
+    region,
+    setEstimatorOpen,
+    setRegion,
+    setStudentLoanType,
+    sliderSalary,
+    studentLoanType,
+  } = useSalaryInputForm({ onCalculate })
 
   return (
     <Card className="border-0 bg-[#0d1321] text-white ring-0">
@@ -206,8 +129,8 @@ export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryIn
               type="number"
               step={1}
               value={annualSalaryInput}
-              min={MIN_SALARY}
-              max={MAX_SALARY}
+              min={salaryInputLimits.MIN_SALARY}
+              max={salaryInputLimits.MAX_SALARY}
               onChange={(event) => handleAnnualSalaryChange(event.target.value)}
               onBlur={handleAnnualSalaryBlur}
               className="h-11 border-white/30 bg-white text-[#0d1321]"
@@ -237,8 +160,9 @@ export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryIn
                       id="hourly-rate"
                       type="number"
                       min={0}
-                      value={hourlyRate}
-                      onChange={(event) => setHourlyRate(Math.max(0, Number(event.target.value) || 0))}
+                      value={hourlyRateInput}
+                      onChange={(event) => handleHourlyRateChange(event.target.value)}
+                      onBlur={handleHourlyRateBlur}
                     />
                   </Field>
                   <Field>
@@ -247,8 +171,9 @@ export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryIn
                       id="hours-week"
                       type="number"
                       min={0}
-                      value={hoursWorked}
-                      onChange={(event) => setHoursWorked(Math.max(0, Number(event.target.value) || 0))}
+                      value={hoursWorkedInput}
+                      onChange={(event) => handleHoursWorkedChange(event.target.value)}
+                      onBlur={handleHoursWorkedBlur}
                     />
                   </Field>
                   <p className="text-sm text-muted-foreground">
@@ -259,11 +184,7 @@ export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryIn
                 <DialogFooter showCloseButton>
                   <Button
                     type="button"
-                    onClick={() => {
-                      setAnnualSalary(estimatedAnnualSalary)
-                      setAnnualSalaryInput(estimatedAnnualSalary.toString())
-                      setEstimatorOpen(false)
-                    }}
+                    onClick={applyEstimatedSalary}
                   >
                     Use this estimate
                   </Button>
@@ -279,15 +200,10 @@ export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryIn
             />
             <Slider
               value={[sliderSalary]}
-              min={MIN_SALARY}
-              max={MAX_SLIDER_SALARY}
+              min={salaryInputLimits.MIN_SALARY}
+              max={salaryInputLimits.MAX_SLIDER_SALARY}
               step={1}
-              onValueChange={(value) => {
-                const rawValue = value[0] ?? MIN_SALARY
-                const nextSalary = clampSalary(normalizeSliderSalary(rawValue))
-                setAnnualSalary(nextSalary)
-                setAnnualSalaryInput(nextSalary.toString())
-              }}
+              onValueChange={handleSliderChange}
               className="py-1 [&_[data-slot=slider-range]]:bg-[#748cab] [&_[data-slot=slider-thumb]]:border-[#748cab] [&_[data-slot=slider-track]]:bg-white/25"
             />
             <div className="flex items-center justify-between text-xs font-semibold text-[#f0ebd8]/90">
@@ -295,7 +211,7 @@ export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryIn
               <span>500k</span>
             </div>
             <p className="text-xs text-[#f0ebd8]/70">Current: £{annualSalaryText}</p>
-            {annualSalary > MAX_SLIDER_SALARY ? (
+            {annualSalary > salaryInputLimits.MAX_SLIDER_SALARY ? (
               <p className="text-xs text-[#f0ebd8]/70">
                 Slider caps at £500,000 for usability. Manual input still supports up to £999,000,000.
               </p>
