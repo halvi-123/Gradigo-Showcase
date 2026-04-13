@@ -39,14 +39,6 @@ def valid_payload():
 
 
 @pytest.mark.django_db
-def test_unauthenticated_user_cannot_access_salary_calculate(api_client, valid_payload):
-    response = api_client.post(
-        "/api/salary/calculate/", valid_payload, format="json")
-
-    assert response.status_code in [401, 403]
-
-
-@pytest.mark.django_db
 def test_authenticated_user_can_access_salary_calculate(
     authenticated_client, valid_payload
 ):

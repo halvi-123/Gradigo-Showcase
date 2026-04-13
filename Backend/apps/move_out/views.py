@@ -1,14 +1,30 @@
-from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
+from rest_framework import permissions, serializers, status
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework.views import APIView
 
 from .serializers import MoveOutCheckSerializer, MoveOutPlanSerializer
-from .services import save_move_out_plan, get_saved_move_out_plan, MoveOutServiceError
+from .services import (
+    MoveOutServiceError,
+    get_saved_move_out_plan,
+    save_move_out_plan,
+)
+
+
+class DetailResponseSerializer(serializers.Serializer):
+    detail = serializers.CharField()
 
 
 class MoveOutCheckView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        responses={
+            200: MoveOutPlanSerializer,
+            404: DetailResponseSerializer,
+        },
+        tags=["moveout"],
+    )
     def get(self, request):
         plan = get_saved_move_out_plan(request.user)
 
@@ -21,6 +37,14 @@ class MoveOutCheckView(APIView):
         serializer = MoveOutPlanSerializer(plan)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=MoveOutCheckSerializer,
+        responses={
+            200: MoveOutPlanSerializer,
+            400: DetailResponseSerializer,
+        },
+        tags=["moveout"],
+    )
     def post(self, request):
         serializer = MoveOutCheckSerializer(data=request.data)
 

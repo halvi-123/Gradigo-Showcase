@@ -39,11 +39,20 @@ def valid_payload():
 
 
 @pytest.mark.django_db
-def test_unauthenticated_user_cannot_access_salary_calculate(api_client, valid_payload):
+def test_unauthenticated_user_can_access_salary_calculate(api_client, valid_payload):
     response = api_client.post(
-        "/api/salary/calculate/", valid_payload, format="json")
+        "/api/salary/calculate/", valid_payload, format="json"
+    )
 
-    assert response.status_code in [401, 403]
+    assert response.status_code == 200
+    assert "gross_salary" in response.data
+    assert "income_tax" in response.data
+    assert "national_insurance" in response.data
+    assert "student_loan" in response.data
+    assert "pension" in response.data
+    assert "total_deductions" in response.data
+    assert "net_annual" in response.data
+    assert "net_monthly" in response.data
 
 
 @pytest.mark.django_db

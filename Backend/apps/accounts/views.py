@@ -1,25 +1,63 @@
 from django.conf import settings
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from rest_framework import status
+from drf_spectacular.utils import extend_schema
+from rest_framework import serializers, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
-    RegisterSerializer,
     ForgotPasswordSerializer,
+    RegisterSerializer,
     ResetPasswordSerializer,
 )
-from django.contrib.auth import authenticate, get_user_model
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
 
+class MessageResponseSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+
+class ErrorResponseSerializer(serializers.Serializer):
+    error = serializers.CharField()
+
+
+class LoginRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+
+class LoginResponseSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField()
+
+
+class LogoutRequestSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+
+class MeResponseSerializer(serializers.Serializer):
+    user_id = serializers.UUIDField()
+    email = serializers.EmailField()
+    full_name = serializers.CharField()
+    created_at = serializers.DateTimeField()
+
+
 class RegisterView(APIView):
+    @extend_schema(
+        request=RegisterSerializer,
+        responses={
+            201: MessageResponseSerializer,
+            400: RegisterSerializer,
+        },
+        tags=["accounts"],
+    )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -32,6 +70,15 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
+    @extend_schema(
+        request=LoginRequestSerializer,
+        responses={
+            200: LoginResponseSerializer,
+            400: ErrorResponseSerializer,
+            401: ErrorResponseSerializer,
+        },
+        tags=["accounts"],
+    )
     def post(self, request):
         email = request.data.get("email")
         password = request.data.get("password")
@@ -49,8 +96,10 @@ class LoginView(APIView):
                 {
                     "refresh": str(refresh),
                     "access": str(refresh.access_token),
-                }
+                },
+                status=status.HTTP_200_OK,
             )
+
         return Response(
             {"error": "Invalid credentials"},
             status=status.HTTP_401_UNAUTHORIZED,
@@ -58,6 +107,14 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    @extend_schema(
+        request=LogoutRequestSerializer,
+        responses={
+            200: MessageResponseSerializer,
+            400: ErrorResponseSerializer,
+        },
+        tags=["accounts"],
+    )
     def post(self, request):
         try:
             refresh_token = request.data.get("refresh")
@@ -66,9 +123,14 @@ class LogoutView(APIView):
                     {"error": "Refresh token is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response({"message": "Logged out successfully"})
+
+            return Response(
+                {"message": "Logged out successfully"},
+                status=status.HTTP_200_OK,
+            )
         except Exception:
             return Response(
                 {"error": "Invalid token"},
@@ -79,6 +141,13 @@ class LogoutView(APIView):
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        responses={
+            200: MeResponseSerializer,
+            401: ErrorResponseSerializer,
+        },
+        tags=["accounts"],
+    )
     def get(self, request):
         user = request.user
         return Response(
@@ -87,11 +156,17 @@ class MeView(APIView):
                 "email": user.email,
                 "full_name": user.full_name,
                 "created_at": user.created_at,
-            }
+            },
+            status=status.HTTP_200_OK,
         )
 
 
 class ForgotPasswordView(APIView):
+    @extend_schema(
+        request=ForgotPasswordSerializer,
+        responses={200: MessageResponseSerializer},
+        tags=["accounts"],
+    )
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -109,7 +184,8 @@ class ForgotPasswordView(APIView):
             send_mail(
                 subject="Reset your password",
                 message=(
-                    "Use the link below to reset your password:\n\n" f"{reset_url}"
+                    "Use the link below to reset your password:\n\n"
+                    f"{reset_url}"
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
@@ -130,6 +206,11 @@ class ForgotPasswordView(APIView):
 
 
 class ResetPasswordView(APIView):
+    @extend_schema(
+        request=ResetPasswordSerializer,
+        responses={200: MessageResponseSerializer},
+        tags=["accounts"],
+    )
     def post(self, request):
         serializer = ResetPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
