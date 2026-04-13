@@ -1,4 +1,5 @@
 import { DEFAULT_MOCK_SALARY_RESULT } from "@/data/salary-calculator.mock"
+import { getApiBaseUrl } from "@/lib/api/base-url"
 import type {
   SalaryCalculationApiRequest,
   SalaryCalculationApiResponse,
@@ -7,22 +8,7 @@ import type {
   StudentLoanType,
 } from "@/lib/salary-calculator/types"
 
-const DEV_FALLBACK_API_BASE_URL = "http://127.0.0.1:8000"
 const SALARY_CALCULATE_PATH = "/api/salary/calculate/"
-
-function getApiBaseUrl() {
-  const configuredBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
-
-  if (configuredBaseUrl) {
-    return configuredBaseUrl.replace(/\/$/, "")
-  }
-
-  if (process.env.NODE_ENV === "development") {
-    return DEV_FALLBACK_API_BASE_URL
-  }
-
-  throw new Error("Missing NEXT_PUBLIC_API_BASE_URL for non-development environment")
-}
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
