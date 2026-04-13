@@ -26,6 +26,7 @@ migrations:
   services:
     - name: mysql:8.0
       alias: mysql
+      command: ["--default-authentication-plugin=mysql_native_password"]
   before_script:
     - apt-get update
     - apt-get install -y gcc pkg-config libmariadb-dev mariadb-client
@@ -35,13 +36,9 @@ migrations:
     - python -m pip install -r requirements.txt
     - echo "Waiting for MySQL..."
     - |
-      i=0
-      until mysqladmin ping -h "mysql" --silent; do
-        i=$((i+1))
-        if [ $i -gt 60 ]; then
-          echo "MySQL not ready"
-          exit 1
-        fi
+      for i in {1..120}; do
+        mysql -h mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SELECT 1" && break
+        echo "MySQL not ready yet..."
         sleep 2
       done
     - python manage.py migrate
