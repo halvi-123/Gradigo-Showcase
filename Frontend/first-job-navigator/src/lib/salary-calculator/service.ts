@@ -7,11 +7,21 @@ import type {
   StudentLoanType,
 } from "@/lib/salary-calculator/types"
 
-const DEFAULT_API_BASE_URL = "http://127.0.0.1:8000"
+const DEV_FALLBACK_API_BASE_URL = "http://127.0.0.1:8000"
 const SALARY_CALCULATE_PATH = "/api/salary/calculate/"
 
 function getApiBaseUrl() {
-  return (process.env.NEXT_PUBLIC_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, "")
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
+
+  if (configuredBaseUrl) {
+    return configuredBaseUrl.replace(/\/$/, "")
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return DEV_FALLBACK_API_BASE_URL
+  }
+
+  throw new Error("Missing NEXT_PUBLIC_API_BASE_URL for non-development environment")
 }
 
 function clamp(value: number, min: number, max: number) {
