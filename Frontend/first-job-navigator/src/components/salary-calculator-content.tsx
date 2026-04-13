@@ -26,12 +26,20 @@ import { PayBreakdownTable } from "@/components/pay-breakdown-table"
 export function SalaryCalculatorContent() {
   const [result, setResult] = useState<SalaryCalculationResult>(getDefaultSalaryCalculationResult)
   const [isCalculating, setIsCalculating] = useState(false)
+  const [calculationError, setCalculationError] = useState<string | null>(null)
 
   async function handleCalculate(input: SalaryCalculationInput) {
     setIsCalculating(true)
+    setCalculationError(null)
     try {
       const nextResult = await calculateSalary(input)
       setResult(nextResult)
+    } catch (error) {
+      if (error instanceof Error && error.message) {
+        setCalculationError(error.message)
+      } else {
+        setCalculationError("We could not calculate your salary right now. Please try again in a moment.")
+      }
     } finally {
       setIsCalculating(false)
     }
@@ -74,6 +82,7 @@ export function SalaryCalculatorContent() {
               <SalaryInputCard
                 onCalculate={handleCalculate}
                 isCalculating={isCalculating}
+                calculationError={calculationError}
               />
 
               <div className="grid gap-4 content-start">

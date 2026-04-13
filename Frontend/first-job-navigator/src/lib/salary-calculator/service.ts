@@ -9,6 +9,19 @@ import type {
 } from "@/lib/salary-calculator/types"
 
 const SALARY_CALCULATE_PATH = "/api/salary/calculate/"
+const SALARY_REQUEST_TIMEOUT_MS = 10_000
+
+function getRequestFailureMessage(status: number): string {
+  if (status === 400) {
+    return "Please check your entries and try again."
+  }
+
+  if (status >= 500) {
+    return "Something went wrong on our side. Please try again in a moment."
+  }
+
+  return "We could not complete your calculation right now. Please try again."
+}
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
@@ -53,18 +66,43 @@ export function getDefaultSalaryCalculationResult(): SalaryCalculationResult {
 
 export async function calculateSalary(input: SalaryCalculationInput): Promise<SalaryCalculationResult> {
   const request = toApiRequest(input)
+  const controller = new AbortController()
+  const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
+    controller.abort()
+  }, SALARY_REQUEST_TIMEOUT_MS)
 
-  const response = await fetch(`${getApiBaseUrl()}${SALARY_CALCULATE_PATH}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(request),
-  })
+  let response: Response
+
+  try {
+    response = await fetch(`${getApiBaseUrl()}${SALARY_CALCULATE_PATH}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+      signal: controller.signal,
+    })
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error("This is taking longer than expected. Please try again.")
+    }
+
+    throw new Error("We could not connect right now. Please check your internet and try again.")
+  } finally {
+    clearTimeout(timeoutId)
+  }
 
   if (!response.ok) {
     const errorText = await response.text()
-    throw new Error(`Salary API request failed (${response.status}): ${errorText}`)
+
+    if (process.env.NODE_ENV === "development") {
+      console.error("Salary API request failed", {
+        status: response.status,
+        body: errorText,
+      })
+    }
+
+    throw new Error(getRequestFailureMessage(response.status))
   }
 
   const apiResponse = (await response.json()) as SalaryCalculationApiResponse

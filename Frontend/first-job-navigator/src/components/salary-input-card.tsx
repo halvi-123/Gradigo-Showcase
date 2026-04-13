@@ -24,6 +24,7 @@ import { CalculatorIcon, CircleHelpIcon } from "lucide-react"
 type SalaryInputCardProps = {
   onCalculate?: (payload: SalaryCalculationInput) => Promise<void> | void
   isCalculating?: boolean
+  calculationError?: string | null
 }
 
 function FieldHeading({
@@ -63,7 +64,11 @@ function FieldHeading({
   )
 }
 
-export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryInputCardProps) {
+export function SalaryInputCard({
+  onCalculate,
+  isCalculating = false,
+  calculationError = null,
+}: SalaryInputCardProps) {
   const {
     annualSalary,
     annualSalaryInput,
@@ -265,6 +270,14 @@ export function SalaryInputCard({ onCalculate, isCalculating = false }: SalaryIn
               <CalculatorIcon className="h-4 w-4 transition-transform duration-200 group-hover:rotate-6" />
               {isCalculating ? "Calculating..." : "Calculate Take-Home Pay"}
             </Button>
+            {calculationError ? (
+              <div
+                role="alert"
+                className="mt-3 rounded-md border border-red-300/50 bg-red-500/15 px-3 py-2 text-sm text-red-100"
+              >
+                {calculationError}
+              </div>
+            ) : null}
           </div>
         </FieldGroup>
       </CardContent>

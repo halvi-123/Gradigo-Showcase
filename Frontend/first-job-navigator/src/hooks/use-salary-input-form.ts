@@ -24,6 +24,18 @@ function clampPercentage(value: number) {
   return Math.min(100, Math.max(0, value))
 }
 
+function parseDecimalInput(rawValue: string): number {
+  // Allow only digits and one decimal point
+  const allowedChars = rawValue.replace(/[^0-9.]/g, "")
+  // Ensure only one decimal point
+  const parts = allowedChars.split(".")
+  if (parts.length > 2) {
+    return Number(parts[0] + "." + parts[1])
+  }
+  const parsed = Number(allowedChars)
+  return Number.isNaN(parsed) ? 0 : parsed
+}
+
 export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
   const [region, setRegion] = useState<Region>("england")
   const [annualSalary, setAnnualSalary] = useState<number>(30000)
@@ -50,16 +62,16 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
   const sliderSalary = normalizeSliderSalary(Math.min(annualSalary, MAX_SLIDER_SALARY))
 
   function handleAnnualSalaryChange(rawValue: string) {
-    const digitsOnly = rawValue.replace(/\D/g, "")
-    if (digitsOnly === "") {
+    if (rawValue === "") {
       setAnnualSalaryInput("")
       return
     }
 
-    const normalizedInput = digitsOnly.replace(/^0+(?=\d)/, "")
-    const parsedValue = clampSalary(Number(normalizedInput))
-    setAnnualSalary(parsedValue)
-    setAnnualSalaryInput(parsedValue.toString())
+    const parsedValue = parseDecimalInput(rawValue)
+    if (!Number.isNaN(parsedValue) && parsedValue >= MIN_SALARY) {
+      setAnnualSalary(Math.round(parsedValue))
+      setAnnualSalaryInput(rawValue)
+    }
   }
 
   function handleAnnualSalaryBlur() {
@@ -69,22 +81,22 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
       return
     }
 
-    const parsedValue = clampSalary(Number(annualSalaryInput))
+    const parsedValue = clampSalary(Math.round(parseDecimalInput(annualSalaryInput)))
     setAnnualSalary(parsedValue)
     setAnnualSalaryInput(parsedValue.toString())
   }
 
   function handlePensionContributionChange(rawValue: string) {
-    const digitsOnly = rawValue.replace(/\D/g, "")
-    if (digitsOnly === "") {
+    if (rawValue === "") {
       setPensionContributionInput("")
       return
     }
 
-    const normalizedInput = digitsOnly.replace(/^0+(?=\d)/, "")
-    const parsedValue = clampPercentage(Number(normalizedInput))
-    setPensionContribution(parsedValue)
-    setPensionContributionInput(parsedValue.toString())
+    const parsedValue = parseDecimalInput(rawValue)
+    if (!Number.isNaN(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
+      setPensionContribution(parsedValue)
+      setPensionContributionInput(rawValue)
+    }
   }
 
   function handlePensionContributionBlur() {
@@ -94,22 +106,22 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
       return
     }
 
-    const parsedValue = clampPercentage(Number(pensionContributionInput))
+    const parsedValue = clampPercentage(parseDecimalInput(pensionContributionInput))
     setPensionContribution(parsedValue)
     setPensionContributionInput(parsedValue.toString())
   }
 
   function handleHourlyRateChange(rawValue: string) {
-    const digitsOnly = rawValue.replace(/\D/g, "")
-    if (digitsOnly === "") {
+    if (rawValue === "") {
       setHourlyRateInput("")
       return
     }
 
-    const normalizedInput = digitsOnly.replace(/^0+(?=\d)/, "")
-    const parsedValue = Number(normalizedInput)
-    setHourlyRate(parsedValue)
-    setHourlyRateInput(parsedValue.toString())
+    const parsedValue = parseDecimalInput(rawValue)
+    if (!Number.isNaN(parsedValue) && parsedValue >= 0) {
+      setHourlyRate(parsedValue)
+      setHourlyRateInput(rawValue)
+    }
   }
 
   function handleHourlyRateBlur() {
@@ -118,22 +130,24 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
       return
     }
 
-    const parsedValue = Number(hourlyRateInput)
-    setHourlyRate(parsedValue)
-    setHourlyRateInput(parsedValue.toString())
+    const parsedValue = parseDecimalInput(hourlyRateInput)
+    if (!Number.isNaN(parsedValue) && parsedValue >= 0) {
+      setHourlyRate(parsedValue)
+      setHourlyRateInput(parsedValue.toString())
+    }
   }
 
   function handleHoursWorkedChange(rawValue: string) {
-    const digitsOnly = rawValue.replace(/\D/g, "")
-    if (digitsOnly === "") {
+    if (rawValue === "") {
       setHoursWorkedInput("")
       return
     }
 
-    const normalizedInput = digitsOnly.replace(/^0+(?=\d)/, "")
-    const parsedValue = Number(normalizedInput)
-    setHoursWorked(parsedValue)
-    setHoursWorkedInput(parsedValue.toString())
+    const parsedValue = parseDecimalInput(rawValue)
+    if (!Number.isNaN(parsedValue) && parsedValue >= 0) {
+      setHoursWorked(parsedValue)
+      setHoursWorkedInput(rawValue)
+    }
   }
 
   function handleHoursWorkedBlur() {
@@ -142,9 +156,11 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
       return
     }
 
-    const parsedValue = Number(hoursWorkedInput)
-    setHoursWorked(parsedValue)
-    setHoursWorkedInput(parsedValue.toString())
+    const parsedValue = parseDecimalInput(hoursWorkedInput)
+    if (!Number.isNaN(parsedValue) && parsedValue >= 0) {
+      setHoursWorked(parsedValue)
+      setHoursWorkedInput(parsedValue.toString())
+    }
   }
 
   function handleSliderChange(value: number[]) {
