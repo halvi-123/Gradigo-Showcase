@@ -36,7 +36,7 @@ migrations:
     - python -m pip install -r requirements.txt
     - echo "Waiting for MySQL..."
     - |
-      for i in {1..120}; do
+      for i in {1..60}; do
         mysql --ssl-mode=DISABLED -h mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SELECT 1" && break
         echo "MySQL not ready yet..."
         sleep 2
