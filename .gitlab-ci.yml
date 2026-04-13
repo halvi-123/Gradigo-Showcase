@@ -27,7 +27,7 @@ migrations:
     - name: mysql:8.0
       alias: mysql
   before_script:
-    - apt-get update && apt-get install -y default-mysql-client libmysqlclient-dev build-essential pkg-config
+    - apt-get install -y default-mysql-client libmariadb-dev-compat libmariadb-dev build-essential pkg-config
     - pip install --upgrade pip
   script:
     - cd Backend
