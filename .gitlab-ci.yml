@@ -37,7 +37,7 @@ migrations:
     - echo "Waiting for MySQL..."
     - |
       for i in {1..120}; do
-        mysql -h mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SELECT 1" && break
+        mysql --ssl-mode=DISABLED -h mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SELECT 1" && break
         echo "MySQL not ready yet..."
         sleep 2
       done
