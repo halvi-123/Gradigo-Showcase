@@ -1,19 +1,21 @@
 {
-    "sqltools.connections": [
-        {
-            "mysqlOptions": {
-                "authProtocol": "default",
-                "enableSsl": "Disabled"
-            },
-            "ssh": "Disabled",
-            "previewLimit": 50,
-            "server": "127.0.0.1",
-            "port": 3306,
-            "driver": "MySQL",
-            "name": "First Job Navigator (Local)",
-            "database": "first_job_navigator",
-            "username": "teamsharkey",
-            "askForPassword": true
-        }
-    ]
+    "sqltools.connections":  [
+                                 {
+                                     "mysqlOptions":  {
+                                                          "authProtocol":  "default",
+                                                          "enableSsl":  "Disabled"
+                                                      },
+                                     "ssh":  "Disabled",
+                                     "previewLimit":  50,
+                                     "server":  "127.0.0.1",
+                                     "port":  3306,
+                                     "driver":  "MySQL",
+                                     "name":  "First Job Navigator (Local)",
+                                     "database":  "first_job_navigator",
+                                     "username":  "teamsharkey",
+                                     "askForPassword":  true
+                                 }
+                             ],
+    "python.terminal.activateEnvironment":  false,
+    "python.terminal.activateEnvInCurrentTerminal":  false
 }
