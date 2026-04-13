@@ -10,6 +10,9 @@ variables:
   DB_HOST: mysql
   DB_PORT: "3306"
 
+  #frontends env
+  NEXT_PUBLIC_API_URL: "http://127.0.0.1:8000"
+
 default:
   image: ubuntu:22.04
   services:
@@ -32,6 +35,7 @@ stages:
   - test
   - deploy
 
+#BACKEND JOBS
 migrations:
   stage: build
   script:
@@ -67,6 +71,41 @@ django-tests:
     - python3.11 -m pip install -r requirements.txt
     - pytest
 
+#FRONTEND JOBS
+install-frontend:
+  stage: build
+  script:
+    - cd Frontend/first-job-navigator
+    - npm ci
+
+frontend-lint:
+  stage: lint
+  script:
+    - cd Frontend/first-job-navigator
+    - npm ci
+    - npm run lint
+
+frontend-tests:
+  stage: test
+  script:
+    - cd Frontend/first-job-navigator
+    - npm ci
+    - npm test
+    - npm run test:coverage
+  artifacts:
+    when: always
+    paths:
+      - first-job-navigator/test-reports/
+    expire_in: 1 week
+
+frontend-build:
+  stage: build
+  script:
+    - cd Frontend/first-job-navigator
+    - npm ci
+    - npm run build
+
+#DEPLOYMENT
 deploy:
   stage: deploy
   script:
