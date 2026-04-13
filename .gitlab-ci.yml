@@ -27,11 +27,12 @@ migrations:
     - name: mysql:8.0
       alias: mysql
   before_script:
-    - apt-get install -y default-mysql-client libmariadb-dev-compat libmariadb-dev build-essential pkg-config
+    - apt-get update
+    - apt-get install -y gcc pkg-config libmariadb-dev mariadb-client
     - pip install --upgrade pip
   script:
     - cd Backend
-    - python3.11 -m pip install -r requirements.txt
+    - python -m pip install -r requirements.txt
     - echo "Waiting for MySQL..."
     - |
       i=0
@@ -43,8 +44,8 @@ migrations:
         fi
         sleep 2
       done
-    - python3.11 manage.py migrate
-    - python3.11 manage.py check
+    - python manage.py migrate
+    - python manage.py check
 
 Backend-lint:
   stage: lint
@@ -53,8 +54,8 @@ Backend-lint:
     - pip install --upgrade pip
   script:
     - cd Backend
-    - python3.11 -m pip install -r requirements.txt
-    - python3.11 -m pip install flake8
+    - python -m pip install -r requirements.txt
+    - python -m pip install flake8
     - flake8 . --exclude=migrations,__pycache__ --show-source --statistics
 
 
@@ -65,11 +66,12 @@ django-tests:
     - name: mysql:8.0
       alias: mysql
   before_script:
-    - apt-get update && apt-get install -y default-mysql-client
+    - apt-get update
+    - apt-get install -y gcc pkg-config libmariadb-dev
     - pip install --upgrade pip
   script:
     - cd Backend
-    - python3.11 -m pip install -r requirements.txt
+    - python -m pip install -r requirements.txt
     - pytest
 
 #FRONTEND JOBS
@@ -108,7 +110,7 @@ frontend-tests:
   artifacts:
     when: always
     paths:
-      - first-job-navigator/test-reports/
+      - Frontend/first-job-navigator/test-reports/
     expire_in: 1 week
 
 frontend-build:
