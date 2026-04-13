@@ -91,7 +91,6 @@ export function SalaryResultsCard({ result, hoursPerWeek = 40 }: Props) {
             </Tabs>
             <p className="text-sm text-[#f0ebd8]/70">Estimated take-home ({payFrequency})</p>
             <p className="text-4xl font-bold tracking-tight text-white">{formatCurrency(displayValue)}</p>
-            <p className="text-xs text-[#f0ebd8]/50">Currently powered by mock service data.</p>
             <div className="hidden md:block mt-auto">
               {renderLegend()}
             </div>

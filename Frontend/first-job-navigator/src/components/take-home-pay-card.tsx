@@ -59,9 +59,6 @@ export function TakeHomePayCard({
         <CardContent>
         <p className="text-sm text-[#f0ebd8]/70">Estimated take-home ({payFrequency})</p>
         <p className="mt-1 text-3xl font-bold tracking-tight text-white">{formatCurrency(displayValue)}</p>
-        <p className="mt-4 text-xs text-[#f0ebd8]/70">
-          Currently powered by mock service data. I will wire API response data here from backend once whole feature is ready.
-        </p>
       </CardContent>
     </Card>
   )

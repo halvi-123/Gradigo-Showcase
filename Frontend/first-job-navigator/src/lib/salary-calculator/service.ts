@@ -1,4 +1,5 @@
 import { DEFAULT_MOCK_SALARY_RESULT } from "@/data/salary-calculator.mock"
+import { getApiBaseUrl } from "@/lib/api/base-url"
 import type {
   SalaryCalculationApiRequest,
   SalaryCalculationApiResponse,
@@ -6,6 +7,8 @@ import type {
   SalaryCalculationResult,
   StudentLoanType,
 } from "@/lib/salary-calculator/types"
+
+const SALARY_CALCULATE_PATH = "/api/salary/calculate/"
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
@@ -41,45 +44,6 @@ function fromApiResponse(response: SalaryCalculationApiResponse): SalaryCalculat
   }
 }
 
-function mockCalculateApi(request: SalaryCalculationApiRequest): SalaryCalculationApiResponse {
-  const grossSalary = request.gross_salary
-  const pension = grossSalary * (request.pension_percent / 100)
-
-  // Mock only: this approximates deductions to unblock frontend rendering.
-  const taxableIncome = Math.max(0, grossSalary - pension)
-  const incomeTaxRate = request.tax_region === "scotland" ? 0.125 : 0.115
-  const nationalInsuranceRate = 0.075
-
-  const incomeTax = taxableIncome * incomeTaxRate
-  const nationalInsurance = taxableIncome * nationalInsuranceRate
-
-  const studentLoanRateByPlan: Record<NonNullable<SalaryCalculationApiRequest["student_loan_plan"]>, number> = {
-    plan1: 0.01,
-    plan2: 0.02,
-    plan4: 0.015,
-    plan5: 0.03,
-  }
-
-  const studentLoan = request.student_loan_plan
-    ? taxableIncome * studentLoanRateByPlan[request.student_loan_plan]
-    : 0
-
-  const totalDeductions = incomeTax + nationalInsurance + pension + studentLoan
-  const netAnnual = Math.max(0, grossSalary - totalDeductions)
-
-  return {
-    gross_salary: grossSalary,
-    tax_region: request.tax_region,
-    income_tax: incomeTax,
-    national_insurance: nationalInsurance,
-    student_loan: studentLoan,
-    pension,
-    total_deductions: totalDeductions,
-    net_annual: netAnnual,
-    net_monthly: netAnnual / 12,
-  }
-}
-
 export function getDefaultSalaryCalculationResult(): SalaryCalculationResult {
   return {
     ...DEFAULT_MOCK_SALARY_RESULT,
@@ -90,8 +54,20 @@ export function getDefaultSalaryCalculationResult(): SalaryCalculationResult {
 export async function calculateSalary(input: SalaryCalculationInput): Promise<SalaryCalculationResult> {
   const request = toApiRequest(input)
 
-  // Replace this with fetch("/api/salary/calculate/", ...) once backend integration is enabled.
-  const apiResponse = mockCalculateApi(request)
+  const response = await fetch(`${getApiBaseUrl()}${SALARY_CALCULATE_PATH}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(`Salary API request failed (${response.status}): ${errorText}`)
+  }
+
+  const apiResponse = (await response.json()) as SalaryCalculationApiResponse
 
   return fromApiResponse(apiResponse)
 }
