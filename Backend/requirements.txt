@@ -35,3 +35,15 @@ urllib3==2.6.3
 drf_spectacular
 beautifulsoup4
 openpyxl
+groq==1.1.2
+httpx==0.28.1
+httpcore==1.0.9
+anyio==4.13.0
+sniffio==1.3.1
+pydantic==2.13.0
+pydantic_core==2.46.0
+annotated-types==0.7.0
+typing-inspection==0.4.2
+typing_extensions==4.15.0
+distro==1.9.0
+h11==0.16.0
