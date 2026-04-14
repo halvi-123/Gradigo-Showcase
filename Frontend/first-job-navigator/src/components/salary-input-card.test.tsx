@@ -3,12 +3,13 @@ import userEvent from "@testing-library/user-event"
 import { SalaryInputCard } from "@/components/salary-input-card"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import type { SalaryCalculationInput } from "@/lib/salary-calculator/types"
+import type { ReactNode } from "react"
 
 jest.mock("@/components/ui/tooltip", () => ({
-  TooltipProvider: ({ children }: { children: any }) => <>{children}</>,
-  Tooltip: ({ children }: { children: any }) => <>{children}</>,
-  TooltipTrigger: ({ children }: { children: any }) => <>{children}</>,
-  TooltipContent: ({ children }: { children: any }) => (
+  TooltipProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children: ReactNode }) => <>{children}</>,
+  TooltipContent: ({ children }: { children: ReactNode }) => (
     <div data-testid="tooltip-content">{children}</div>
   ),
 }))
