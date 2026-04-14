@@ -108,7 +108,7 @@ frontend-tests:
     when: always
     paths:
       - Frontend/first-job-navigator/test-reports/
-    expire_in: 1 week
+    expire_in: 1 day
 
 frontend-build:
   stage: build
