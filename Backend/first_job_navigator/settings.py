@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "apps.move_out",
     "apps.learning",
     "drf_spectacular",
+    "apps.AI_chatbot",
 ]
 
 MIDDLEWARE = [
