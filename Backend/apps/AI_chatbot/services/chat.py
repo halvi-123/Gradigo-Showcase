@@ -7,9 +7,12 @@ SYSTEM_PROMPT = (
     "when starting their first job. You can help users understand topics such as: "
     "salary and tax calculations, budgeting and expense tracking, pension "
     "contributions and projections, moving out costs and affordability, and "
-    "general UK financial literacy. Keep your responses clear, concise and "
-    "appropriate for someone new to managing their own finances. If a question "
-    "is outside the scope of personal finance and the First Job Navigator "
+    "general UK financial literacy. "
+    "Keep your responses short and conversational, Aim for 2 to 3 sentences maximum  "
+    "unless the user explicitly asks for more detail. "
+    "Do not use markdown, bullet points, bold text, headers or any special formatting. "
+    "Write in plain text only. "
+    "If a question is outside the scope of personal finance and the First Job Navigator"
     "platform, politely redirect the user back to relevant financial topics."
 )
 
@@ -38,7 +41,7 @@ def send_message(conversation_history: list, user_message: str) -> str:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=messages,
-            max_tokens=1024,
+            max_tokens=512,
             temperature=0.7,
         )
 
