@@ -70,7 +70,7 @@ function parseErrorMessage(payload: unknown, fallbackMessage: string) {
       }
 
       if (Array.isArray(value)) {
-        const candidate = value.find((item): item is string => typeof item === "string" && item.trim())
+        const candidate = value.find((item): item is string => typeof item === "string" && Boolean(item.trim()))
         if (candidate) {
           fieldMessage = candidate.trim()
           break
