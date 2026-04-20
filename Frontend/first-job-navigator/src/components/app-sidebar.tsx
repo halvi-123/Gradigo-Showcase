@@ -25,6 +25,7 @@ import {
   WalletIcon,
 } from "lucide-react"
 import { TbNavigationDollar } from "react-icons/tb"
+import { useAuthSessionState } from "@/hooks/use-auth-session-state"
 
 const featureLinks = [
   { label: "Salary Calculator", href: "/salary-calculator", icon: WalletIcon },
@@ -37,6 +38,7 @@ const featureLinks = [
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
+  const { isAuthenticated, user, logoutUser } = useAuthSessionState()
 
   return (
     <Sidebar collapsible="offcanvas" {...props} className="text-sidebar-foreground">
@@ -86,10 +88,16 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter className="text-sidebar-foreground">
         <NavUser
-          user={{
-            name: "Demo User",
-            email: "demo@firstjobnavigator.com",
-          }}
+          user={
+            isAuthenticated && user
+              ? user
+              : {
+                  name: "You're not logged in!",
+                  email: "Create an account/login to use features.",
+                }
+          }
+          isAuthenticated={isAuthenticated}
+          onLogout={logoutUser}
         />
       </SidebarFooter>
     </Sidebar>
