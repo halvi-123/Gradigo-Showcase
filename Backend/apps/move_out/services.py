@@ -258,13 +258,23 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
 
     listings = []
     for item in items:
+        #print("RAW ITEM:", item)
+        #print("IMAGES FIELD:", item.get("images"))
+        #break
+    
         price = item.get("price")
         if price is not None:
             try:
-                if Decimal(str(price)) > max_price:
+                numeric_price = Decimal(
+                    re.sub(r"[^\d.]", "", str(price))
+                )
+                if numeric_price > max_price:
                     continue
             except Exception:
                 pass
+
+        images = item.get("images") or []
+        image_url = images[0] if images else None
 
         listings.append(
             {
@@ -279,7 +289,7 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
                 "agent": item.get("agent"),
                 "agent_branch": item.get("agentBranch"),
                 "added_date": item.get("addedOn"),
-                "image_url": item.get("imageUrl"),
+                "image_url": image_url,
                 "listing_url": item.get("url"),
                 "source": "Rightmove via Apify",
             }
