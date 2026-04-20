@@ -139,9 +139,7 @@ class TestChatMessageListView:
         )
 
         client.force_authenticate(user=user)
-        response = client.get(
-            f"/api/chatbot/sessions/{session.session_id}/messages/"
-        )
+        response = client.get(f"/api/chatbot/sessions/{session.session_id}/messages/")
 
         assert response.status_code == 200
         assert len(response.data) == 2
@@ -164,9 +162,7 @@ class TestChatMessageListView:
         session = ChatSession.objects.create(user=other_user)
 
         client.force_authenticate(user=user)
-        response = client.get(
-            f"/api/chatbot/sessions/{session.session_id}/messages/"
-        )
+        response = client.get(f"/api/chatbot/sessions/{session.session_id}/messages/")
 
         assert response.status_code == 404
         assert response.data["detail"] == "Chat session not found."

@@ -23,8 +23,7 @@ class BudgetModelTests(TestCase):
         self.assertEqual(budget.net_income, Decimal("2000.00"))
 
     def test_unique_budget_per_month(self):
-        Budget.objects.create(
-            user=self.user, net_income=1000, month=date(2026, 1, 1))
+        Budget.objects.create(user=self.user, net_income=1000, month=date(2026, 1, 1))
         with self.assertRaises(IntegrityError):
             Budget.objects.create(
                 user=self.user, net_income=1500, month=date(2026, 1, 1)

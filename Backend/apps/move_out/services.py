@@ -258,16 +258,10 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
 
     listings = []
     for item in items:
-        #print("RAW ITEM:", item)
-        #print("IMAGES FIELD:", item.get("images"))
-        #break
-    
         price = item.get("price")
         if price is not None:
             try:
-                numeric_price = Decimal(
-                    re.sub(r"[^\d.]", "", str(price))
-                )
+                numeric_price = Decimal(re.sub(r"[^\d.]", "", str(price)))
                 if numeric_price > max_price:
                     continue
             except Exception:
@@ -334,9 +328,7 @@ def calculate_readiness(income: Decimal, expenses: Decimal, rent: Decimal) -> di
 
 
 def generate_summary(status: str, estimated_rent: Decimal, crime_level: str) -> str:
-    crime_text = (
-        f" Crime level in the area appears to be {crime_level.lower()}."
-    )
+    crime_text = f" Crime level in the area appears to be {crime_level.lower()}."
 
     messages = {
         MoveOutPlan.ReadinessStatus.ready: (
@@ -371,21 +363,18 @@ def save_move_out_plan(
         monthly_income = Decimal(str(monthly_income))
         monthly_expenses = Decimal(str(monthly_expenses))
     except (InvalidOperation, TypeError) as e:
-        raise MoveOutServiceError(
-            "Income and expenses must be valid numbers") from e
+        raise MoveOutServiceError("Income and expenses must be valid numbers") from e
 
     postcode_data = lookup_postcode(postcode)
     estimated_rent = get_average_rent_from_ons(postcode_data)
     crime_level = get_crime_level(postcode_data)
-    readiness = calculate_readiness(
-        monthly_income, monthly_expenses, estimated_rent)
+    readiness = calculate_readiness(monthly_income, monthly_expenses, estimated_rent)
 
     existing = get_saved_move_out_plan(user)
     postcode_changed = (
         not existing or existing.target_postcode != postcode_data["postcode"]
     )
-    stale = not existing or (
-        timezone.now() - existing.updated_at) > timedelta(days=3)
+    stale = not existing or (timezone.now() - existing.updated_at) > timedelta(days=3)
 
     if postcode_changed or stale:
         search_location = (
@@ -394,13 +383,11 @@ def save_move_out_plan(
             or postcode_data.get("region")
             or ""
         )
-        listings = get_rental_listings(
-            search_location, readiness["disposable_income"])
+        listings = get_rental_listings(search_location, readiness["disposable_income"])
     else:
         listings = existing.property_listings
 
-    summary = generate_summary(
-        readiness["status"], estimated_rent, crime_level)
+    summary = generate_summary(readiness["status"], estimated_rent, crime_level)
 
     plan, _ = MoveOutPlan.objects.update_or_create(
         user=user,

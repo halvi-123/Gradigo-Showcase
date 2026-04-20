@@ -201,13 +201,11 @@ class TestMoveOutServices:
         assert results[0]["listing_id"] == "2"
 
     def test_calculate_disposable_income(self):
-        result = calculate_disposable_income(
-            Decimal("2500.00"), Decimal("800.00"))
+        result = calculate_disposable_income(Decimal("2500.00"), Decimal("800.00"))
         assert result == Decimal("1700.00")
 
     def test_calculate_rent_ratio_percent(self):
-        result = calculate_rent_ratio_percent(
-            Decimal("2500.00"), Decimal("1000.00"))
+        result = calculate_rent_ratio_percent(Decimal("2500.00"), Decimal("1000.00"))
         assert result == Decimal("40.00")
 
     def test_calculate_readiness_ready(self):

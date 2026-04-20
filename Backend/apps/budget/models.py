@@ -17,8 +17,7 @@ class Budget(models.Model):
         month: Date representing the month the budget applies to.
     """
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     net_income = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.DateField()
 
@@ -90,10 +89,8 @@ class SavingsGoal(models.Model):
         target_date: Optional date field indicating target date.
     """
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    current_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
+    current_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     target_date = models.DateField(null=True, blank=True)

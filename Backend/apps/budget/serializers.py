@@ -10,14 +10,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def validate_allocated_amount(self, value):
         if value < 0:
-            raise serializers.ValidationError(
-                "Allocated amount cannot be negative")
+            raise serializers.ValidationError("Allocated amount cannot be negative")
         return value
 
     def validate_limit_amount(self, value):
         if value is not None and value < 0:
-            raise serializers.ValidationError(
-                "Limit amount can not be negative")
+            raise serializers.ValidationError("Limit amount can not be negative")
         return value
 
 
@@ -54,14 +52,12 @@ class SavingsGoalSerializer(serializers.ModelSerializer):
 
     def validate_current_amount(self, value):
         if value < 0:
-            raise serializers.ValidationError(
-                "Current amount can not be negative")
+            raise serializers.ValidationError("Current amount can not be negative")
         return value
 
     def validate_target_amount(self, value):
         if value < 0:
-            raise serializers.ValidationError(
-                "Target amount can not be negative")
+            raise serializers.ValidationError("Target amount can not be negative")
         return value
 
     def validate(self, attrs):
@@ -75,8 +71,7 @@ class SavingsGoalSerializer(serializers.ModelSerializer):
             )
 
         if target_date and target_date < date.today():
-            raise serializers.ValidationError(
-                "Target date cannot be in the past")
+            raise serializers.ValidationError("Target date cannot be in the past")
 
         return attrs
 
@@ -95,8 +90,7 @@ class TransactionCreateSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         if not value.strip():
-            raise serializers.ValidationError(
-                "Transaction name cannot be empty")
+            raise serializers.ValidationError("Transaction name cannot be empty")
         return value
 
 
@@ -107,20 +101,17 @@ class SavingsGoalCreateSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
         if not value.strip():
-            raise serializers.ValidationError(
-                "Savings goal name cannot be empty")
+            raise serializers.ValidationError("Savings goal name cannot be empty")
         return value
 
     def validate_current_amount(self, value):
         if value < 0:
-            raise serializers.ValidationError(
-                "Current amount cannot be negative")
+            raise serializers.ValidationError("Current amount cannot be negative")
         return value
 
     def validate_target_amount(self, value):
         if value <= 0:
-            raise serializers.ValidationError(
-                "Target amount must be greater than 0")
+            raise serializers.ValidationError("Target amount must be greater than 0")
         return value
 
     def validate(self, attrs):
@@ -134,8 +125,7 @@ class SavingsGoalCreateSerializer(serializers.ModelSerializer):
             )
 
         if target_date and target_date < date.today():
-            raise serializers.ValidationError(
-                "Target date cannot be in the past")
+            raise serializers.ValidationError("Target date cannot be in the past")
 
         return attrs
 
@@ -147,12 +137,10 @@ class CategoryUpdateSerializer(serializers.ModelSerializer):
 
     def validate_allocated_amount(self, value):
         if value < 0:
-            raise serializers.ValidationError(
-                "Allocated amount cannot be negative.")
+            raise serializers.ValidationError("Allocated amount cannot be negative.")
         return value
 
     def validate_limit_amount(self, value):
         if value is not None and value < 0:
-            raise serializers.ValidationError(
-                "Limit amount cannot be negative.")
+            raise serializers.ValidationError("Limit amount cannot be negative.")
         return value

@@ -184,8 +184,7 @@ class ForgotPasswordView(APIView):
             send_mail(
                 subject="Reset your password",
                 message=(
-                    "Use the link below to reset your password:\n\n"
-                    f"{reset_url}"
+                    "Use the link below to reset your password:\n\n" f"{reset_url}"
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],

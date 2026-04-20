@@ -130,8 +130,7 @@ class TestBudgetServices:
         create_default_categories(budget)
 
         categories = Category.objects.filter(budget=budget)
-        category_names = set(categories.values_list(
-            "category_name", flat=True))
+        category_names = set(categories.values_list("category_name", flat=True))
 
         assert categories.count() == len(default_categories)
         assert set(default_categories) == category_names

@@ -38,10 +38,8 @@ class LearningAPITests(TestCase):
             description="Video description",
         )
 
-        self.quiz_easy = Quiz.objects.create(
-            title="Easy Quiz", difficulty="easy")
-        self.quiz_hard = Quiz.objects.create(
-            title="Hard Quiz", difficulty="hard")
+        self.quiz_easy = Quiz.objects.create(title="Easy Quiz", difficulty="easy")
+        self.quiz_hard = Quiz.objects.create(title="Hard Quiz", difficulty="hard")
 
         self.question = Question.objects.create(
             quiz=self.quiz_easy,

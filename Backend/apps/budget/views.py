@@ -258,9 +258,7 @@ class CategoryUpdateView(APIView):
     )
     def patch(self, request, pk):
         category = self.get_object(pk, request.user)
-        serializer = CategoryUpdateSerializer(
-            category, data=request.data, partial=True
-        )
+        serializer = CategoryUpdateSerializer(category, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()

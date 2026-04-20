@@ -6,8 +6,7 @@ PASS_MARK = 70
 
 
 def mark_article_complete(user, article):
-    progress, _ = ArticleProgress.objects.get_or_create(
-        user=user, article=article)
+    progress, _ = ArticleProgress.objects.get_or_create(user=user, article=article)
 
     progress.completed = True
     progress.completed_at = timezone.now()
@@ -58,8 +57,7 @@ def get_dashboard(user):
     quizzes_taken = QuizAttempt.objects.filter(user=user).count()
 
     avg_score = (
-        QuizAttempt.objects.filter(user=user).aggregate(
-            Avg("score"))["score__avg"] or 0
+        QuizAttempt.objects.filter(user=user).aggregate(Avg("score"))["score__avg"] or 0
     )
 
     return {

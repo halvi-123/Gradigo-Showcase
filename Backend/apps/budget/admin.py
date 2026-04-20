@@ -12,11 +12,9 @@ class BudgetAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "budget", "category_name",
-                    "allocated_amount", "limit_amount")
+    list_display = ("id", "budget", "category_name", "allocated_amount", "limit_amount")
     list_filter = ("category_name",)
-    search_fields = ("category_name", "budget__user__username",
-                     "budget__user__email")
+    search_fields = ("category_name", "budget__user__username", "budget__user__email")
 
 
 @admin.register(Transaction)

@@ -14,8 +14,7 @@ urlpatterns = [
     path("budget/", BudgetDetailView.as_view(), name="budget-detail"),
     path("dashboard/", BudgetDashboardView.as_view(), name="budget_dashboard"),
     # Category URLs
-    path("categories/<int:pk>/", CategoryUpdateView.as_view(),
-         name="category-update"),
+    path("categories/<int:pk>/", CategoryUpdateView.as_view(), name="category-update"),
     # Transaction URLs
     path(
         "transactions/",

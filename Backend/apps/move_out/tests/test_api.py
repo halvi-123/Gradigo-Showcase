@@ -115,8 +115,7 @@ class TestMoveOutAPI:
     ):
         from apps.move_out.services import MoveOutServiceError
 
-        mock_save_move_out_plan.side_effect = MoveOutServiceError(
-            "Service failed")
+        mock_save_move_out_plan.side_effect = MoveOutServiceError("Service failed")
 
         response = authenticated_client.post(
             "/api/moveout/check/",

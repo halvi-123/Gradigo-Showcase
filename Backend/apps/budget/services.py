@@ -137,15 +137,12 @@ def check_overspending_alerts(budget):
 
         if category.limit_amount is not None and spent > category.limit_amount:
             excess = spent - category.limit_amount
-            alerts.append(
-                f"{category.category_name} limit exceeded by £{excess:.2f}."
-            )
+            alerts.append(f"{category.category_name} limit exceeded by £{excess:.2f}.")
 
         if category.category_name == "Rent" and budget.net_income > 0:
             percent_of_income = (spent / budget.net_income) * 100
             if percent_of_income > 50:
-                alerts.append(
-                    "Your rent spending is more than 50% of your income.")
+                alerts.append("Your rent spending is more than 50% of your income.")
 
         if category.category_name == "Entertainment" and budget.net_income > 0:
             percent_of_income = (spent / budget.net_income) * 100
@@ -153,8 +150,7 @@ def check_overspending_alerts(budget):
                 alerts.append("Your entertainment spending looks quite high.")
 
     if calculate_remaining_income(budget) < 0:
-        alerts.append(
-            "You have spent and saved more than your monthly income.")
+        alerts.append("You have spent and saved more than your monthly income.")
 
     return alerts
 
@@ -186,8 +182,7 @@ def calculate_financial_snapshot_score(budget):
         spent = calculate_category_spent(category)
 
         if category.limit_amount and spent > category.limit_amount:
-            overspend_ratio = (spent - category.limit_amount) / \
-                category.limit_amount
+            overspend_ratio = (spent - category.limit_amount) / category.limit_amount
             score -= min(20, float(overspend_ratio * 20))
 
         if category.category_name == "Rent":
@@ -224,8 +219,7 @@ def generate_budget_summary(budget):
     summary_parts = [f"You have spent £{total_spent:.2f} this month."]
 
     if total_saved > 0:
-        summary_parts.append(
-            f"You have put £{total_saved:.2f} into savings goals.")
+        summary_parts.append(f"You have put £{total_saved:.2f} into savings goals.")
 
     if remaining > 0:
         summary_parts.append(f"You have £{remaining:.2f} left.")
@@ -237,8 +231,7 @@ def generate_budget_summary(budget):
     if score >= 80:
         summary_parts.append("Your budget looks healthy overall.")
     elif score >= 50:
-        summary_parts.append(
-            "Your budget is okay, but there is room for improvement.")
+        summary_parts.append("Your budget is okay, but there is room for improvement.")
     else:
         summary_parts.append("Your budget needs attention.")
 

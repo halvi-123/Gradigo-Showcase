@@ -35,8 +35,7 @@ class Migration(migrations.Migration):
                     models.DecimalField(
                         decimal_places=2,
                         max_digits=10,
-                        validators=[
-                            django.core.validators.MinValueValidator(0)],
+                        validators=[django.core.validators.MinValueValidator(0)],
                     ),
                 ),
                 (
@@ -44,8 +43,7 @@ class Migration(migrations.Migration):
                     models.DecimalField(
                         decimal_places=2,
                         max_digits=10,
-                        validators=[
-                            django.core.validators.MinValueValidator(0)],
+                        validators=[django.core.validators.MinValueValidator(0)],
                     ),
                 ),
                 (
@@ -53,14 +51,12 @@ class Migration(migrations.Migration):
                     models.DecimalField(
                         decimal_places=2,
                         max_digits=10,
-                        validators=[
-                            django.core.validators.MinValueValidator(0)],
+                        validators=[django.core.validators.MinValueValidator(0)],
                     ),
                 ),
                 (
                     "disposable_income",
-                    models.DecimalField(
-                        decimal_places=2, default=0, max_digits=10),
+                    models.DecimalField(decimal_places=2, default=0, max_digits=10),
                 ),
                 (
                     "rent_ratio_percent",
@@ -68,8 +64,7 @@ class Migration(migrations.Migration):
                         decimal_places=2,
                         default=0,
                         max_digits=6,
-                        validators=[
-                            django.core.validators.MinValueValidator(0)],
+                        validators=[django.core.validators.MinValueValidator(0)],
                     ),
                 ),
                 ("readiness_score", models.PositiveSmallIntegerField(default=0)),
