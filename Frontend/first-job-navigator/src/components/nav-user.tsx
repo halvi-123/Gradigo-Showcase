@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,11 +19,15 @@ import { LogOutIcon, SettingsIcon } from "lucide-react"
 
 export function NavUser({
   user,
+  isAuthenticated,
+  onLogout,
 }: {
   user: {
     name: string
     email: string
   }
+  isAuthenticated: boolean
+  onLogout: () => Promise<void> | void
 }) {
   const { isMobile } = useSidebar()
 
@@ -56,11 +61,18 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <SettingsIcon />
-              Settings
+            <DropdownMenuItem asChild>
+              <Link href="/login">
+                <SettingsIcon />
+                Settings
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={!isAuthenticated}
+              onClick={() => {
+                void onLogout()
+              }}
+            >
               <LogOutIcon
               />
               Log out

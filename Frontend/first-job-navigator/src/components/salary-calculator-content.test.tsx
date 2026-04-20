@@ -76,6 +76,15 @@ jest.mock("@/components/pay-breakdown-table", () => ({
   ),
 }))
 
+jest.mock("@/hooks/use-auth-session-state", () => ({
+  useAuthSessionState: () => ({
+    isAuthenticated: false,
+    isLoading: false,
+    user: null,
+    logoutUser: jest.fn(),
+  }),
+}))
+
 function createDeferred<T>() {
   let resolve!: (value: T) => void
   let reject!: (reason?: unknown) => void
@@ -95,7 +104,7 @@ describe("SalaryCalculatorContent", () => {
     render(<SalaryCalculatorContent />)
 
     expect(screen.getByText(/salary calculator/i)).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /login \/ signup/i })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: /login \/ signup/i })).toBeInTheDocument()
     expect(screen.getByTestId("app-sidebar")).toBeInTheDocument()
     expect(screen.getByTestId("results-net-annual")).toHaveTextContent("24000")
     expect(screen.getByTestId("table-gross-annual")).toHaveTextContent("30000")

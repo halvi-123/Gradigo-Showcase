@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SalaryInputCard } from "@/components/salary-input-card"
@@ -18,12 +19,14 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { useAuthSessionState } from "@/hooks/use-auth-session-state"
 import { calculateSalary, getDefaultSalaryCalculationResult } from "@/lib/salary-calculator/service"
 import type { SalaryCalculationInput, SalaryCalculationResult } from "@/lib/salary-calculator/types"
 import { SalaryResultsCard } from "@/components/salary-results-card"
 import { PayBreakdownTable } from "@/components/pay-breakdown-table"
 
 export function SalaryCalculatorContent() {
+  const { isAuthenticated } = useAuthSessionState()
   const [result, setResult] = useState<SalaryCalculationResult>(getDefaultSalaryCalculationResult)
   const [isCalculating, setIsCalculating] = useState(false)
   const [calculationError, setCalculationError] = useState<string | null>(null)
@@ -72,9 +75,11 @@ export function SalaryCalculatorContent() {
               </Breadcrumb>
             </div>
 
-            <Button variant="outline" className="h-10 rounded-md px-5 text-sm font-semibold text-primary">
-              Login / Signup
-            </Button>
+            {!isAuthenticated ? (
+              <Button asChild variant="outline" className="h-10 rounded-md px-5 text-sm font-semibold text-primary">
+                <Link href="/login">Login / Signup</Link>
+              </Button>
+            ) : null}
           </header>
 
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
