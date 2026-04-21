@@ -87,6 +87,22 @@ describe("SalaryInputCard", () => {
     expect(screen.queryByRole("dialog", { name: /estimate annual salary/i })).not.toBeInTheDocument()
   })
 
+  it("clamps hours worked per week input to a maximum of 168", async () => {
+    const user = userEvent.setup()
+    renderSalaryInputCard()
+
+    await user.click(screen.getByRole("button", { name: /calculate it/i }))
+
+    const hoursInput = screen.getByLabelText(/hours worked per week/i) as HTMLInputElement
+    expect(hoursInput).toBeInTheDocument()
+
+    await user.clear(hoursInput)
+    await user.type(hoursInput, "200")
+    await user.tab()
+
+    expect(hoursInput).toHaveValue(168)
+  })
+
 
 
   it("displays the slider cap notice when salary exceeds the slider max", async () => {
