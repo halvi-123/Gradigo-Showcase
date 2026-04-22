@@ -9,8 +9,11 @@ from .models import Category, SavingsGoal, Transaction
 from .serializers import (
     BudgetSerializer,
     CategorySerializer,
+    CategoryCreateSerializer,
     CategoryUpdateSerializer,
+    SavingsGoalCreateSerializer,
     SavingsGoalSerializer,
+    TransactionCreateSerializer,
     TransactionSerializer,
 )
 from .services import (
@@ -51,13 +54,13 @@ class TransactionListCreateView(APIView):
         return Response(serializer.data)
 
     @extend_schema(
-        request=TransactionSerializer,
+        request=TransactionCreateSerializer,
         responses={201: TransactionSerializer},
         tags=["budget"],
     )
     def post(self, request):
         budget = get_or_create_budget(request.user, 0)
-        serializer = TransactionSerializer(data=request.data)
+        serializer = TransactionCreateSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save(budget=budget)
@@ -127,12 +130,12 @@ class SavingsGoalListCreateView(APIView):
         return Response(serializer.data)
 
     @extend_schema(
-        request=SavingsGoalSerializer,
+        request=SavingsGoalCreateSerializer,
         responses={201: SavingsGoalSerializer},
         tags=["budget"],
     )
     def post(self, request):
-        serializer = SavingsGoalSerializer(data=request.data)
+        serializer = SavingsGoalCreateSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save(user=request.user)
@@ -216,6 +219,39 @@ class BudgetDetailView(APIView):
         if serializer.is_valid():
             serializer.save(user=request.user, month=budget.month)
             return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CategoryListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        responses={200: CategorySerializer(many=True)},
+        tags=["budget"],
+    )
+    def get(self, request):
+        budget = get_or_create_budget(request.user, 0)
+        create_default_categories(budget)
+        categories = Category.objects.filter(budget=budget)
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+    @extend_schema(
+        request=CategoryCreateSerializer,
+        responses={201: CategorySerializer},
+        tags=["budget"],
+    )
+    def post(self, request):
+        budget = get_or_create_budget(request.user, 0)
+        create_default_categories(budget)
+        serializer = CategoryCreateSerializer(
+            data=request.data, context={"request": request}
+        )
+
+        if serializer.is_valid():
+            serializer.save(budget=budget)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

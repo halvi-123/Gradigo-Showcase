@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     BudgetDetailView,
     CategoryUpdateView,
+    CategoryListCreateView,
     BudgetDashboardView,
     TransactionListCreateView,
     TransactionDetailView,
@@ -14,6 +15,7 @@ urlpatterns = [
     path("budget/", BudgetDetailView.as_view(), name="budget-detail"),
     path("dashboard/", BudgetDashboardView.as_view(), name="budget_dashboard"),
     # Category URLs
+    path("categories/", CategoryListCreateView.as_view(), name="category-list-create"),
     path("categories/<int:pk>/", CategoryUpdateView.as_view(), name="category-update"),
     # Transaction URLs
     path(

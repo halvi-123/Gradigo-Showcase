@@ -112,6 +112,7 @@ def calculate_category_breakdown(budget):
 
         breakdown.append(
             {
+                "id": category.id,
                 "category_name": category.category_name,
                 "spent_amount": float(spent),
                 "limit_amount": (

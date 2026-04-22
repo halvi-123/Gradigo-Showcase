@@ -19,6 +19,42 @@ class CategorySerializer(serializers.ModelSerializer):
         return value
 
 
+class CategoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["category_name", "allocated_amount", "limit_amount"]
+
+    def validate_category_name(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Category name cannot be empty")
+        return value
+
+    def validate_allocated_amount(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Allocated amount cannot be negative")
+        return value
+
+    def validate_limit_amount(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Limit amount cannot be negative")
+        return value
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        if request:
+            from .services import get_or_create_budget
+
+            budget = get_or_create_budget(request.user, 0)
+            category_name = attrs.get("category_name")
+            if Category.objects.filter(
+                budget=budget, category_name=category_name
+            ).exists():
+                raise serializers.ValidationError(
+                    "A category with this name already exists in your budget."
+                )
+        return attrs
+
+
 class BudgetSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)
 
