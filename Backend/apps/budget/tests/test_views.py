@@ -217,7 +217,7 @@ class TestBudgetServices:
     def test_calculate_remaining_income(self, populated_budget):
         remaining_income = calculate_remaining_income(populated_budget)
 
-        assert remaining_income == Decimal("1170.00")
+        assert remaining_income == Decimal("1370.00")
 
     def test_calculate_category_spent(self, budget_with_categories):
         budget = budget_with_categories["budget"]

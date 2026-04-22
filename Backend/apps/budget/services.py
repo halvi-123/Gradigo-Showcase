@@ -86,8 +86,7 @@ def calculate_total_saved(user):
 def calculate_remaining_income(budget):
     # calculates how much income is left after spendings/savings
     total_spent = calculate_total_spent(budget)
-    total_saved = calculate_total_saved(budget.user)
-    remaining = budget.net_income - total_spent - total_saved
+    remaining = budget.net_income - total_spent
     return remaining
 
 
@@ -150,7 +149,7 @@ def check_overspending_alerts(budget):
                 alerts.append("Your entertainment spending looks quite high.")
 
     if calculate_remaining_income(budget) < 0:
-        alerts.append("You have spent and saved more than your monthly income.")
+        alerts.append("You have spent more than your monthly income.")
 
     return alerts
 
