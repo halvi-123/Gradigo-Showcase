@@ -25,12 +25,15 @@ function clampPercentage(value: number) {
 }
 
 function parseDecimalInput(rawValue: string): number {
-  // Allow only digits and one decimal point
-  const allowedChars = rawValue.replace(/[^0-9.]/g, "")
-  // Ensure only one decimal point
+  const trimmed = rawValue.trim()
+  const isNegative = trimmed.startsWith("-")
+  let allowedChars = trimmed.replace(/[^0-9.]/g, "")
   const parts = allowedChars.split(".")
   if (parts.length > 2) {
-    return Number(parts[0] + "." + parts[1])
+    allowedChars = parts[0] + "." + parts[1]
+  }
+  if (isNegative && allowedChars !== "") {
+    allowedChars = "-" + allowedChars
   }
   const parsed = Number(allowedChars)
   return Number.isNaN(parsed) ? 0 : parsed
@@ -92,10 +95,11 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
       return
     }
 
-    const parsedValue = parseDecimalInput(rawValue)
+    const parsedRaw = parseDecimalInput(rawValue)
+    const parsedValue = Math.abs(parsedRaw)
     if (!Number.isNaN(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
       setPensionContribution(parsedValue)
-      setPensionContributionInput(rawValue)
+      setPensionContributionInput(rawValue.replace(/[^0-9.]/g, ""))
     }
   }
 
@@ -106,7 +110,7 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
       return
     }
 
-    const parsedValue = clampPercentage(parseDecimalInput(pensionContributionInput))
+    const parsedValue = clampPercentage(Math.abs(parseDecimalInput(pensionContributionInput)))
     setPensionContribution(parsedValue)
     setPensionContributionInput(parsedValue.toString())
   }
@@ -144,10 +148,10 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
     }
 
     const parsedValue = parseDecimalInput(rawValue)
-    if (!Number.isNaN(parsedValue) && parsedValue >= 0) {
-      setHoursWorked(parsedValue)
-      setHoursWorkedInput(rawValue)
-    }
+    if (Number.isNaN(parsedValue)) return
+    const clampedValue = Math.min(168, Math.max(0, parsedValue))
+    setHoursWorked(clampedValue)
+    setHoursWorkedInput(clampedValue.toString())
   }
 
   function handleHoursWorkedBlur() {
@@ -157,10 +161,13 @@ export function useSalaryInputForm({ onCalculate }: UseSalaryInputFormOptions) {
     }
 
     const parsedValue = parseDecimalInput(hoursWorkedInput)
-    if (!Number.isNaN(parsedValue) && parsedValue >= 0) {
-      setHoursWorked(parsedValue)
-      setHoursWorkedInput(parsedValue.toString())
+    if (Number.isNaN(parsedValue)) {
+      setHoursWorkedInput(hoursWorked.toString())
+      return
     }
+    const clampedValue = Math.min(168, Math.max(0, parsedValue))
+    setHoursWorked(clampedValue)
+    setHoursWorkedInput(clampedValue.toString())
   }
 
   function handleSliderChange(value: number[]) {
@@ -229,4 +236,5 @@ export const salaryInputLimits = {
   MAX_SALARY,
   MAX_SLIDER_SALARY,
   MIN_SALARY,
+  MAX_HOURS_PER_WEEK: 168,
 }

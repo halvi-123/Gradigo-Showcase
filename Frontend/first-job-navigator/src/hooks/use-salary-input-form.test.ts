@@ -229,7 +229,7 @@ describe("useSalaryInputForm", () => {
     const { result } = renderHook(() => useSalaryInputForm({}))
 
     act(() => {
-      result.current.handleHourlyRateChange("100000")
+      result.current.handleHourlyRateChange("200000")
       result.current.handleHoursWorkedChange("100000")
     })
 
@@ -370,5 +370,37 @@ describe("useSalaryInputForm", () => {
     })
 
     consoleLogSpy.mockRestore()
+  })
+
+  it("clamps hours worked per week to a maximum of 168", () => {
+    const { result } = renderHook(() => useSalaryInputForm({}))
+
+    act(() => {
+      result.current.handleHoursWorkedChange("200")
+    })
+    expect(result.current.hoursWorked).toBe(168)
+    expect(result.current.hoursWorkedInput).toBe("168")
+
+    act(() => {
+      result.current.handleHoursWorkedChange("168")
+    })
+    expect(result.current.hoursWorked).toBe(168)
+    expect(result.current.hoursWorkedInput).toBe("168")
+
+    act(() => {
+      result.current.handleHoursWorkedChange("167")
+    })
+    expect(result.current.hoursWorked).toBe(167)
+    expect(result.current.hoursWorkedInput).toBe("167")
+  })
+
+  it("clamps hours worked per week to a minimum of 0", () => {
+    const { result } = renderHook(() => useSalaryInputForm({}))
+
+    act(() => {
+      result.current.handleHoursWorkedChange("-10")
+    })
+    expect(result.current.hoursWorked).toBe(0)
+    expect(result.current.hoursWorkedInput).toBe("0")
   })
 })

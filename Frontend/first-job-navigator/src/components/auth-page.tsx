@@ -136,7 +136,7 @@ export function AuthPage({ mode, resetTokens }: AuthPageProps) {
     try {
       if (mode === "login") {
         await login({ email: form.email, password: form.password })
-        router.push("/move-out-readiness")
+        router.push("/salary-calculator")
         router.refresh()
         return
       }

@@ -174,6 +174,7 @@ export function SalaryInputCard({
                       id="hours-week"
                       type="number"
                       min={0}
+                      max={salaryInputLimits.MAX_HOURS_PER_WEEK}
                       value={hoursWorkedInput}
                       onChange={(event) => handleHoursWorkedChange(event.target.value)}
                       onBlur={handleHoursWorkedBlur}
