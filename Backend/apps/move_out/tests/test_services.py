@@ -152,10 +152,9 @@ class TestMoveOutServices:
 
         assert result == "Unknown"
 
-    @patch("apps.move_out.services.USE_CACHED_LISTINGS_ONLY", False)
-    @patch("apps.move_out.services.get_cached_rental_listings", return_value=[])
+    @patch("apps.move_out.services.APIFY_API_TOKEN", "test-token")
     @patch("apps.move_out.services.requests.post")
-    def test_get_rental_listings_success(self, mock_post, mock_cached):
+    def test_get_rental_listings_success(self, mock_post):
         mock_response = Mock()
         mock_response.raise_for_status.return_value = None
         mock_response.status_code = 201
@@ -173,7 +172,7 @@ class TestMoveOutServices:
                 "agent": "Test Agent",
                 "agentBranch": "Guildford Branch",
                 "addedOn": "2026-04-09",
-                "imageUrl": "https://example.com/image.jpg",
+                "images": ["https://example.com/image.jpg"],
                 "url": "https://example.com/listing",
             }
         ]
@@ -185,12 +184,9 @@ class TestMoveOutServices:
         assert results[0]["listing_id"] == "abc123"
         assert results[0]["latest_price"] == 1200
 
-    @patch("apps.move_out.services.USE_CACHED_LISTINGS_ONLY", False)
-    @patch("apps.move_out.services.get_cached_rental_listings", return_value=[])
+    @patch("apps.move_out.services.APIFY_API_TOKEN", "test-token")
     @patch("apps.move_out.services.requests.post")
-    def test_get_rental_listings_filters_out_expensive_properties(
-        self, mock_post, mock_cached
-    ):
+    def test_get_rental_listings_filters_out_expensive_properties(self, mock_post):
         mock_response = Mock()
         mock_response.raise_for_status.return_value = None
         mock_response.status_code = 201
