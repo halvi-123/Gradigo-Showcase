@@ -1,14 +1,20 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from io import BytesIO
-from django.utils import timezone
 import re
+import json
+from pathlib import Path
 
 import requests
 from django.conf import settings
 from openpyxl import load_workbook
 
 from .models import MoveOutPlan
+
+MOVE_OUT_CACHE_PATH = (
+    Path(settings.BASE_DIR) / "apps" / "move_out" / "rightmove_cache.json"
+)
+USE_CACHED_LISTINGS_ONLY = getattr(settings, "USE_CACHED_LISTINGS_ONLY", True)
 
 POSTCODES_API_BASE_URL = getattr(
     settings, "POSTCODES_API_BASE_URL", "https://api.postcodes.io"
@@ -221,11 +227,87 @@ def get_crime_level(postcode_data: dict) -> str:
     return "Very High"
 
 
+def _extract_outcode(search_location: str) -> str:
+    return search_location.strip().split()[0].upper() if search_location else ""
+
+
+def _load_cached_listings() -> dict:
+    if not MOVE_OUT_CACHE_PATH.exists():
+        return {}
+
+    try:
+        with open(MOVE_OUT_CACHE_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _to_decimal_price(value) -> Decimal | None:
+    if value is None:
+        return None
+    try:
+        cleaned = re.sub(r"[^\d.]", "", str(value))
+        if not cleaned:
+            return None
+        return Decimal(cleaned)
+    except Exception:
+        return None
+
+
+def get_cached_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
+    outcode = _extract_outcode(search_location)
+    if not outcode:
+        return []
+
+    cache = _load_cached_listings()
+    items = cache.get(outcode, [])
+
+    listings = []
+    for item in items:
+        numeric_price = _to_decimal_price(
+            item.get("latest_price") or item.get("display_price")
+        )
+        if numeric_price is not None and numeric_price > max_price:
+            continue
+
+        listings.append(
+            {
+                "listing_id": item.get("listing_id"),
+                "display_address": item.get("display_address"),
+                "latest_price": item.get("latest_price"),
+                "display_price": item.get("display_price"),
+                "bedrooms": item.get("bedrooms"),
+                "bathrooms": item.get("bathrooms"),
+                "property_type": item.get("property_type"),
+                "property_sub_type": item.get("property_sub_type"),
+                "agent": item.get("agent"),
+                "agent_branch": item.get("agent_branch"),
+                "added_date": item.get("added_date"),
+                "image_url": item.get("image_url"),
+                "listing_url": item.get("listing_url"),
+                "source": item.get("source", "Rightmove Cache"),
+            }
+        )
+
+        if len(listings) == 6:
+            break
+
+    return listings
+
+
 def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
+    cached = get_cached_rental_listings(search_location, max_price)
+    if cached:
+        return cached
+
+    if USE_CACHED_LISTINGS_ONLY:
+        return []
+
     if not APIFY_API_TOKEN or not search_location:
         return []
 
-    outcode = search_location.split()[0].upper()
+    outcode = _extract_outcode(search_location)
     list_url = f"https://www.rightmove.co.uk/property-to-rent/{outcode}.html"
 
     run_input = {
@@ -247,13 +329,9 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
             json=run_input,
             timeout=180,
         )
-        print("APIFY STATUS:", resp.status_code)
-        print("APIFY URL:", list_url)
-        print("APIFY TEXT:", resp.text[:1000])
         resp.raise_for_status()
         items = resp.json()
-    except Exception as e:
-        print("APIFY ERROR:", repr(e))
+    except Exception:
         return []
 
     listings = []
@@ -292,7 +370,6 @@ def get_rental_listings(search_location: str, max_price: Decimal) -> list[dict]:
         if len(listings) == 6:
             break
 
-    print("FINAL LISTINGS:", listings)
     return listings
 
 
@@ -370,22 +447,13 @@ def save_move_out_plan(
     crime_level = get_crime_level(postcode_data)
     readiness = calculate_readiness(monthly_income, monthly_expenses, estimated_rent)
 
-    existing = get_saved_move_out_plan(user)
-    postcode_changed = (
-        not existing or existing.target_postcode != postcode_data["postcode"]
+    search_location = (
+        postcode_data.get("postcode")
+        or postcode_data.get("admin_district")
+        or postcode_data.get("region")
+        or ""
     )
-    stale = not existing or (timezone.now() - existing.updated_at) > timedelta(days=3)
-
-    if postcode_changed or stale:
-        search_location = (
-            postcode_data.get("postcode")
-            or postcode_data.get("admin_district")
-            or postcode_data.get("region")
-            or ""
-        )
-        listings = get_rental_listings(search_location, readiness["disposable_income"])
-    else:
-        listings = existing.property_listings
+    listings = get_rental_listings(search_location, readiness["disposable_income"])
 
     summary = generate_summary(readiness["status"], estimated_rent, crime_level)
 
