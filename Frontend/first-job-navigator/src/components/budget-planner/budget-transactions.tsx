@@ -42,7 +42,7 @@ function formatDateLabel(dateStr: string): string {
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
 }
 
-const SELECT_CLASS = "rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#3e5c76] transition-opacity"
+const SELECT_CLASS = "rounded-md border border-white/10 bg-white/5 px-2 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#3e5c76] transition-opacity min-w-0"
 
 export function BudgetTransactions({ transactions, categories, onAdd, onEdit, onDelete }: Props) {
   const now = new Date()
@@ -79,23 +79,25 @@ export function BudgetTransactions({ transactions, categories, onAdd, onEdit, on
   return (
     <Card className="bg-[#0d1321] border-border/60 text-white shadow-none">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
             <CardTitle className="text-lg font-semibold">Transactions</CardTitle>
-            <p className="text-sm text-muted-foreground mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5 hidden sm:block">
               Log your spending to automatically update category totals and your health score.
             </p>
           </div>
-          <AddTransactionDialog mode="add" categories={categories} onAdd={onAdd} />
+          <div className="shrink-0">
+            <AddTransactionDialog mode="add" categories={categories} onAdd={onAdd} />
+          </div>
         </div>
       </CardHeader>
       <Separator className="bg-border/40 mb-4 mx-6" />
       <CardContent className="space-y-5">
 
-        {/* Filters row — month/year left, category filter right with hint */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Month + Year — left side */}
-          <div className="flex items-center gap-3">
+        {/* Filters row */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          {/* Month + Year */}
+          <div className="flex items-center gap-2 flex-wrap">
             <select
               value={selectedMonth}
               onChange={e => setSelectedMonth(Number(e.target.value))}
@@ -117,19 +119,20 @@ export function BudgetTransactions({ transactions, categories, onAdd, onEdit, on
               ))}
             </select>
             <span className="text-xs text-white/40">
-              {categoryFiltering}
+              {filtered.length} transaction{filtered.length !== 1 ? "s" : ""}
+              {categoryFiltering && " · all time"}
             </span>
           </div>
 
-          {/* Category filter — right side with hint text */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-white/40 hidden sm:block">
+          {/* Category filter */}
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xs text-white/40 hidden md:block shrink-0">
               💡 Select a category to see all its transactions across all time
             </span>
             <select
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value === "all" ? "all" : Number(e.target.value))}
-              className={SELECT_CLASS}
+              className={`${SELECT_CLASS} shrink-0`}
             >
               <option value="all" className="bg-[#0d1321]">All Categories</option>
               {categories.map(c => (
@@ -140,15 +143,15 @@ export function BudgetTransactions({ transactions, categories, onAdd, onEdit, on
         </div>
 
         {/* Summary stats */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { label: "Total logged", value: `£${totalLogged.toFixed(2)}` },
             { label: "Transactions", value: String(filtered.length) },
             { label: "Categories",   value: String(categoriesUsed) },
           ].map(({ label, value }) => (
-            <div key={label} className="rounded-lg bg-white/5 border border-white/10 px-4 py-3">
-              <p className="text-xs text-white/50 mb-1">{label}</p>
-              <p className="text-xl font-bold text-white">{value}</p>
+            <div key={label} className="rounded-lg bg-white/5 border border-white/10 px-3 py-2 sm:px-4 sm:py-3 min-w-0">
+              <p className="text-[10px] sm:text-xs text-white/50 mb-1 truncate">{label}</p>
+              <p className="text-lg sm:text-xl font-bold text-white truncate">{value}</p>
             </div>
           ))}
         </div>
@@ -157,7 +160,7 @@ export function BudgetTransactions({ transactions, categories, onAdd, onEdit, on
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl">🧾</div>
-            <p className="text-sm text-white/50">{emptyMessage}</p>
+            <p className="text-sm text-white/50 text-center">{emptyMessage}</p>
             <p className="text-xs text-white/30 text-center max-w-xs">
               Log a transaction to start tracking your spending.
             </p>
@@ -170,24 +173,26 @@ export function BudgetTransactions({ transactions, categories, onAdd, onEdit, on
             <p className="text-xs font-medium text-white/40 uppercase tracking-wide">{dateLabel}</p>
             <div className="space-y-1.5">
               {txs.map((tx, i) => (
-                <div key={tx.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/[0.08] transition-colors">
-                  <div className="flex items-center gap-3">
+                <div key={tx.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-3 hover:bg-white/[0.08] transition-colors gap-2 min-w-0">
+                  {/* Left — name + category */}
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
                     <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: getCategoryColor(tx.category_name, i) }} />
-                    <div>
-                      <p className="text-sm font-medium text-white">{tx.name}</p>
-                      <p className="text-xs text-white/40">{tx.category_name}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{tx.name}</p>
+                      <p className="text-xs text-white/40 truncate">{tx.category_name}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-red-400">-£{tx.amount.toFixed(2)}</span>
-                    <Badge className="text-[10px] px-2 py-0 hidden sm:inline-flex border-none"
+                  {/* Right — amount + actions */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm font-semibold text-red-400 shrink-0">-£{tx.amount.toFixed(2)}</span>
+                    <Badge className="text-[10px] px-2 py-0 hidden md:inline-flex border-none shrink-0"
                       style={{ backgroundColor: `${getCategoryColor(tx.category_name, i)}30`, color: getCategoryColor(tx.category_name, i) }}>
                       {tx.category_name}
                     </Badge>
                     <AddTransactionDialog mode="edit" categories={categories} transaction={tx} onEdit={onEdit} />
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <button className="text-xs text-red-500/50 hover:text-red-400 transition-colors">Delete</button>
+                        <button className="text-xs text-red-500/50 hover:text-red-400 transition-colors shrink-0">Delete</button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="bg-[#0d1321] border border-border/60 text-white">
                         <AlertDialogHeader>

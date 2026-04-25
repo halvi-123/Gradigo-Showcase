@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { validateMoney, roundMoney, MAX_MONEY, MONEY_STEP, blockNegativeInput } from "@/lib/budget-planner/validation"
 import type { AddTransactionInput, EditTransactionInput, CategoryBreakdown, Transaction } from "@/lib/budget-planner/types"
 
 interface AddProps {
@@ -32,6 +33,8 @@ export function AddTransactionDialog(props: Props) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const minDate = `${new Date().getFullYear() - 2}-01-01`
+
   useEffect(() => {
     if (isEdit && open) {
       const tx = (props as EditProps).transaction
@@ -44,22 +47,42 @@ export function AddTransactionDialog(props: Props) {
 
   async function submit() {
     if (!name.trim()) { setError("Please enter a transaction name."); return }
-    if (!amount || Number(amount) <= 0) { setError("Amount must be greater than £0."); return }
+    const amountError = validateMoney(amount, "Amount")
+    if (amountError) { setError(amountError); return }
+    if (Number(amount) <= 0) { setError("Amount must be greater than £0."); return }
     if (!categoryId) { setError("Please select a category."); return }
     if (!date) { setError("Please select a date."); return }
+        const parsedDate = new Date(date)
+        const year = parsedDate.getFullYear()
+        if (!date) { setError("Please select a date."); return }
+        const yearStr = date.split("-")[0]
+        if (yearStr.length !== 4) { setError("Transaction date must be today or in the past."); return }
+        if (date < minDate) { setError(`Transaction date cannot be before ${new Date().getFullYear() - 2}.`); return }
+        if (date > new Date().toISOString().split("T")[0]) { setError("Transaction date must be today or in the past."); return }
 
     setSaving(true); setError(null)
     if (isEdit) {
-      await (props as EditProps).onEdit({ id: (props as EditProps).transaction.id, name: name.trim(), amount: Number(amount), date, category_id: Number(categoryId) })
+      await (props as EditProps).onEdit({
+        id: (props as EditProps).transaction.id,
+        name: name.trim(),
+        amount: roundMoney(Number(amount)),
+        date,
+        category_id: Number(categoryId),
+      })
     } else {
-      await (props as AddProps).onAdd({ name: name.trim(), amount: Number(amount), date, category_id: Number(categoryId) })
+      await (props as AddProps).onAdd({
+        name: name.trim(),
+        amount: roundMoney(Number(amount)),
+        date,
+        category_id: Number(categoryId),
+      })
     }
     if (!isEdit) { setName(""); setAmount(""); setCategoryId(""); setDate(new Date().toISOString().split("T")[0]) }
     setSaving(false); setOpen(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setError(null) }}>
       <DialogTrigger asChild>
         {isEdit
           ? <button className="text-xs text-gray-500 hover:text-gray-200">Edit</button>
@@ -73,13 +96,22 @@ export function AddTransactionDialog(props: Props) {
         <div className="space-y-3 py-1">
           <div className="space-y-1">
             <Label className="text-white/70">Transaction Name</Label>
-            <Input placeholder="e.g. Tesco shop" value={name} onChange={e => setName(e.target.value)}
-              className="bg-white/5 border-white/10 text-white placeholder:text-gray-500" />
+            <Input placeholder="e.g. Tesco shop" value={name} onChange={e => setName(e.target.value) }
+            maxLength={50} className="bg-white/5 border-white/10 text-white placeholder:text-gray-500" />
           </div>
           <div className="space-y-1">
             <Label className="text-white/70">Amount (£)</Label>
-            <Input type="number" min={0.01} step={0.01} placeholder="0.00" value={amount} onChange={e => setAmount(e.target.value)}
-              className="bg-white/5 border-white/10 text-white placeholder:text-gray-500" />
+            <Input
+              type="number"
+              min={0.01}
+              step={MONEY_STEP}
+              max={MAX_MONEY}
+              placeholder="0.00"
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+              className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+              onKeyDown={blockNegativeInput}
+            />
           </div>
           <div className="space-y-1">
             <Label className="text-white/70">Category</Label>
@@ -90,7 +122,6 @@ export function AddTransactionDialog(props: Props) {
                 <option key={c.id} value={c.id} className="bg-[#0d1321]">{c.category_name}</option>
               ))}
             </select>
-            {/* Hint to add categories in Spending tab */}
             {!isEdit && (
               <p className="text-xs text-white/40 mt-1">
                 💡 Need a different category? Add one in the <span className="text-white/60 underline">Spending</span> tab.
@@ -99,10 +130,14 @@ export function AddTransactionDialog(props: Props) {
           </div>
           <div className="space-y-1">
             <Label className="text-white/70">Date</Label>
-            <Input type="date" value={date} onChange={e => setDate(e.target.value)}
-            max={new Date().toISOString().split("T")[0]}
-            min={`${new Date().getFullYear() - 2}-01-01`}
-            className="bg-white/5 border-white/10 text-white" />
+            <Input
+              type="date"
+              value={date}
+              onChange={e => setDate(e.target.value)}
+              max={new Date().toISOString().split("T")[0]}
+              min={minDate}
+              className="bg-white/5 border-white/10 text-white"
+            />
           </div>
           {error && <p className="text-xs text-red-400">{error}</p>}
         </div>

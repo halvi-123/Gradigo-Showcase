@@ -16,7 +16,7 @@ import { getStoredAuthSession } from "@/lib/auth/session"
 import {
   getBudgetDashboard, getTransactions,
   updateBudget,
-  addCategory, editCategory,
+  addCategory, editCategory, deleteCategory,
   addSavingsGoal, editSavingsGoal, deleteSavingsGoal,
   addTransaction, editTransaction, deleteTransaction,
 } from "@/lib/budget-planner/service"
@@ -55,7 +55,8 @@ const MOCK_TRANSACTIONS: Transaction[] = []
 
 function generateInsight(data: BudgetDashboard): string {
   const netIncome = data.net_income
-  const spentPct = netIncome > 0 ? Math.round((data.total_spent / netIncome) * 100) : 0
+  if (netIncome === 0) return "Set your monthly income above to start tracking your budget health."
+  const spentPct = Math.round((data.total_spent / netIncome) * 100)
   if (data.remaining_income < 0)
     return `You are over budget this month. Consider reviewing your spending categories to bring things back on track.`
   if (data.financial_snapshot_score >= 80)
@@ -69,7 +70,7 @@ const AUTH_ERROR = "Please log in or sign up to use this feature."
 
 export function BudgetPlannerContent() {
   const { isAuthenticated } = useAuthSessionState()
-  const firstName = getStoredAuthSession()?.fullName?.split(" ")[0]
+  const firstName = isAuthenticated ? (getStoredAuthSession()?.fullName?.split(" ")[0] ?? "") : ""
   const [data, setData] = useState<BudgetDashboard | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [authError, setAuthError] = useState<string | null>(null)
@@ -99,6 +100,7 @@ export function BudgetPlannerContent() {
   const handleUpdateIncome    = requireAuth(async (n: number) => { await updateBudget({ net_income: n }); await refresh() })
   const handleAddCategory     = requireAuth(async (i: AddCategoryInput) => { await addCategory(i); await refresh() })
   const handleEditCategory    = requireAuth(async (i: EditCategoryInput) => { await editCategory(i); await refresh() })
+  const handleDeleteCategory  = requireAuth(async (id: number) => { await deleteCategory(id); await refresh() })
   const handleAddGoal         = requireAuth(async (i: AddSavingsGoalInput) => { await addSavingsGoal(i); await refresh() })
   const handleEditGoal        = requireAuth(async (i: EditSavingsGoalInput) => { await editSavingsGoal(i); await refresh() })
   const handleDeleteGoal      = requireAuth(async (id: number) => { await deleteSavingsGoal(id); await refresh() })
@@ -137,16 +139,16 @@ export function BudgetPlannerContent() {
           <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-0 max-w-6xl mx-auto w-full">
             {/* Auth error banner */}
             {authError && (
-              <div className="flex items-center justify-between rounded-lg bg-yellow-500/10 border border-yellow-500/30 px-4 py-3">
-                <p className="text-sm text-yellow-300">{authError}</p>
-                <div className="flex items-center gap-3">
-                  <Link href="/login" className="text-sm font-medium text-yellow-300 underline hover:text-yellow-200">
-                    Log in
-                  </Link>
-                  <button onClick={() => setAuthError(null)} className="text-xs text-yellow-300/60 hover:text-yellow-300">✕</button>
+                <div className="sticky top-4 z-50 flex items-center justify-between rounded-lg bg-amber-900/80 border border-amber-500/50 px-4 py-3 shadow-lg">                    <div className="flex items-center gap-2">
+                    <span>🔒</span>
+                    <p className="text-sm font-medium text-white">{authError}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                    <Link href="/login" className="text-sm font-semibold text-white underline hover:text-white/80">Log in</Link>
+                    <button onClick={() => setAuthError(null)} className="text-xs text-white/50 hover:text-white">✕</button>
+                    </div>
                 </div>
-              </div>
-            )}
+                )}
 
             {!data ? (
               <p className="text-muted-foreground text-sm animate-pulse">Loading...</p>
@@ -155,18 +157,18 @@ export function BudgetPlannerContent() {
                 <BudgetSummaryCard data={data} onUpdateIncome={handleUpdateIncome} />
 
                 <Tabs defaultValue="overview" className="w-full">
-                  <TabsList className="bg-[#1d2d44] border border-white/10 w-full h-11 p-1 gap-0.5">
-                    <TabsTrigger value="overview" className="flex-1 h-9 rounded-md font-medium text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
-                      📊 Overview
+                  <TabsList className="bg-[#1d2d44] border border-white/10 w-full h-11 p-1 gap-0.5 overflow-hidden">
+                    <TabsTrigger value="overview" className="flex-1 h-9 rounded-md font-medium text-[10px] sm:text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
+                      <span className="hidden sm:inline">📊 </span>Overview
                     </TabsTrigger>
-                    <TabsTrigger value="spending" className="flex-1 h-9 rounded-md font-medium text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
-                      💸 Spending
+                    <TabsTrigger value="spending" className="flex-1 h-9 rounded-md font-medium text-[10px] sm:text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
+                      <span className="hidden sm:inline">💸 </span>Spending
                     </TabsTrigger>
-                    <TabsTrigger value="transactions" className="flex-1 h-9 rounded-md font-medium text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
-                      🧾 Transactions
+                    <TabsTrigger value="transactions" className="flex-1 h-9 rounded-md font-medium text-[10px] sm:text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
+                      <span className="hidden sm:inline">🧾 </span>Transactions
                     </TabsTrigger>
-                    <TabsTrigger value="savings" className="flex-1 h-9 rounded-md font-medium text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
-                      🎯 Savings
+                    <TabsTrigger value="savings" className="flex-1 h-9 rounded-md font-medium text-[10px] sm:text-sm transition-all text-white/40 data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:border-b-2 data-[state=active]:border-[#748cab] data-[state=inactive]:hover:bg-white/5 data-[state=inactive]:hover:text-white/70">
+                      <span className="hidden sm:inline">🎯 </span>Savings
                     </TabsTrigger>
                   </TabsList>
 
@@ -182,7 +184,7 @@ export function BudgetPlannerContent() {
                           <span className="text-lg mt-0.5">💡</span>
                           <div>
                             <p className="text-sm font-medium text-white mb-1">
-                            {isAuthenticated && firstName ? `Hello, ${firstName} 👋` : "Monthly Insight"}
+                              {isAuthenticated && firstName ? `Hello, ${firstName} 👋` : "Monthly Insight"}
                             </p>
                             <p className="text-sm text-white/60 leading-relaxed">{generateInsight(data)}</p>
                           </div>
@@ -197,6 +199,7 @@ export function BudgetPlannerContent() {
                       breakdown={data.category_breakdown}
                       onAdd={handleAddCategory}
                       onEdit={handleEditCategory}
+                      onDelete={handleDeleteCategory}
                       netIncome={data.net_income}
                     />
                   </TabsContent>

@@ -1,3 +1,25 @@
+/**
+ * Budget Planner Service Layer
+ *
+ * All API calls use the JWT token from the auth session.
+ * Token stored in localStorage under "fjna.access_token" via @/lib/auth/session.
+ *
+ * Backend endpoints:
+ *   GET    /api/budget/budget/                 → BudgetDetailView
+ *   PUT    /api/budget/budget/                 → BudgetDetailView (net_income only)
+ *   GET    /api/budget/dashboard/              → BudgetDashboardView
+ *   GET    /api/budget/categories/             → CategoryListCreateView
+ *   POST   /api/budget/categories/             → CategoryListCreateView (CategoryCreateSerializer)
+ *   PATCH  /api/budget/categories/<pk>/        → CategoryUpdateView (allocated_amount, limit_amount)
+ *   POST   /api/budget/savings-goals/          → SavingsGoalListCreateView (SavingsGoalCreateSerializer)
+ *   PUT    /api/budget/savings-goals/<pk>/     → SavingsGoalDetailView
+ *   DELETE /api/budget/savings-goals/<pk>/     → SavingsGoalDetailView
+ *   GET    /api/budget/transactions/           → TransactionListCreateView
+ *   POST   /api/budget/transactions/           → TransactionListCreateView (TransactionCreateSerializer)
+ *   PUT    /api/budget/transactions/<pk>/      → TransactionDetailView
+ *   DELETE /api/budget/transactions/<pk>/      → TransactionDetailView
+ */
+
 import { buildBearerAuthHeaders } from "@/lib/auth/session"
 import { getApiBaseUrl } from "@/lib/api/base-url"
 import type {
@@ -14,7 +36,7 @@ import type {
 
 const BASE = `${getApiBaseUrl()}/api/budget`
 
-// Auth headers
+// ─── Auth headers ─────────────────────────────────────────────────────────────
 
 function authHeaders(): Record<string, string> {
   return {
@@ -23,7 +45,7 @@ function authHeaders(): Record<string, string> {
   }
 }
 
-// Error handling
+// ─── Error handling ───────────────────────────────────────────────────────────
 
 async function handleResponse(res: Response): Promise<void> {
   if (!res.ok) {
@@ -40,12 +62,13 @@ async function handleJsonResponse<T>(res: Response): Promise<T> {
   return res.json()
 }
 
-// Dashboard
+// ─── Dashboard ────────────────────────────────────────────────────────────────
 
 export async function getBudgetDashboard(): Promise<BudgetDashboard> {
-
-  // Dashboard gives values (spent, remaining, score, alerts)
-
+  // Fetch dashboard, budget and savings goals in parallel
+  // Budget gives us full category objects with IDs
+  // Dashboard gives us computed values (spent, remaining, score, alerts)
+  // Savings goals come from a separate endpoint — not included in dashboard response
   const [dashRes, budgetRes, goalsRes] = await Promise.all([
     fetch(`${BASE}/dashboard/`, { headers: authHeaders() }),
     fetch(`${BASE}/budget/`, { headers: authHeaders() }),
@@ -55,6 +78,7 @@ export async function getBudgetDashboard(): Promise<BudgetDashboard> {
   const budget = await handleJsonResponse<any>(budgetRes)
   const goalsData = await handleJsonResponse<any[]>(goalsRes)
 
+  // Build category_name -> id map from budget.categories
   const categoryIdMap: Record<string, number> = {}
   if (budget.categories && Array.isArray(budget.categories)) {
     for (const cat of budget.categories) {
@@ -87,7 +111,7 @@ export async function getBudgetDashboard(): Promise<BudgetDashboard> {
   }
 }
 
-// Budget (net income)
+// ─── Budget (net income) ──────────────────────────────────────────────────────
 
 export async function updateBudget(input: UpdateBudgetInput): Promise<void> {
   const res = await fetch(`${BASE}/budget/`, {
@@ -98,9 +122,10 @@ export async function updateBudget(input: UpdateBudgetInput): Promise<void> {
   await handleResponse(res)
 }
 
-// Transactions
+// ─── Transactions ─────────────────────────────────────────────────────────────
 
 export async function getTransactions(): Promise<Transaction[]> {
+  // Fetch transactions and budget in parallel to resolve category_name
   const [txRes, budgetRes] = await Promise.all([
     fetch(`${BASE}/transactions/`, { headers: authHeaders() }),
     fetch(`${BASE}/budget/`, { headers: authHeaders() }),
@@ -108,6 +133,7 @@ export async function getTransactions(): Promise<Transaction[]> {
   const txData = await handleJsonResponse<any[]>(txRes)
   const budgetData = await handleJsonResponse<any>(budgetRes)
 
+  // Build category id -> name map
   const categoryMap: Record<number, string> = {}
   if (budgetData.categories && Array.isArray(budgetData.categories)) {
     for (const cat of budgetData.categories) {
@@ -126,9 +152,8 @@ export async function getTransactions(): Promise<Transaction[]> {
 }
 
 export async function addTransaction(input: AddTransactionInput): Promise<void> {
-
   // TransactionCreateSerializer fields: ["budget", "category", "name", "amount", "date"]
-
+  // budget must be passed — fetch current budget id first
   const budgetRes = await fetch(`${BASE}/budget/`, { headers: authHeaders() })
   const budget = await handleJsonResponse<any>(budgetRes)
 
@@ -172,12 +197,12 @@ export async function deleteTransaction(id: number): Promise<void> {
   await handleResponse(res)
 }
 
-// Categories
+// ─── Categories ───────────────────────────────────────────────────────────────
 
 export async function addCategory(input: AddCategoryInput): Promise<void> {
-
+  // POST /api/budget/categories/ using CategoryCreateSerializer
+  // budget is set automatically from session in the view
   // CategoryCreateSerializer likely accepts: category_name, allocated_amount, limit_amount
-
   const res = await fetch(`${BASE}/categories/`, {
     method: "POST",
     headers: authHeaders(),
@@ -190,10 +215,16 @@ export async function addCategory(input: AddCategoryInput): Promise<void> {
   await handleResponse(res)
 }
 
+export async function deleteCategory(id: number): Promise<void> {
+  const res = await fetch(`${BASE}/categories/${id}/`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  })
+  await handleResponse(res)
+}
+
 export async function editCategory(input: EditCategoryInput): Promise<void> {
-
-  // CategoryUpdateSerializer : allocated_amount, limit_amount
-
+  // CategoryUpdateSerializer only accepts: allocated_amount, limit_amount
   const res = await fetch(`${BASE}/categories/${input.id}/`, {
     method: "PATCH",
     headers: authHeaders(),
@@ -205,12 +236,11 @@ export async function editCategory(input: EditCategoryInput): Promise<void> {
   await handleResponse(res)
 }
 
-// Savings Goals 
+// ─── Savings Goals ────────────────────────────────────────────────────────────
 
 export async function addSavingsGoal(input: AddSavingsGoalInput): Promise<void> {
-
   // SavingsGoalCreateSerializer fields: ["name", "current_amount", "target_amount", "target_date"]
-
+  // user is set automatically from session in the view
   const res = await fetch(`${BASE}/savings-goals/`, {
     method: "POST",
     headers: authHeaders(),
@@ -225,7 +255,7 @@ export async function addSavingsGoal(input: AddSavingsGoalInput): Promise<void> 
 }
 
 export async function editSavingsGoal(input: EditSavingsGoalInput): Promise<void> {
-
+  // SavingsGoalDetailView.put uses SavingsGoalSerializer — send all fields except user
   const res = await fetch(`${BASE}/savings-goals/${input.id}/`, {
     method: "PUT",
     headers: authHeaders(),

@@ -18,7 +18,7 @@ export function BudgetScore({ data }: { data: BudgetDashboard }) {
   const spentPct = netIncome > 0 ? Math.round((data.total_spent / netIncome) * 100) : 0
   const remPct = netIncome > 0 ? Math.round((data.remaining_income / netIncome) * 100) : 0
 
-  // Score breakdown
+  // Score breakdown — monthly only, savings excluded
   const factors = [
     {
       label: "Spent",
@@ -42,7 +42,7 @@ export function BudgetScore({ data }: { data: BudgetDashboard }) {
       <CardContent className="space-y-4">
         {/* Circle + badge */}
         <div className="flex items-center gap-5 py-1">
-          <div className="relative flex items-center justify-center w-32 h-32 shrink-0">
+          <div className="relative flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32 shrink-0">
             <svg width="128" height="128" viewBox="0 0 128 128" className="-rotate-90">
               <circle cx="64" cy="64" r={radius} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="9" />
               <circle
@@ -59,7 +59,7 @@ export function BudgetScore({ data }: { data: BudgetDashboard }) {
               <span className="text-[10px] text-white/50">/ 100</span>
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 min-w-0">
             <Badge variant={variant} className="text-xs">{label}</Badge>
             <p className="text-xs text-white/50 leading-relaxed">
               Score reflects your monthly spending habits only. Savings goals are tracked separately.
