@@ -75,7 +75,9 @@ class TransactionDetailView(APIView):
         return get_object_or_404(Transaction, pk=pk, budget__user=user)
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
         responses={200: TransactionSerializer},
         tags=["budget"],
     )
@@ -85,7 +87,9 @@ class TransactionDetailView(APIView):
         return Response(serializer.data)
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
         request=TransactionSerializer,
         responses={200: TransactionSerializer},
         tags=["budget"],
@@ -101,7 +105,9 @@ class TransactionDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
         responses={204: None},
         tags=["budget"],
     )
@@ -145,7 +151,9 @@ class SavingsGoalDetailView(APIView):
         return get_object_or_404(SavingsGoal, pk=pk, user=user)
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
         responses={200: SavingsGoalSerializer},
         tags=["budget"],
     )
@@ -155,23 +163,27 @@ class SavingsGoalDetailView(APIView):
         return Response(serializer.data)
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
-        request=SavingsGoalCreateSerializer,
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
+        request=SavingsGoalSerializer,
         responses={200: SavingsGoalSerializer},
         tags=["budget"],
     )
     def put(self, request, pk):
         savings_goal = self.get_object(pk, request.user)
-        serializer = SavingsGoalCreateSerializer(savings_goal, data=request.data)
+        serializer = SavingsGoalSerializer(savings_goal, data=request.data)
 
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save()
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
         responses={204: None},
         tags=["budget"],
     )
@@ -255,7 +267,9 @@ class CategoryUpdateView(APIView):
         )
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
         request=CategoryUpdateSerializer,
         responses={200: CategorySerializer},
         tags=["budget"],
@@ -271,7 +285,9 @@ class CategoryUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
         request=CategoryUpdateSerializer,
         responses={200: CategorySerializer},
         tags=["budget"],
@@ -285,16 +301,6 @@ class CategoryUpdateView(APIView):
             return Response(CategorySerializer(category).data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @extend_schema(
-        parameters=[OpenApiParameter("pk", int, OpenApiParameter.PATH)],
-        responses={204: None},
-        tags=["budget"],
-    )
-    def delete(self, request, pk):
-        category = self.get_object(pk, request.user)
-        category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BudgetDashboardView(APIView):

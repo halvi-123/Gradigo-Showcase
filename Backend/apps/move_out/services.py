@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from io import BytesIO
 from django.utils import timezone
 import re
+import os
 
 import requests
 from django.conf import settings
@@ -24,7 +25,8 @@ ONS_PIPR_XLSX_URL = getattr(
 )
 POLICE_API_BASE_URL = "https://data.police.uk/api"
 APIFY_API_BASE_URL = "https://api.apify.com/v2"
-APIFY_API_TOKEN = "REMOVED_APIFY_TOKEN"
+
+APIFY_API_TOKEN = os.getenv("APIFY_API_TOKEN")
 
 TIMEOUT = 15
 MONEY = Decimal("0.01")
