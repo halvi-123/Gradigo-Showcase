@@ -34,7 +34,6 @@ import { BudgetAlerts } from "./budget-alerts"
 import { BudgetSavingsGoals } from "./budget-savings-goals"
 import { BudgetTransactions } from "./budget-transactions"
 
-// Mock data shown when not logged in
 const MOCK_DATA: BudgetDashboard = {
   net_income: 2200,
   remaining_income: 1400,
@@ -86,9 +85,12 @@ export function BudgetPlannerContent() {
     setTransactions(txs)
   }, [isAuthenticated])
 
-  useEffect(() => { refresh() }, [refresh])
+    useEffect(() => {
+      const load = async () => { await refresh() }
+      load().catch(console.error)
+    }, [refresh])
 
-  function requireAuth<T extends any[]>(fn: (...args: T) => Promise<void>) {
+  function requireAuth<T extends unknown[]>(fn: (...args: T) => Promise<void>) {
     return async (...args: T) => {
       if (!isAuthenticated) { setAuthError(AUTH_ERROR); return }
       setAuthError(null)
@@ -127,33 +129,32 @@ export function BudgetPlannerContent() {
               </Breadcrumb>
             </div>
 
-            {/* Login/Signup button — only shown when not authenticated */}
-            {!isAuthenticated && (
+            {!isAuthenticated ? (
               <Button asChild variant="outline" className="h-10 rounded-md px-5 text-sm font-semibold text-primary">
                 <Link href="/login">Login / Signup</Link>
               </Button>
-            )}
+            ) : null}
           </header>
 
           <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-0 max-w-6xl mx-auto w-full">
-            {/* Auth error banner */}
             {authError && (
-                <div className="sticky top-4 z-50 flex items-center justify-between rounded-lg bg-amber-900/80 border border-amber-500/50 px-4 py-3 shadow-lg">                    <div className="flex items-center gap-2">
-                    <span>🔒</span>
-                    <p className="text-sm font-medium text-white">{authError}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                    <Link href="/login" className="text-sm font-semibold text-white underline hover:text-white/80">Log in</Link>
-                    <button onClick={() => setAuthError(null)} className="text-xs text-white/50 hover:text-white">✕</button>
-                    </div>
+              <div className="sticky top-4 z-50 flex items-center justify-between rounded-lg bg-amber-900/80 border border-amber-500/50 px-4 py-3 shadow-lg">
+                <div className="flex items-center gap-2">
+                  <span>🔒</span>
+                  <p className="text-sm font-medium text-white">{authError}</p>
                 </div>
-                )}
+                <div className="flex items-center gap-3">
+                  <Link href="/login" className="text-sm font-semibold text-white underline hover:text-white/80">Log in</Link>
+                  <button onClick={() => setAuthError(null)} className="text-xs text-white/50 hover:text-white">✕</button>
+                </div>
+              </div>
+            )}
 
             {!data ? (
               <p className="text-muted-foreground text-sm animate-pulse">Loading...</p>
             ) : (
               <>
-                <BudgetSummaryCard data={data} onUpdateIncome={handleUpdateIncome} />
+                <BudgetSummaryCard key={data.net_income} data={data} onUpdateIncome={handleUpdateIncome} />
 
                 <Tabs defaultValue="overview" className="w-full">
                   <TabsList className="bg-[#1d2d44] border border-white/10 w-full h-11 p-1 gap-0.5 overflow-hidden">
@@ -171,7 +172,6 @@ export function BudgetPlannerContent() {
                     </TabsTrigger>
                   </TabsList>
 
-                  {/* ── Overview ── */}
                   <TabsContent value="overview" className="mt-4 space-y-4">
                     <div className="grid gap-4 xl:grid-cols-2">
                       <BudgetScore data={data} />
@@ -192,7 +192,6 @@ export function BudgetPlannerContent() {
                     </Card>
                   </TabsContent>
 
-                  {/* ── Spending ── */}
                   <TabsContent value="spending" className="mt-4">
                     <BudgetBreakdown
                       breakdown={data.category_breakdown}
@@ -203,7 +202,6 @@ export function BudgetPlannerContent() {
                     />
                   </TabsContent>
 
-                  {/* ── Transactions ── */}
                   <TabsContent value="transactions" className="mt-4">
                     <BudgetTransactions
                       transactions={transactions}
@@ -214,7 +212,6 @@ export function BudgetPlannerContent() {
                     />
                   </TabsContent>
 
-                  {/* ── Savings Goals ── */}
                   <TabsContent value="savings" className="mt-4">
                     <BudgetSavingsGoals
                       goals={data.savings_goals}

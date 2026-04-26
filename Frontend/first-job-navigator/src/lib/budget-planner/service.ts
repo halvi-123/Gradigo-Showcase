@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { buildBearerAuthHeaders } from "@/lib/auth/session"
 import { getApiBaseUrl } from "@/lib/api/base-url"
 import type {

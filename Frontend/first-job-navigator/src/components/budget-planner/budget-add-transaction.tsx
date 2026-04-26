@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -35,15 +35,18 @@ export function AddTransactionDialog(props: Props) {
 
   const minDate = `${new Date().getFullYear() - 2}-01-01`
 
-  useEffect(() => {
-    if (isEdit && open) {
+  function handleOpenChange(o: boolean) {
+    setOpen(o)
+    if (!o) {
+      setError(null)
+    } else if (isEdit) {
       const tx = (props as EditProps).transaction
       setName(tx.name)
       setAmount(String(tx.amount))
       setDate(tx.date)
       setCategoryId(tx.category_id)
     }
-  }, [open, isEdit])
+  }
 
   async function submit() {
     if (!name.trim()) { setError("Please enter a transaction name."); return }
@@ -52,13 +55,10 @@ export function AddTransactionDialog(props: Props) {
     if (Number(amount) <= 0) { setError("Amount must be greater than £0."); return }
     if (!categoryId) { setError("Please select a category."); return }
     if (!date) { setError("Please select a date."); return }
-        const parsedDate = new Date(date)
-        const year = parsedDate.getFullYear()
-        if (!date) { setError("Please select a date."); return }
-        const yearStr = date.split("-")[0]
-        if (yearStr.length !== 4) { setError("Transaction date must be today or in the past."); return }
-        if (date < minDate) { setError(`Transaction date cannot be before ${new Date().getFullYear() - 2}.`); return }
-        if (date > new Date().toISOString().split("T")[0]) { setError("Transaction date must be today or in the past."); return }
+    const yearStr = date.split("-")[0]
+    if (yearStr.length !== 4) { setError("Transaction date must be today or in the past."); return }
+    if (date < minDate) { setError(`Transaction date cannot be before ${new Date().getFullYear() - 2}.`); return }
+    if (date > new Date().toISOString().split("T")[0]) { setError("Transaction date must be today or in the past."); return }
 
     setSaving(true); setError(null)
     if (isEdit) {
@@ -82,7 +82,7 @@ export function AddTransactionDialog(props: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setError(null) }}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {isEdit
           ? <button className="text-xs text-gray-500 hover:text-gray-200">Edit</button>
@@ -96,8 +96,8 @@ export function AddTransactionDialog(props: Props) {
         <div className="space-y-3 py-1">
           <div className="space-y-1">
             <Label className="text-white/70">Transaction Name</Label>
-            <Input placeholder="e.g. Tesco shop" value={name} onChange={e => setName(e.target.value) }
-            maxLength={50} className="bg-white/5 border-white/10 text-white placeholder:text-gray-500" />
+            <Input placeholder="e.g. Tesco shop" value={name} onChange={e => setName(e.target.value)}
+              maxLength={50} className="bg-white/5 border-white/10 text-white placeholder:text-gray-500" />
           </div>
           <div className="space-y-1">
             <Label className="text-white/70">Amount (£)</Label>

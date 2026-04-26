@@ -23,7 +23,6 @@ interface Props {
 
 function formatMoney(val: number): string {
   if (val >= 1000000) return `£${(val / 1000000).toFixed(1)}M`
-  if (val >= 100000) return `£${(val / 1000).toFixed(1)}k`
   return `£${val.toLocaleString("en-GB")}`
 }
 
@@ -41,11 +40,7 @@ function generateGoalInsight(g: SavingsGoal): string | null {
   const isOnTrack = g.current_amount / g.target_amount >= (1 - daysLeft / 365)
   if (daysLeft === 1) return `Target date is tomorrow — £${remaining.toFixed(0)} still needed.`
   if (daysLeft <= 30) return `${daysLeft} days left — you need £${monthlyNeeded.toFixed(0)}/month to reach your goal. ${isOnTrack ? "You're on track! 🎯" : "You're behind — consider saving more."}`
-  const timeLeft = daysLeft >= 365
-  ? `${Math.floor(daysLeft / 365)} year${Math.floor(daysLeft / 365) > 1 ? "s" : ""} ${Math.floor((daysLeft % 365) / 30)} month${Math.floor((daysLeft % 365) / 30) !== 1 ? "s" : ""}`
-  : `${daysLeft} days`
-
-return `${timeLeft} left — save £${monthlyNeeded.toFixed(0)}/month to reach your goal by ${target.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}. ${isOnTrack ? "You're on track! 🎯" : "You're a bit behind — try to save more each month."}`
+  return `${daysLeft} days left — save £${monthlyNeeded.toFixed(0)}/month to reach your goal by ${target.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}. ${isOnTrack ? "You're on track! 🎯" : "You're a bit behind — try to save more each month."}`
 }
 
 export function BudgetSavingsGoals({ goals, onAdd, onEdit, onDelete }: Props) {
@@ -115,7 +110,7 @@ export function BudgetSavingsGoals({ goals, onAdd, onEdit, onDelete }: Props) {
         <div className="flex items-start gap-2 rounded-lg bg-white/5 border border-white/10 px-4 py-3">
           <span className="text-sm mt-0.5 shrink-0">💡</span>
           <p className="text-xs text-white/50 leading-relaxed">
-            Savings goals are long-term targets and are tracked separately from your monthly budget. Adding to a savings goal <span className="text-white/70">won't affect your remaining income</span> or health score.
+            Savings goals are long-term targets and are tracked separately from your monthly budget. Adding to a savings goal <span className="text-white/70">won&apos;t affect your remaining income</span> or health score.
           </p>
         </div>
 

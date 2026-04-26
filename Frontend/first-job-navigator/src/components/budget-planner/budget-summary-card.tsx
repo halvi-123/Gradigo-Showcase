@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -29,11 +29,6 @@ export function BudgetSummaryCard({ data, onUpdateIncome }: Props) {
   const [incomeValue, setIncomeValue] = useState(String(data.net_income ?? ""))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    setIncomeValue(String(data.net_income ?? ""))
-    if (data.net_income === 0) setEditing(true)
-  }, [data.net_income])
 
   const values = {
     remaining: data.remaining_income,
