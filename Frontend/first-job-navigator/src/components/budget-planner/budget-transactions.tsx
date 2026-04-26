@@ -125,8 +125,8 @@ export function BudgetTransactions({ transactions, categories, onAdd, onEdit, on
           </div>
 
           {/* Category filter */}
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xs text-white/40 hidden md:block shrink-0">
+          <div className="flex items-center gap-2 min-w-0 overflow-hidden">
+            <span className="text-xs text-white/40 hidden lg:block shrink-0">
               💡 Select a category to see all its transactions across all time
             </span>
             <select
@@ -145,13 +145,13 @@ export function BudgetTransactions({ transactions, categories, onAdd, onEdit, on
         {/* Summary stats */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
-            { label: "Total logged", value: `£${totalLogged.toFixed(2)}` },
+            { label: "Total logged", value: totalLogged >= 100000 ? `£${(totalLogged / 1000).toFixed(0)}k` : `£${totalLogged.toFixed(2)}` },
             { label: "Transactions", value: String(filtered.length) },
             { label: "Categories",   value: String(categoriesUsed) },
           ].map(({ label, value }) => (
             <div key={label} className="rounded-lg bg-white/5 border border-white/10 px-3 py-2 sm:px-4 sm:py-3 min-w-0">
               <p className="text-[10px] sm:text-xs text-white/50 mb-1 truncate">{label}</p>
-              <p className="text-lg sm:text-xl font-bold text-white truncate">{value}</p>
+              <p className="text-sm sm:text-xl font-bold text-white break-words">{value}</p>
             </div>
           ))}
         </div>

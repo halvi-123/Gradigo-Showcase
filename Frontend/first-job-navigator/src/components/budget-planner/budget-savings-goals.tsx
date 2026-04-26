@@ -41,7 +41,11 @@ function generateGoalInsight(g: SavingsGoal): string | null {
   const isOnTrack = g.current_amount / g.target_amount >= (1 - daysLeft / 365)
   if (daysLeft === 1) return `Target date is tomorrow — £${remaining.toFixed(0)} still needed.`
   if (daysLeft <= 30) return `${daysLeft} days left — you need £${monthlyNeeded.toFixed(0)}/month to reach your goal. ${isOnTrack ? "You're on track! 🎯" : "You're behind — consider saving more."}`
-  return `${daysLeft} days left — save £${monthlyNeeded.toFixed(0)}/month to reach your goal by ${target.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}. ${isOnTrack ? "You're on track! 🎯" : "You're a bit behind — try to save more each month."}`
+  const timeLeft = daysLeft >= 365
+  ? `${Math.floor(daysLeft / 365)} year${Math.floor(daysLeft / 365) > 1 ? "s" : ""} ${Math.floor((daysLeft % 365) / 30)} month${Math.floor((daysLeft % 365) / 30) !== 1 ? "s" : ""}`
+  : `${daysLeft} days`
+
+return `${timeLeft} left — save £${monthlyNeeded.toFixed(0)}/month to reach your goal by ${target.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}. ${isOnTrack ? "You're on track! 🎯" : "You're a bit behind — try to save more each month."}`
 }
 
 export function BudgetSavingsGoals({ goals, onAdd, onEdit, onDelete }: Props) {

@@ -88,7 +88,6 @@ export function BudgetPlannerContent() {
 
   useEffect(() => { refresh() }, [refresh])
 
-  // Auth guard wrapper — shows error if not logged in
   function requireAuth<T extends any[]>(fn: (...args: T) => Promise<void>) {
     return async (...args: T) => {
       if (!isAuthenticated) { setAuthError(AUTH_ERROR); return }

@@ -18,8 +18,15 @@ import { validateMoney, MAX_MONEY, MONEY_STEP, blockNegativeInput } from "@/lib/
 import type { CategoryBreakdown, EditCategoryInput, AddCategoryInput } from "@/lib/budget-planner/types"
 
 const COLORS = [
-  "#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff",
-  "#ff922b", "#cc5de8", "#20c997", "#f06595",
+  "#4d96ff",
+  "#ff6b6b",
+  "#51cf66",
+  "#fcc419",
+  "#cc5de8",
+  "#20c997",
+  "#f06595",
+  "#ff922b",
+
 ]
 
 const DEFAULT_CATEGORIES = ["Rent", "Bills", "Groceries", "Entertainment", "Subscriptions", "Transport"]
@@ -176,7 +183,7 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
                             </div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-white">£{c.spent_amount}</span>
-                            {c.limit_amount !== null && <span className="text-xs text-muted-foreground">/ £{c.limit_amount}</span>}
+                            {c.limit_amount !== null && <span className="text-xs text-muted-foreground023e8a">/ £{c.limit_amount}</span>}
                             {isOver && <Badge variant="destructive" className="text-xs px-1.5 py-0">Over</Badge>}
                             <button onClick={() => startEdit(c)} className="text-xs text-gray-500 hover:text-gray-200">
                               {c.limit_amount !== null ? "Edit limit" : "Add limit"}
@@ -204,7 +211,7 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
                         </div>
                         <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
                           <div className="h-full rounded-full transition-all duration-500"
-                            style={{ width: `${limitPct}%`, backgroundColor: isOver ? "#ef4444" : "#1b263b" }} />
+                            style={{ width: `${limitPct}%`, backgroundColor: isOver ? "#ef4444" : "#184e77" }} />
                         </div>
                         <p className="text-xs text-muted-foreground">
                           {c.limit_amount ? `${limitPct.toFixed(0)}% of limit used` : `${c.percentage.toFixed(0)}% of total spending`}

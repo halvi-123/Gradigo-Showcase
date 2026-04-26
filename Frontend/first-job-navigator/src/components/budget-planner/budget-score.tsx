@@ -18,7 +18,6 @@ export function BudgetScore({ data }: { data: BudgetDashboard }) {
   const spentPct = netIncome > 0 ? Math.round((data.total_spent / netIncome) * 100) : 0
   const remPct = netIncome > 0 ? Math.round((data.remaining_income / netIncome) * 100) : 0
 
-  // Score breakdown — monthly only, savings excluded
   const factors = [
     {
       label: "Spent",

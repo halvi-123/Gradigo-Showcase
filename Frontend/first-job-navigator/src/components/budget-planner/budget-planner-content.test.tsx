@@ -2,7 +2,6 @@ import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { BudgetPlannerContent } from "@/components/budget-planner/budget-planner-content"
 
-// ─── Mock auth ────────────────────────────────────────────────────────────────
 
 const mockUseAuthSessionState = jest.fn()
 
@@ -15,7 +14,6 @@ jest.mock("@/lib/auth/session", () => ({
   getStoredAuthSession: () => ({ fullName: "Test User", accessToken: "mock-token" }),
 }))
 
-// ─── Mock service layer ───────────────────────────────────────────────────────
 
 jest.mock("@/lib/budget-planner/service", () => ({
   getBudgetDashboard: jest.fn().mockResolvedValue({
@@ -44,7 +42,6 @@ jest.mock("@/lib/budget-planner/service", () => ({
   deleteTransaction: jest.fn().mockResolvedValue(undefined),
 }))
 
-// ─── Mock heavy components ────────────────────────────────────────────────────
 
 jest.mock("@/components/app-sidebar", () => ({
   AppSidebar: () => <aside data-testid="app-sidebar">sidebar</aside>,
@@ -94,7 +91,6 @@ jest.mock("@/lib/api/base-url", () => ({
   getApiBaseUrl: () => "http://localhost:8000",
 }))
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function mockAuthenticated() {
   mockUseAuthSessionState.mockReturnValue({
@@ -114,7 +110,6 @@ function mockUnauthenticated() {
   })
 }
 
-// ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("BudgetPlannerContent", () => {
   beforeEach(() => {
