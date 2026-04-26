@@ -211,7 +211,7 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
                         </div>
                         <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
                           <div className="h-full rounded-full transition-all duration-500"
-                            style={{ width: `${limitPct}%`, backgroundColor: isOver ? "#ef4444" : "#184e77" }} />
+                            style={{ width: `${limitPct}%`, backgroundColor: isOver ? "#ef4444" : "#3e5c76" }} />
                         </div>
                         <p className="text-xs text-muted-foreground">
                           {c.limit_amount ? `${limitPct.toFixed(0)}% of limit used` : `${c.percentage.toFixed(0)}% of total spending`}
