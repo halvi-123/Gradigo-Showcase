@@ -12,8 +12,9 @@ import type {
   EditTransactionInput,
 } from "./types"
 
-const BASE = `${getApiBaseUrl()}/api/budget`
-
+function getBase() {
+  return `${getApiBaseUrl()}/api/budget`
+}
 
 function authHeaders(): Record<string, string> {
   return {
@@ -21,7 +22,6 @@ function authHeaders(): Record<string, string> {
     "Content-Type": "application/json",
   }
 }
-
 
 async function handleResponse(res: Response): Promise<void> {
   if (!res.ok) {
@@ -41,6 +41,7 @@ async function handleJsonResponse<T>(res: Response): Promise<T> {
 // Dashboard
 
 export async function getBudgetDashboard(): Promise<BudgetDashboard> {
+  const BASE = getBase()
   const [dashRes, budgetRes, goalsRes] = await Promise.all([
     fetch(`${BASE}/dashboard/`, { headers: authHeaders() }),
     fetch(`${BASE}/budget/`, { headers: authHeaders() }),
@@ -84,6 +85,7 @@ export async function getBudgetDashboard(): Promise<BudgetDashboard> {
 // Budget (net income)
 
 export async function updateBudget(input: UpdateBudgetInput): Promise<void> {
+  const BASE = getBase()
   const res = await fetch(`${BASE}/budget/`, {
     method: "PUT",
     headers: authHeaders(),
@@ -95,7 +97,7 @@ export async function updateBudget(input: UpdateBudgetInput): Promise<void> {
 // Transactions
 
 export async function getTransactions(): Promise<Transaction[]> {
-  // Fetch transactions and budget in parallel to resolve category_name
+  const BASE = getBase()
   const [txRes, budgetRes] = await Promise.all([
     fetch(`${BASE}/transactions/`, { headers: authHeaders() }),
     fetch(`${BASE}/budget/`, { headers: authHeaders() }),
@@ -103,7 +105,6 @@ export async function getTransactions(): Promise<Transaction[]> {
   const txData = await handleJsonResponse<any[]>(txRes)
   const budgetData = await handleJsonResponse<any>(budgetRes)
 
-  // Build category id -> name map
   const categoryMap: Record<number, string> = {}
   if (budgetData.categories && Array.isArray(budgetData.categories)) {
     for (const cat of budgetData.categories) {
@@ -122,7 +123,7 @@ export async function getTransactions(): Promise<Transaction[]> {
 }
 
 export async function addTransaction(input: AddTransactionInput): Promise<void> {
-  // TransactionCreateSerializer fields: ["budget", "category", "name", "amount", "date"]
+  const BASE = getBase()
   const budgetRes = await fetch(`${BASE}/budget/`, { headers: authHeaders() })
   const budget = await handleJsonResponse<any>(budgetRes)
 
@@ -141,6 +142,7 @@ export async function addTransaction(input: AddTransactionInput): Promise<void> 
 }
 
 export async function editTransaction(input: EditTransactionInput): Promise<void> {
+  const BASE = getBase()
   const budgetRes = await fetch(`${BASE}/budget/`, { headers: authHeaders() })
   const budget = await handleJsonResponse<any>(budgetRes)
 
@@ -159,6 +161,7 @@ export async function editTransaction(input: EditTransactionInput): Promise<void
 }
 
 export async function deleteTransaction(id: number): Promise<void> {
+  const BASE = getBase()
   const res = await fetch(`${BASE}/transactions/${id}/`, {
     method: "DELETE",
     headers: authHeaders(),
@@ -169,6 +172,7 @@ export async function deleteTransaction(id: number): Promise<void> {
 // Categories
 
 export async function addCategory(input: AddCategoryInput): Promise<void> {
+  const BASE = getBase()
   const res = await fetch(`${BASE}/categories/`, {
     method: "POST",
     headers: authHeaders(),
@@ -182,6 +186,7 @@ export async function addCategory(input: AddCategoryInput): Promise<void> {
 }
 
 export async function deleteCategory(id: number): Promise<void> {
+  const BASE = getBase()
   const res = await fetch(`${BASE}/categories/${id}/`, {
     method: "DELETE",
     headers: authHeaders(),
@@ -190,7 +195,7 @@ export async function deleteCategory(id: number): Promise<void> {
 }
 
 export async function editCategory(input: EditCategoryInput): Promise<void> {
-  // CategoryUpdateSerializer only accepts: allocated_amount, limit_amount
+  const BASE = getBase()
   const res = await fetch(`${BASE}/categories/${input.id}/`, {
     method: "PATCH",
     headers: authHeaders(),
@@ -205,7 +210,7 @@ export async function editCategory(input: EditCategoryInput): Promise<void> {
 // Savings Goals
 
 export async function addSavingsGoal(input: AddSavingsGoalInput): Promise<void> {
-  // SavingsGoalCreateSerializer fields: ["name", "current_amount", "target_amount", "target_date"]
+  const BASE = getBase()
   const res = await fetch(`${BASE}/savings-goals/`, {
     method: "POST",
     headers: authHeaders(),
@@ -220,6 +225,7 @@ export async function addSavingsGoal(input: AddSavingsGoalInput): Promise<void> 
 }
 
 export async function editSavingsGoal(input: EditSavingsGoalInput): Promise<void> {
+  const BASE = getBase()
   const res = await fetch(`${BASE}/savings-goals/${input.id}/`, {
     method: "PUT",
     headers: authHeaders(),
@@ -234,6 +240,7 @@ export async function editSavingsGoal(input: EditSavingsGoalInput): Promise<void
 }
 
 export async function deleteSavingsGoal(id: number): Promise<void> {
+  const BASE = getBase()
   const res = await fetch(`${BASE}/savings-goals/${id}/`, {
     method: "DELETE",
     headers: authHeaders(),
