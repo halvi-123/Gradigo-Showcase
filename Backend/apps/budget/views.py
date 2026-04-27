@@ -294,13 +294,29 @@ class CategoryUpdateView(APIView):
     )
     def patch(self, request, pk):
         category = self.get_object(pk, request.user)
-        serializer = CategoryUpdateSerializer(category, data=request.data, partial=True)
+        serializer = CategoryUpdateSerializer(
+            category,
+            data=request.data,
+            partial=True,
+        )
 
         if serializer.is_valid():
             serializer.save()
             return Response(CategorySerializer(category).data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("pk", int, OpenApiParameter.PATH),
+        ],
+        responses={204: None},
+        tags=["budget"],
+    )
+    def delete(self, request, pk):
+        category = self.get_object(pk, request.user)
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BudgetDashboardView(APIView):
