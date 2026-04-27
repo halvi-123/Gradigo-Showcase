@@ -102,6 +102,32 @@ class LearningAPITests(TestCase):
             ).exists()
         )
 
+    def test_learning_progress_persists_across_sessions(self):
+        self.client.force_authenticate(user=self.user)
+
+        complete_response = self.client.post(
+            f"/api/learning/articles/{self.article.id}/complete/"
+        )
+
+        self.assertEqual(complete_response.status_code, 200)
+
+        self.client.force_authenticate(user=None)
+
+        self.client.force_authenticate(user=self.user)
+
+        dashboard_response = self.client.get("/api/learning/dashboard/")
+
+        self.assertEqual(dashboard_response.status_code, 200)
+        self.assertEqual(dashboard_response.data["completed_articles"], 1)
+        self.assertEqual(dashboard_response.data["total_articles"], 1)
+        self.assertTrue(
+            ArticleProgress.objects.filter(
+                user=self.user,
+                article=self.article,
+                completed=True,
+            ).exists()
+        )
+
     def test_submit_quiz_endpoint_requires_auth(self):
         response = self.client.post(
             f"/api/learning/quizzes/{self.quiz_easy.id}/submit/",
