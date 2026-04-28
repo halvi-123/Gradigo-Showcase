@@ -172,11 +172,15 @@ class SavingsGoalDetailView(APIView):
     )
     def put(self, request, pk):
         savings_goal = self.get_object(pk, request.user)
-        serializer = SavingsGoalSerializer(savings_goal, data=request.data)
+        serializer = SavingsGoalCreateSerializer(
+            savings_goal,
+            data=request.data,
+            partial=True,
+        )
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            serializer.save(user=request.user)
+            return Response(SavingsGoalSerializer(savings_goal).data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
