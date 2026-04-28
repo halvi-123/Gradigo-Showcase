@@ -1,9 +1,9 @@
 from django.urls import path
 from .views import (
-    ArticleListView,
     QuestionsByFilterView,
+    ArticleListView,
     VideoListView,
-    QuizByDifficultyView,
+    QuizListView,
     CompleteArticleView,
     SubmitQuizView,
     DashboardView,
@@ -13,7 +13,7 @@ urlpatterns = [
     path("questions/", QuestionsByFilterView.as_view()),
     path("articles/", ArticleListView.as_view()),
     path("videos/", VideoListView.as_view()),
-    path("quizzes/difficulty/<str:difficulty>/", QuizByDifficultyView.as_view()),
+    path("quizzes/", QuizListView.as_view()),
     path("articles/<int:pk>/complete/", CompleteArticleView.as_view()),
     path("quizzes/<int:pk>/submit/", SubmitQuizView.as_view()),
     path("dashboard/", DashboardView.as_view()),

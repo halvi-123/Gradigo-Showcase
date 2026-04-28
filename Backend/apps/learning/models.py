@@ -35,6 +35,7 @@ class Question(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     explanation = models.TextField(blank=True)
+    tip = models.TextField(blank=True)
 
     def __str__(self):
         return self.text
