@@ -4,20 +4,11 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
-class Article(models.Model):
-    title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
-
-    # optional inline fallback
-    content = models.TextField(blank=True)
-
-    # primary usage
-    external_url = models.URLField(blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Quiz(models.Model):
@@ -40,6 +31,11 @@ class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
     text = models.TextField()
 
+    difficulty = models.CharField(max_length=10, choices=Quiz.Difficulty.choices)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    explanation = models.TextField(blank=True)
+
     def __str__(self):
         return self.text
 
@@ -52,13 +48,18 @@ class Answer(models.Model):
     is_correct = models.BooleanField(default=False)
 
 
+class Article(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+    content = models.TextField(blank=True)
+    external_url = models.URLField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Video(models.Model):
     title = models.CharField(max_length=255)
     youtube_url = models.URLField()
     description = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.title
 
 
 class ArticleProgress(models.Model):

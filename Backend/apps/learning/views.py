@@ -4,8 +4,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Article, Quiz, Video
-from .serializers import ArticleSerializer, QuizSerializer, VideoSerializer
+from .models import Article, Question, Quiz, Video
+from .serializers import (
+    ArticleSerializer,
+    QuestionSerializer,
+    QuizSerializer,
+    VideoSerializer,
+)
 from .services import get_dashboard, mark_article_complete, submit_quiz
 
 
@@ -73,6 +78,23 @@ class QuizByDifficultyView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
 
+class QuestionsByFilterView(APIView):
+
+    def get(self, request):
+        category = request.query_params.get("category")
+        difficulty = request.query_params.get("difficulty")
+
+        questions = Question.objects.all()
+
+        if category:
+            questions = questions.filter(category__name__iexact=category)
+
+        if difficulty:
+            questions = questions.filter(difficulty=difficulty)
+
+        return Response(QuestionSerializer(questions, many=True).data)
+
+
 class CompleteArticleView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -105,9 +127,11 @@ class SubmitQuizView(APIView):
         quiz = Quiz.objects.get(pk=pk)
         answers = request.data.get("answers", {})
 
-        attempt = submit_quiz(request.user, quiz, answers)
+        attempt, results = submit_quiz(request.user, quiz, answers)
 
-        return Response({"score": attempt.score, "passed": attempt.passed})
+        return Response(
+            {"score": attempt.score, "passed": attempt.passed, "results": results}
+        )
 
 
 class DashboardView(APIView):

@@ -1,0 +1,189 @@
+{
+"quiz_title": "Financial Literacy for Young Professionals",
+"questions": [
+
+{
+  "text": "You just started your first job and earn £2,000/month before deductions. What does 'gross pay' mean?",
+  "difficulty": "easy",
+  "category": "payslip",
+  "explanation": "Gross pay is your total earnings before any deductions like tax or National Insurance.",
+  "tip": "Always compare your gross vs net pay so you understand where your money is going.",
+  "answers": [
+    {"text": "Pay after tax", "is_correct": false},
+    {"text": "Total pay before deductions", "is_correct": true},
+    {"text": "Bonus pay only", "is_correct": false}
+  ]
+},
+{
+  "text": "You receive £1,600 in your bank after deductions. What is this called?",
+  "difficulty": "easy",
+  "category": "payslip",
+  "explanation": "Net pay is what you receive after deductions like tax and National Insurance.",
+  "tip": "Your net pay is what you should base your budget on—not your gross salary.",
+  "answers": [
+    {"text": "Gross pay", "is_correct": false},
+    {"text": "Net pay", "is_correct": true},
+    {"text": "Taxable income", "is_correct": false}
+  ]
+},
+{
+  "text": "Why do you pay income tax?",
+  "difficulty": "easy",
+  "category": "tax",
+  "explanation": "Income tax funds public services like healthcare, education, and infrastructure.",
+  "tip": "Understanding taxes helps you avoid confusion when your take-home pay changes.",
+  "answers": [
+    {"text": "To increase your salary", "is_correct": false},
+    {"text": "To fund public services", "is_correct": true},
+    {"text": "To avoid savings", "is_correct": false}
+  ]
+},
+{
+  "text": "What is a pension?",
+  "difficulty": "easy",
+  "category": "pension",
+  "explanation": "A pension is a long-term savings plan to support you financially in retirement.",
+  "tip": "Start contributing early—even small amounts grow significantly over time.",
+  "answers": [
+    {"text": "A short-term loan", "is_correct": false},
+    {"text": "Savings for retirement", "is_correct": true},
+    {"text": "A type of tax", "is_correct": false}
+  ]
+},
+{
+  "text": "What is the first step in creating a budget?",
+  "difficulty": "easy",
+  "category": "budgeting",
+  "explanation": "Tracking income and expenses helps you understand where your money goes.",
+  "tip": "Use apps or notes to track spending daily—it builds awareness fast.",
+  "answers": [
+    {"text": "Invest all your money", "is_correct": false},
+    {"text": "Track income and expenses", "is_correct": true},
+    {"text": "Take out a loan", "is_correct": false}
+  ]
+},
+
+{
+  "text": "Your payslip shows deductions for 'NI'. What does this stand for?",
+  "difficulty": "medium",
+  "category": "tax",
+  "explanation": "National Insurance contributions fund benefits like the NHS and state pension.",
+  "tip": "Check your payslip regularly so you understand all deductions, not just tax.",
+  "answers": [
+    {"text": "Net Income", "is_correct": false},
+    {"text": "National Insurance", "is_correct": true},
+    {"text": "New Investment", "is_correct": false}
+  ]
+},
+{
+  "text": "Your employer matches your pension contributions. Why is this beneficial?",
+  "difficulty": "medium",
+  "category": "pension",
+  "explanation": "Employer contributions increase your retirement savings without extra cost to you.",
+  "tip": "Always contribute enough to get full employer matching—it's essentially free money.",
+  "answers": [
+    {"text": "You pay more tax", "is_correct": false},
+    {"text": "You get free additional savings", "is_correct": true},
+    {"text": "You lose money", "is_correct": false}
+  ]
+},
+{
+  "text": "You spend more than you earn each month. What is the likely outcome?",
+  "difficulty": "medium",
+  "category": "budgeting",
+  "explanation": "Spending more than your income leads to debt accumulation over time.",
+  "tip": "If you're overspending, start by reducing small daily expenses—they add up quickly.",
+  "answers": [
+    {"text": "You build savings", "is_correct": false},
+    {"text": "You go into debt", "is_correct": true},
+    {"text": "Your income increases", "is_correct": false}
+  ]
+},
+{
+  "text": "What is a tax code on your payslip used for?",
+  "difficulty": "medium",
+  "category": "tax",
+  "explanation": "A tax code determines how much income tax should be deducted from your salary.",
+  "tip": "If your tax code looks wrong, contact HMRC—you might be overpaying tax.",
+  "answers": [
+    {"text": "To calculate bonuses", "is_correct": false},
+    {"text": "To determine tax deductions", "is_correct": true},
+    {"text": "To track savings", "is_correct": false}
+  ]
+},
+{
+  "text": "Why is it important to start saving early for retirement?",
+  "difficulty": "medium",
+  "category": "pension",
+  "explanation": "Starting early allows your savings to grow more through compound interest.",
+  "tip": "Time matters more than amount—starting early beats saving more later.",
+  "answers": [
+    {"text": "You avoid working", "is_correct": false},
+    {"text": "Your money has more time to grow", "is_correct": true},
+    {"text": "You pay less rent", "is_correct": false}
+  ]
+},
+
+{
+  "text": "You earn £35,000/year and receive a £5,000 bonus. The higher tax rate starts at £37,700. How is your bonus taxed?",
+  "difficulty": "hard",
+  "category": "tax",
+  "explanation": "Only income above £37,700 is taxed at the higher rate. So part of your bonus is taxed higher, not all of it.",
+  "tip": "Don’t fear bonuses—being in a higher tax band doesn’t mean all your income is taxed more.",
+  "answers": [
+    {"text": "All £5,000 is taxed at the higher rate", "is_correct": false},
+    {"text": "Only the portion above £37,700 is taxed higher", "is_correct": true},
+    {"text": "None of the bonus is taxed", "is_correct": false}
+  ]
+},
+{
+  "text": "You contribute 5% of your £2,400 monthly salary to your pension, and your employer contributes 3%. How much goes into your pension each month?",
+  "difficulty": "hard",
+  "category": "pension",
+  "explanation": "5% of £2,400 = £120 and 3% = £72, so £192 total goes into your pension monthly.",
+  "tip": "Use simple percentage calculations to quickly understand where your money is going.",
+  "answers": [
+    {"text": "£120", "is_correct": false},
+    {"text": "£192", "is_correct": true},
+    {"text": "£72", "is_correct": false}
+  ]
+},
+{
+  "text": "You save £300/month with 5% annual compound interest. After a few years, why does your balance grow faster even if you don’t increase contributions?",
+  "difficulty": "hard",
+  "category": "savings",
+  "explanation": "Compound interest means you earn interest on both your savings and previously earned interest.",
+  "tip": "Start saving early—even small amounts benefit massively from compound growth.",
+  "answers": [
+    {"text": "Interest rate increases automatically", "is_correct": false},
+    {"text": "You earn interest on interest", "is_correct": true},
+    {"text": "Your bank adds extra money", "is_correct": false}
+  ]
+},
+{
+  "text": "Your monthly income is £2,000. Fixed costs are £1,300 and variable spending is £600. What is the main financial risk?",
+  "difficulty": "hard",
+  "category": "budgeting",
+  "explanation": "You only have £100 left, which creates a very small safety buffer for emergencies.",
+  "tip": "Aim to save at least 10–20% of your income to build a financial safety net.",
+  "answers": [
+    {"text": "You are saving too much", "is_correct": false},
+    {"text": "You have a very low financial buffer", "is_correct": true},
+    {"text": "You are underpaying tax", "is_correct": false}
+  ]
+},
+{
+  "text": "Your payslip shows a tax code change and higher deductions this month. What is the most likely explanation?",
+  "difficulty": "hard",
+  "category": "payslip",
+  "explanation": "A tax code change can adjust how much tax is deducted, especially if HMRC updates your records.",
+  "tip": "Always check changes in your payslip—small errors over time can cost you a lot.",
+  "answers": [
+    {"text": "Your employer made a random error", "is_correct": false},
+    {"text": "Your tax code has been updated", "is_correct": true},
+    {"text": "Your salary increased automatically", "is_correct": false}
+  ]
+}
+
+]
+}

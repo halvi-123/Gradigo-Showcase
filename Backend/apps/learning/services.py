@@ -35,16 +35,38 @@ def calculate_quiz_score(quiz, submitted_answers):
 
 
 def submit_quiz(user, quiz, answers):
-    score = calculate_quiz_score(quiz, answers)
+    total = quiz.questions.count()
+    correct = 0
+    results = []
 
-    passed = score >= PASS_MARK
+    for question in quiz.questions.all():
+        selected_id = answers.get(str(question.id))
+        correct_answer = question.answers.filter(is_correct=True).first()
 
-    return QuizAttempt.objects.create(
+        is_correct = str(selected_id) == str(correct_answer.id)
+
+        if is_correct:
+            correct += 1
+
+        results.append(
+            {
+                "question": question.text,
+                "correct": is_correct,
+                "correct_answer": correct_answer.text,
+                "explanation": question.explanation,
+            }
+        )
+
+    score = (correct / total) * 100 if total else 0
+
+    attempt = QuizAttempt.objects.create(
         user=user,
         quiz=quiz,
         score=score,
-        passed=passed,
+        passed=score >= PASS_MARK,
     )
+
+    return attempt, results
 
 
 def get_dashboard(user):
