@@ -1,4 +1,3 @@
-from django.utils import timezone
 from django.db.models import Avg
 from .models import ArticleProgress, Answer, QuizAttempt, Article
 

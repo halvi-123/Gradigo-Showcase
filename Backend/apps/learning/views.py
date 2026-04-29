@@ -15,6 +15,7 @@ from .services import get_dashboard, mark_article_complete, submit_quiz
 
 from django.shortcuts import get_object_or_404
 
+
 class StatusResponseSerializer(serializers.Serializer):
     status = serializers.CharField()
 
@@ -121,7 +122,6 @@ class QuestionsByFilterView(APIView):
                 many=True
             ).data
         )
-
 
 
 class CompleteArticleView(APIView):
