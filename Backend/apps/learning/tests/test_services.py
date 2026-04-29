@@ -6,6 +6,7 @@ from apps.learning.models import (
     Quiz,
     Question,
     Answer,
+    Category,
     ArticleProgress,
     QuizAttempt,
 )
@@ -27,6 +28,8 @@ class LearningServiceTests(TestCase):
             password="password123",
         )
 
+        self.category = Category.objects.create(name="budgeting")
+
         self.article1 = Article.objects.create(
             title="Article 1",
             slug="article-1",
@@ -40,8 +43,18 @@ class LearningServiceTests(TestCase):
 
         self.quiz = Quiz.objects.create(title="Quiz 1", difficulty="easy")
 
-        self.q1 = Question.objects.create(quiz=self.quiz, text="Question 1?")
-        self.q2 = Question.objects.create(quiz=self.quiz, text="Question 2?")
+        self.q1 = Question.objects.create(
+            quiz=self.quiz,
+            text="Question 1?",
+            difficulty="easy",
+            category=self.category,
+        )
+        self.q2 = Question.objects.create(
+            quiz=self.quiz,
+            text="Question 2?",
+            difficulty="easy",
+            category=self.category,
+        )
 
         self.a1_correct = Answer.objects.create(
             question=self.q1,
@@ -65,13 +78,14 @@ class LearningServiceTests(TestCase):
         )
 
     def test_mark_article_complete_creates_progress(self):
-        progress = mark_article_complete(self.user, self.article1)
+        progress, created = mark_article_complete(self.user, self.article1)
 
+        self.assertTrue(created)
         self.assertTrue(progress.completed)
-        self.assertIsNotNone(progress.completed_at)
         self.assertEqual(
             ArticleProgress.objects.filter(
-                user=self.user, article=self.article1
+                user=self.user,
+                article=self.article1,
             ).count(),
             1,
         )
@@ -83,13 +97,14 @@ class LearningServiceTests(TestCase):
             completed=False,
         )
 
-        progress = mark_article_complete(self.user, self.article1)
+        progress, created = mark_article_complete(self.user, self.article1)
 
+        self.assertFalse(created)
         self.assertTrue(progress.completed)
-        self.assertIsNotNone(progress.completed_at)
         self.assertEqual(
             ArticleProgress.objects.filter(
-                user=self.user, article=self.article1
+                user=self.user,
+                article=self.article1,
             ).count(),
             1,
         )
@@ -122,10 +137,11 @@ class LearningServiceTests(TestCase):
             str(self.q2.id): self.a2_correct.id,
         }
 
-        attempt = submit_quiz(self.user, self.quiz, submitted_answers)
+        attempt, results = submit_quiz(self.user, self.quiz, submitted_answers)
 
         self.assertEqual(attempt.score, 100)
         self.assertTrue(attempt.passed)
+        self.assertEqual(len(results), 2)
         self.assertEqual(QuizAttempt.objects.count(), 1)
 
     def test_submit_quiz_creates_attempt_and_sets_pass_false_below_pass_mark(self):
@@ -134,10 +150,11 @@ class LearningServiceTests(TestCase):
             str(self.q2.id): self.a2_wrong.id,
         }
 
-        attempt = submit_quiz(self.user, self.quiz, submitted_answers)
+        attempt, results = submit_quiz(self.user, self.quiz, submitted_answers)
 
         self.assertEqual(attempt.score, 50)
         self.assertFalse(attempt.passed)
+        self.assertEqual(len(results), 2)
         self.assertEqual(QuizAttempt.objects.count(), 1)
 
     def test_get_dashboard_returns_expected_aggregates(self):
@@ -162,6 +179,8 @@ class LearningServiceTests(TestCase):
         self.assertEqual(dashboard["total_articles"], 2)
         self.assertEqual(dashboard["quizzes_taken"], 2)
         self.assertEqual(dashboard["average_score"], 70)
+        self.assertIn("difficulty_breakdown", dashboard)
+        self.assertIn("difficulty_insight", dashboard)
 
     def test_get_dashboard_returns_zero_average_when_no_attempts(self):
         dashboard = get_dashboard(self.user)

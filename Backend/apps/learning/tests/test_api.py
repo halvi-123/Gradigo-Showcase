@@ -10,6 +10,7 @@ from apps.learning.models import (
     Video,
     ArticleProgress,
     QuizAttempt,
+    Category,
 )
 
 User = get_user_model()
@@ -24,6 +25,9 @@ class LearningAPITests(TestCase):
             full_name="API User",
             password="password123",
         )
+
+        self.category_tax = Category.objects.create(name="tax")
+        self.category_budgeting = Category.objects.create(name="budgeting")
 
         self.article = Article.objects.create(
             title="Article 1",
@@ -44,7 +48,30 @@ class LearningAPITests(TestCase):
         self.question = Question.objects.create(
             quiz=self.quiz_easy,
             text="What is budgeting?",
+            difficulty="easy",
+            category=self.category_budgeting,
+            explanation="Budgeting helps manage money.",
+            tip="Track income and expenses regularly.",
         )
+
+        self.tax_question = Question.objects.create(
+            quiz=self.quiz_easy,
+            text="Why do you pay income tax?",
+            difficulty="easy",
+            category=self.category_tax,
+            explanation="Income tax funds public services.",
+            tip="Check your payslip to understand deductions.",
+        )
+
+        self.hard_question = Question.objects.create(
+            quiz=self.quiz_hard,
+            text="What is compound interest?",
+            difficulty="hard",
+            category=self.category_budgeting,
+            explanation="Compound interest means earning interest on interest.",
+            tip="Start saving early.",
+        )
+
         self.correct_answer = Answer.objects.create(
             question=self.question,
             text="Managing money",
@@ -53,6 +80,28 @@ class LearningAPITests(TestCase):
         self.wrong_answer = Answer.objects.create(
             question=self.question,
             text="Ignoring bills",
+            is_correct=False,
+        )
+
+        Answer.objects.create(
+            question=self.tax_question,
+            text="To fund public services",
+            is_correct=True,
+        )
+        Answer.objects.create(
+            question=self.tax_question,
+            text="To increase your salary",
+            is_correct=False,
+        )
+
+        Answer.objects.create(
+            question=self.hard_question,
+            text="You earn interest on interest",
+            is_correct=True,
+        )
+        Answer.objects.create(
+            question=self.hard_question,
+            text="Your bank adds extra money",
             is_correct=False,
         )
 
@@ -70,13 +119,37 @@ class LearningAPITests(TestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["title"], "Video 1")
 
-    def test_get_quizzes_by_difficulty_endpoint(self):
-        response = self.client.get("/api/learning/quizzes/difficulty/easy/")
+    def test_get_questions_endpoint_filters_by_difficulty(self):
+        response = self.client.get("/api/learning/questions/?difficulty=easy")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 2)
+        self.assertTrue(
+            all(question["difficulty"] == "easy" for question in response.data)
+        )
+
+    def test_get_questions_endpoint_filters_by_category(self):
+        response = self.client.get("/api/learning/questions/?category=tax")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["title"], "Easy Quiz")
-        self.assertEqual(response.data[0]["difficulty"], "easy")
+        self.assertEqual(response.data[0]["category"]["name"], "tax")
+
+    def test_get_questions_endpoint_filters_by_category_and_difficulty(self):
+        response = self.client.get(
+            "/api/learning/questions/?category=budgeting&difficulty=hard"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["difficulty"], "hard")
+        self.assertEqual(response.data[0]["category"]["name"], "budgeting")
+
+    def test_get_questions_endpoint_rejects_invalid_difficulty(self):
+        response = self.client.get("/api/learning/questions/?difficulty=invalid")
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Invalid difficulty")
 
     def test_complete_article_endpoint_requires_auth(self):
         response = self.client.post(
@@ -94,6 +167,8 @@ class LearningAPITests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["status"], "completed")
+        self.assertEqual(response.data["article_id"], self.article.id)
+        self.assertFalse(response.data["already_completed"])
         self.assertTrue(
             ArticleProgress.objects.filter(
                 user=self.user,
@@ -112,7 +187,6 @@ class LearningAPITests(TestCase):
         self.assertEqual(complete_response.status_code, 200)
 
         self.client.force_authenticate(user=None)
-
         self.client.force_authenticate(user=self.user)
 
         dashboard_response = self.client.get("/api/learning/dashboard/")
@@ -147,8 +221,10 @@ class LearningAPITests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["score"], 100)
-        self.assertTrue(response.data["passed"])
+        self.assertIn("attempt_id", response.data)
+        self.assertEqual(response.data["score"], 50)
+        self.assertFalse(response.data["passed"])
+        self.assertIn("results", response.data)
         self.assertEqual(QuizAttempt.objects.count(), 1)
 
     def test_submit_quiz_endpoint_success_for_wrong_answer(self):
@@ -191,3 +267,5 @@ class LearningAPITests(TestCase):
         self.assertEqual(response.data["total_articles"], 1)
         self.assertEqual(response.data["quizzes_taken"], 1)
         self.assertEqual(response.data["average_score"], 85)
+        self.assertIn("difficulty_breakdown", response.data)
+        self.assertIn("difficulty_insight", response.data)

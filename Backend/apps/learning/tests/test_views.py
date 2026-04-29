@@ -8,13 +8,14 @@ from apps.learning.models import (
     Question,
     Answer,
     Video,
+    Category,
     ArticleProgress,
     QuizAttempt,
 )
 from apps.learning.views import (
     ArticleListView,
     VideoListView,
-    QuizByDifficultyView,
+    QuestionsByFilterView,
     CompleteArticleView,
     SubmitQuizView,
     DashboardView,
@@ -33,6 +34,8 @@ class LearningViewTests(TestCase):
             password="password123",
         )
 
+        self.category = Category.objects.create(name="budgeting")
+
         self.article = Article.objects.create(
             title="Article 1",
             slug="article-1",
@@ -47,12 +50,16 @@ class LearningViewTests(TestCase):
         )
 
         self.quiz_easy = Quiz.objects.create(title="Easy Quiz", difficulty="easy")
-        self.quiz_medium = Quiz.objects.create(title="Medium Quiz", difficulty="medium")
 
         self.question = Question.objects.create(
             quiz=self.quiz_easy,
             text="What is budgeting?",
+            difficulty="easy",
+            category=self.category,
+            explanation="Budgeting helps manage money.",
+            tip="Track spending regularly.",
         )
+
         self.correct_answer = Answer.objects.create(
             question=self.question,
             text="Managing money",
@@ -80,14 +87,17 @@ class LearningViewTests(TestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["title"], "Video 1")
 
-    def test_quiz_by_difficulty_view_filters_quizzes(self):
-        request = self.factory.get("/learning/quizzes/difficulty/easy/")
-        response = QuizByDifficultyView.as_view()(request, difficulty="easy")
+    def test_questions_by_filter_view_filters_questions(self):
+        request = self.factory.get(
+            "/learning/questions/?category=budgeting&difficulty=easy"
+        )
+        response = QuestionsByFilterView.as_view()(request)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["title"], "Easy Quiz")
+        self.assertEqual(response.data[0]["text"], "What is budgeting?")
         self.assertEqual(response.data[0]["difficulty"], "easy")
+        self.assertEqual(response.data[0]["category"]["name"], "budgeting")
 
     def test_complete_article_view_requires_authentication(self):
         request = self.factory.post(f"/learning/articles/{self.article.id}/complete/")
@@ -134,6 +144,7 @@ class LearningViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["score"], 100)
         self.assertTrue(response.data["passed"])
+        self.assertIn("results", response.data)
         self.assertEqual(QuizAttempt.objects.count(), 1)
 
     def test_submit_quiz_view_returns_failed_for_wrong_answer(self):

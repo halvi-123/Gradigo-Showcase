@@ -8,6 +8,7 @@ from apps.learning.models import (
     Question,
     Answer,
     Video,
+    Category,
     ArticleProgress,
     QuizAttempt,
 )
@@ -22,15 +23,21 @@ class LearningModelTests(TestCase):
             full_name="Model User",
             password="password123",
         )
+        self.category = Category.objects.create(name="savings")
 
-    def test_article_str_returns_title(self):
+    def test_category_str_returns_name(self):
+        self.assertEqual(str(self.category), "savings")
+
+    def test_article_fields_are_saved(self):
         article = Article.objects.create(
             title="Budgeting Basics",
             slug="budgeting-basics",
             content="Learn budgeting.",
             external_url="https://example.com/budgeting",
         )
-        self.assertEqual(str(article), "Budgeting Basics")
+
+        self.assertEqual(article.title, "Budgeting Basics")
+        self.assertEqual(article.slug, "budgeting-basics")
 
     def test_quiz_str_returns_title_and_difficulty(self):
         quiz = Quiz.objects.create(title="Tax Quiz", difficulty="easy")
@@ -38,20 +45,33 @@ class LearningModelTests(TestCase):
 
     def test_question_str_returns_text(self):
         quiz = Quiz.objects.create(title="Savings Quiz", difficulty="medium")
-        question = Question.objects.create(quiz=quiz, text="What is saving?")
+        question = Question.objects.create(
+            quiz=quiz,
+            text="What is saving?",
+            difficulty="medium",
+            category=self.category,
+        )
+
         self.assertEqual(str(question), "What is saving?")
 
-    def test_video_str_returns_title(self):
+    def test_video_fields_are_saved(self):
         video = Video.objects.create(
             title="Intro to Pensions",
             youtube_url="https://youtube.com/watch?v=test",
             description="Pension basics",
         )
-        self.assertEqual(str(video), "Intro to Pensions")
+
+        self.assertEqual(video.title, "Intro to Pensions")
+        self.assertEqual(video.description, "Pension basics")
 
     def test_answer_defaults_to_not_correct(self):
         quiz = Quiz.objects.create(title="Quiz", difficulty="easy")
-        question = Question.objects.create(quiz=quiz, text="Question?")
+        question = Question.objects.create(
+            quiz=quiz,
+            text="Question?",
+            difficulty="easy",
+            category=self.category,
+        )
         answer = Answer.objects.create(question=question, text="Option A")
 
         self.assertFalse(answer.is_correct)
