@@ -1,0 +1,41 @@
+:80 {
+
+    encode gzip
+
+    # Django API
+
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+
+    # Django Admin
+
+    handle /admin/* {
+        reverse_proxy 127.0.0.1:8000
+    }
+
+    # Static Files
+
+    handle /static/* {
+        root * /home/user/team-sharkey/Backend/staticfiles
+        file_server
+    }
+
+    # Media Files
+
+    handle /media/* {
+        root * /home/user/team-sharkey/Backend/media
+        file_server
+    }
+
+    # Frontend (Next.js React)
+
+    handle {
+        reverse_proxy 127.0.0.1:3000
+    }
+
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
