@@ -1,6 +1,5 @@
+import { getApiBaseUrl } from "@/lib/api/base-url"
 import type { PensionApiRequest, PensionProjectionInput, PensionProjectionResult } from "@/lib/pension/types"
-
-const PENSION_API_URL = "http://127.0.0.1:8000/api/pension/project/"
 
 function toApiRequest(input: PensionProjectionInput): PensionApiRequest {
   return {
@@ -26,18 +25,15 @@ export const DEFAULT_PENSION_INPUT: PensionProjectionInput = {
 
 export async function calculatePension(input: PensionProjectionInput): Promise<PensionProjectionResult> {
   const request = toApiRequest(input)
-
-  const response = await fetch(PENSION_API_URL, {
+  const response = await fetch(`${getApiBaseUrl()}/api/pension/project/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(request),
   })
-
   if (!response.ok) {
     throw new Error("Failed to calculate pension projection")
   }
-
   return response.json()
 }
