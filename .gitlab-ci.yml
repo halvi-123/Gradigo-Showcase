@@ -10,6 +10,9 @@ variables:
   DB_HOST: mysql
   DB_PORT: "3306"
 
+  SECRET_KEY: ci-test-secret-key
+  DEBUG: "True"
+  
   #frontends env
   NEXT_PUBLIC_API_URL: "http://127.0.0.1:8000"
 
