@@ -48,3 +48,5 @@ class DashboardSerializer(serializers.Serializer):
     total_articles = serializers.IntegerField()
     quizzes_taken = serializers.IntegerField()
     average_score = serializers.FloatField()
+    difficulty_breakdown = serializers.DictField()
+    difficulty_insight = serializers.DictField()
