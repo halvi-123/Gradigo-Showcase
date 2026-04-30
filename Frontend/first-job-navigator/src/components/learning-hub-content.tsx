@@ -40,8 +40,10 @@ export function LearningHubContent() {
   const [dashboard, setDashboard] = useState<LearningDashboard>({
     completed_articles: 0,
     total_articles: 0,
-    quizzes_taken: 0,
-    average_score: 0,
+    completed_quizzes: 0,
+    total_quizzes: 0,
+    progress_percentage: 0,
+    quiz_scores: [],
   })
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy")
   const [readArticleIds, setReadArticleIds] = useState<number[]>([])
@@ -72,7 +74,8 @@ export function LearningHubContent() {
     async function loadQuizzes() {
       try {
         const quizzesData = await getQuizzesByDifficulty(difficulty)
-        setQuizzes(quizzesData.length > 0 ? quizzesData : MOCK_QUIZZES.filter(q => q.difficulty === difficulty))
+        const validQuizzes = quizzesData.filter((q: Quiz) => q.title !== undefined)
+        setQuizzes(validQuizzes.length > 0 ? validQuizzes : MOCK_QUIZZES.filter(q => q.difficulty === difficulty))
       } catch {
         setQuizzes(MOCK_QUIZZES.filter(q => q.difficulty === difficulty))
       }
