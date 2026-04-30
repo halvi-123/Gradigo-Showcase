@@ -6,8 +6,10 @@ import type { Quiz, LearningDashboard } from "@/lib/learning-hub/types"
 const mockDashboard: LearningDashboard = {
   completed_articles: 2,
   total_articles: 10,
-  quizzes_taken: 1,
-  average_score: 75,
+  completed_quizzes: 1,
+  total_quizzes: 4,
+  progress_percentage: 75,
+  quiz_scores: [],
 }
 
 const mockQuizzes: Quiz[] = [

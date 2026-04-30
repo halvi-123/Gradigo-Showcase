@@ -23,8 +23,8 @@ export function LearningHubQuizDashboard({
   completedQuizIds,
   quizScores,
 }: Props) {
-  const progressPercent = dashboard.total_articles > 0
-    ? Math.round((dashboard.completed_articles / dashboard.total_articles) * 100)
+  const progressPercent = dashboard.total_quizzes > 0
+    ? Math.round((dashboard.completed_quizzes / dashboard.total_quizzes) * 100)
     : 0
 
   return (
@@ -46,7 +46,7 @@ export function LearningHubQuizDashboard({
         </div>
 
         <p className="text-xs text-[#f0ebd8]/50">
-          {dashboard.quizzes_taken} quizzes taken · Average score: {dashboard.average_score.toFixed(1)}%
+          {dashboard.completed_quizzes} quizzes completed · Average score: {(dashboard.progress_percentage ?? 0).toFixed(1)}%
         </p>
 
         <Tabs value={difficulty} onValueChange={(v) => onDifficultyChange(v as "easy" | "medium" | "hard")}>
@@ -70,12 +70,12 @@ export function LearningHubQuizDashboard({
               <button
                 key={quiz.id}
                 onClick={() => onQuizStart(quiz)}
-                className={`w-full rounded-lg px-4 py-2 text-left text-sm font-medium transition-all ${
+                className={`w-full rounded-lg px-4 py-2 text-left text-sm font-medium transition-all border ${
                   completed
                     ? passed
-                      ? "bg-green-900/40 border border-green-500/50 text-green-300"
-                      : "bg-red-900/40 border border-red-500/50 text-red-300"
-                    : "bg-[#1d2d44] border border-[#3e5c76]/50 text-white hover:bg-[#3e5c76]/30"
+                      ? "bg-green-900/40 border-green-500/50 text-green-300"
+                      : "bg-red-900/40 border-red-500/50 text-red-300"
+                    : "bg-[#1d2d44] border-[#3e5c76]/50 text-white hover:bg-[#3e5c76]/30"
                 }`}
               >
                 {quiz.title}

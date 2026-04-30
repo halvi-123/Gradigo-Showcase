@@ -4,6 +4,7 @@ import type {
   Article,
   Video,
   Quiz,
+  Question,
   QuizResult,
   QuizSubmission,
   LearningDashboard,
@@ -44,8 +45,26 @@ export async function getQuizzesByDifficulty(difficulty: "easy" | "medium" | "ha
   const response = await fetch(`${getApiBaseUrl()}/api/learning/questions?difficulty=${difficulty}`, {
     headers: getAuthHeaders(),
   })
-  if (!response.ok) throw new Error("Failed to fetch quizzes")
-  return response.json()
+  if (!response.ok) throw new Error("Failed to fetch questions")
+
+  const questions: Question[] = await response.json()
+
+  // Group flat questions by category into Quiz objects
+  const categoryMap = new Map<number, Quiz>()
+  questions.forEach((question) => {
+    const catId = question.category.id
+    if (!categoryMap.has(catId)) {
+      categoryMap.set(catId, {
+        id: catId,
+        title: question.category.name,
+        difficulty,
+        questions: [],
+      })
+    }
+    categoryMap.get(catId)!.questions.push(question)
+  })
+
+  return Array.from(categoryMap.values())
 }
 
 export async function submitQuiz(quizId: number, submission: QuizSubmission): Promise<QuizResult> {

@@ -12,10 +12,12 @@ jest.mock("@/lib/learning-hub/service", () => ({
   getVideos: jest.fn().mockResolvedValue([]),
   getQuizzesByDifficulty: jest.fn().mockResolvedValue([]),
   getDashboard: jest.fn().mockResolvedValue({
-    completed_articles: 0,
-    total_articles: 0,
-    quizzes_taken: 0,
-    average_score: 0,
+  completed_articles: 0,
+  total_articles: 0,
+  completed_quizzes: 0,
+  total_quizzes: 0,
+  progress_percentage: 0,
+  quiz_scores: [],
   }),
   markArticleComplete: jest.fn().mockResolvedValue(undefined),
 }))

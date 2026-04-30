@@ -13,6 +13,11 @@ export type Video = {
   description: string
 }
 
+export type Category = {
+  id: number
+  name: string
+}
+
 export type Answer = {
   id: number
   text: string
@@ -21,6 +26,8 @@ export type Answer = {
 export type Question = {
   id: number
   text: string
+  difficulty: "easy" | "medium" | "hard"
+  category: Category
   answers: Answer[]
 }
 
@@ -43,6 +50,8 @@ export type QuizResult = {
 export type LearningDashboard = {
   completed_articles: number
   total_articles: number
-  quizzes_taken: number
-  average_score: number
+  completed_quizzes: number
+  total_quizzes: number
+  progress_percentage: number
+  quiz_scores: { quiz_id: number; score: number }[]
 }
