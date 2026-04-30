@@ -35,7 +35,7 @@ export function MoveOutReadinessMeter({ score, statusLabel }: MoveOutReadinessMe
   const strokeDashoffset = circumference - (safeScore / 100) * circumference
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 rounded-xl border border-border/60 bg-gradient-to-b from-background/40 to-transparent p-8">
+    <div className="flex flex-col items-center justify-center gap-6 rounded-xl border border-border/60 bg-gradient-to-b from-background/40 to-transparent p-8 overflow-hidden">
       <div className="relative h-32 w-32">
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 120 120">
           <circle

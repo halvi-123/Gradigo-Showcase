@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from apps.move_out.mapbox_views import MapboxGeocodeView, MapboxStaticView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,6 +29,8 @@ urlpatterns = [
     path("api/learning/", include("apps.learning.urls")),
     path("api/pension/", include("apps.pension.urls")),
     path("api/chatbot/", include("apps.AI_chatbot.urls")),
+    path("api/mapbox/geocode", MapboxGeocodeView.as_view()),
+    path("api/mapbox/static", MapboxStaticView.as_view()),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/docs/",
