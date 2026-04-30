@@ -26,9 +26,9 @@ export async function fetchPostcodeGeocode(postcode: string): Promise<MapboxGeoc
   }
 
   const request = (async () => {
-      const rawBase = process.env.NEXT_PUBLIC_API_BASE_URL
+      const rawBase = process.env.NEXT_PUBLIC_API_URL
       if (!rawBase) {
-        throw new Error("NEXT_PUBLIC_API_BASE_URL must be set to your backend URL")
+        throw new Error("NEXT_PUBLIC_API_URL must be set to your backend URL")
       }
       const base = rawBase.replace(/\/$/, "")
       const url = `${base}/api/mapbox/geocode?postcode=${encodeURIComponent(trimmedPostcode)}`
@@ -72,9 +72,9 @@ export function buildStaticMapUrl(params: {
   searchParams.set("zoom", String(params.zoom ?? 13))
   searchParams.set("style", params.stylePreset ?? "clean")
 
-  const rawBase = process.env.NEXT_PUBLIC_API_BASE_URL
+  const rawBase = process.env.NEXT_PUBLIC_API_URL
   if (!rawBase) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL must be set to your backend URL")
+    throw new Error("NEXT_PUBLIC_API_URL must be set to your backend URL")
   }
   const base = rawBase.replace(/\/$/, "")
   return `${base}/api/mapbox/static?${searchParams.toString()}`
