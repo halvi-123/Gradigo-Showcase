@@ -49,10 +49,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           </div>
           <div className="group-data-[collapsible=icon]:hidden">
             <p className="font-heading text-3xl leading-none font-semibold tracking-tight text-sidebar-foreground">
-              First Job
-            </p>
-            <p className="mt-1 font-heading text-3xl leading-none font-semibold tracking-tight text-sidebar-foreground">
-              Navigator
+              Gradigo
             </p>
           </div>
         </div>

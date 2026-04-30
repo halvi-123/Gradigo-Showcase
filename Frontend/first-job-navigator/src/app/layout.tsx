@@ -9,10 +9,10 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "First Job Navigator",
-    template: "%s >> First Job Navigator",
+    default: "Gradigo",
+    template: "%s >> Gradigo",
   },
-  description: "First Job Navigator helps users understand taxes, budgeting, and financial progress.",
+  description: "Gradigo helps users understand taxes, budgeting, and financial progress.",
   icons: {
     icon: "/sidebar-logo.svg",
     shortcut: "/sidebar-logo.svg",

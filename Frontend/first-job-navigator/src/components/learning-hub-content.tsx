@@ -107,7 +107,7 @@ export function LearningHubContent() {
               <Separator orientation="vertical" className="mr-2 data-vertical:h-4 data-vertical:self-auto" />
               <Breadcrumb>
                 <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">First Job Navigator</BreadcrumbItem>
+                  <BreadcrumbItem className="hidden md:block">Gradigo</BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
                     <BreadcrumbPage className="text-primary text-lg font-semibold">Learning Hub</BreadcrumbPage>

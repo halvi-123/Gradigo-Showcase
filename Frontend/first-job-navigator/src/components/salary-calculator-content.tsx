@@ -63,7 +63,7 @@ export function SalaryCalculatorContent() {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    First Job Navigator
+                    Gradigo
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
