@@ -72,7 +72,7 @@ export function MoveOutReadinessContent() {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    First Job Navigator
+                    Gradigo
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>

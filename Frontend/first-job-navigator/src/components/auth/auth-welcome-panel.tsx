@@ -12,7 +12,7 @@ export function AuthWelcomePanel() {
     <div className="space-y-6 pr-4">
       <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
         <Sparkles className="h-3.5 w-3.5 text-primary" />
-        Welcome to First Job Navigator
+        Welcome to Gradigo
       </div>
 
       <div className="space-y-3">

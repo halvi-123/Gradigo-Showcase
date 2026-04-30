@@ -193,7 +193,7 @@ export function AuthPage({ mode, resetTokens }: AuthPageProps) {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">First Job Navigator</BreadcrumbItem>
+                <BreadcrumbItem className="hidden md:block">Gradigo</BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-lg font-semibold text-foreground">
@@ -217,13 +217,13 @@ export function AuthPage({ mode, resetTokens }: AuthPageProps) {
               <CardHeader className="px-6 pt-6 pb-0 sm:px-8">
                 <div className="space-y-2">
                   <p className="text-xs font-medium uppercase tracking-[0.24em] text-slate-500">
-                    First Job Navigator
+                    Gradigo
                   </p>
                   <h1 className="text-3xl font-semibold tracking-tight text-slate-900 text-balance">
                     {mode === "login"
                       ? "Sign in to your account"
                       : mode === "register"
-                        ? "Start using First Job Navigator"
+                        ? "Start using Gradigo"
                         : mode === "forgot-password"
                           ? "Send a password reset link"
                           : "Choose a new password"}
