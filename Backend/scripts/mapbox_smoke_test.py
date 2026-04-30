@@ -7,12 +7,11 @@ Usage:
 
 Requirements: `requests` (already in Backend/requirements.txt)
 """
+
 from __future__ import annotations
 
 import argparse
-import json
 import os
-import sys
 from typing import Optional
 
 import requests
@@ -57,7 +56,9 @@ def run_geocode(base: str, postcode: str) -> Optional[list]:
     return center
 
 
-def run_static(base: str, lng: str, lat: str, zoom: int = 12, width: int = 600, height: int = 300) -> bool:
+def run_static(
+    base: str, lng: str, lat: str, zoom: int = 12, width: int = 600, height: int = 300
+) -> bool:
     url = f"{base.rstrip('/')}/api/mapbox/static"
     params = {"lng": lng, "lat": lat, "zoom": zoom, "width": width, "height": height}
     print(f"GET {url} params={params}")
@@ -102,7 +103,9 @@ def run_static(base: str, lng: str, lat: str, zoom: int = 12, width: int = 600, 
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Mapbox proxy smoke test")
-    p.add_argument("--base", default="http://127.0.0.1:8000", help="Base URL for Django server")
+    p.add_argument(
+        "--base", default="http://127.0.0.1:8000", help="Base URL for Django server"
+    )
     p.add_argument("--postcode", default="SW5 0LT", help="Postcode to geocode")
     p.add_argument("--no-static", action="store_true", help="Skip static image test")
     args = p.parse_args()

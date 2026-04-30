@@ -99,29 +99,17 @@ class QuestionsByFilterView(APIView):
         questions = Question.objects.all()
 
         if category:
-            questions = questions.filter(
-                category__name__iexact=category
-            )
+            questions = questions.filter(category__name__iexact=category)
 
         valid_difficulties = ["easy", "medium", "hard"]
 
         if difficulty:
             if difficulty not in valid_difficulties:
-                return Response(
-                    {"error": "Invalid difficulty"},
-                    status=400
-                )
+                return Response({"error": "Invalid difficulty"}, status=400)
 
-            questions = questions.filter(
-                difficulty=difficulty
-            )
+            questions = questions.filter(difficulty=difficulty)
 
-        return Response(
-            QuestionSerializer(
-                questions,
-                many=True
-            ).data
-        )
+        return Response(QuestionSerializer(questions, many=True).data)
 
 
 class CompleteArticleView(APIView):
@@ -140,11 +128,13 @@ class CompleteArticleView(APIView):
 
         _, created = mark_article_complete(request.user, article)
 
-        return Response({
-            "status": "completed",
-            "already_completed": not created,
-            "article_id": article.id
-        })
+        return Response(
+            {
+                "status": "completed",
+                "already_completed": not created,
+                "article_id": article.id,
+            }
+        )
 
 
 class SubmitQuizView(APIView):
@@ -165,12 +155,14 @@ class SubmitQuizView(APIView):
 
         attempt, results = submit_quiz(request.user, quiz, answers)
 
-        return Response({
-            "attempt_id": attempt.id,
-            "score": attempt.score,
-            "passed": attempt.passed,
-            "results": results
-        })
+        return Response(
+            {
+                "attempt_id": attempt.id,
+                "score": attempt.score,
+                "passed": attempt.passed,
+                "results": results,
+            }
+        )
 
 
 class DashboardView(APIView):

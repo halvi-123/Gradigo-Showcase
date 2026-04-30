@@ -25,18 +25,12 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv(
-    "SECRET_KEY",
-    "unsafe-dev-secret-key"
-)
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-dev-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.getenv(
-    "ALLOWED_HOSTS",
-    "localhost,127.0.0.1"
-).split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
 # Application definition
@@ -182,10 +176,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-FRONTEND_URL = os.getenv(
-    "FRONTEND_URL",
-    "http://localhost:3000"
-)
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",

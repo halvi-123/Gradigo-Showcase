@@ -6,8 +6,7 @@ PASS_MARK = 70
 
 def mark_article_complete(user, article):
     progress, created = ArticleProgress.objects.get_or_create(
-        user=user,
-        article=article
+        user=user, article=article
     )
 
     if not progress.completed:
@@ -60,12 +59,14 @@ def submit_quiz(user, quiz, answers):
         if is_correct:
             correct += 1
 
-        results.append({
-            "question": question.text,
-            "correct": is_correct,
-            "correct_answer": correct_answer.text,
-            "explanation": question.explanation,
-        })
+        results.append(
+            {
+                "question": question.text,
+                "correct": is_correct,
+                "correct_answer": correct_answer.text,
+                "explanation": question.explanation,
+            }
+        )
 
     score = 0
     if total > 0:
@@ -94,24 +95,23 @@ def get_dashboard(user):
 
     avg_score = attempts.aggregate(Avg("score"))["score__avg"] or 0
 
-    easy_avg = attempts.filter(quiz__difficulty="easy").aggregate(
-        Avg("score")
-    )["score__avg"] or 0
+    easy_avg = (
+        attempts.filter(quiz__difficulty="easy").aggregate(Avg("score"))["score__avg"]
+        or 0
+    )
 
-    medium_avg = attempts.filter(quiz__difficulty="medium").aggregate(
-        Avg("score")
-    )["score__avg"] or 0
+    medium_avg = (
+        attempts.filter(quiz__difficulty="medium").aggregate(Avg("score"))["score__avg"]
+        or 0
+    )
 
-    hard_avg = attempts.filter(quiz__difficulty="hard").aggregate(
-        Avg("score")
-    )["score__avg"] or 0
+    hard_avg = (
+        attempts.filter(quiz__difficulty="hard").aggregate(Avg("score"))["score__avg"]
+        or 0
+    )
 
     # store scores
-    difficulty_scores = {
-        "easy": easy_avg,
-        "medium": medium_avg,
-        "hard": hard_avg
-    }
+    difficulty_scores = {"easy": easy_avg, "medium": medium_avg, "hard": hard_avg}
 
     if quizzes_taken == 0:
         strongest = None
