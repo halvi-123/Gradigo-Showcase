@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SalaryInputCard } from "@/components/salary-input-card"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -30,10 +30,20 @@ export function SalaryCalculatorContent() {
   const [result, setResult] = useState<SalaryCalculationResult>(getDefaultSalaryCalculationResult)
   const [isCalculating, setIsCalculating] = useState(false)
   const [calculationError, setCalculationError] = useState<string | null>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsVisible(true)
+    }, 30)
+
+    return () => clearTimeout(timeout)
+  }, [])
 
   async function handleCalculate(input: SalaryCalculationInput) {
     setIsCalculating(true)
     setCalculationError(null)
+
     try {
       const nextResult = await calculateSalary(input)
       setResult(nextResult)
@@ -52,47 +62,60 @@ export function SalaryCalculatorContent() {
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar />
+
         <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="-ml-1" />
-              <Separator
-                orientation="vertical"
-                className="mr-2 data-vertical:h-4 data-vertical:self-auto"
-              />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    Gradigo
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage className="text-primary text-lg font-semibold">
-                      Salary Calculator
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div>
+          <div
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateY(0)" : "translateY(14px)",
+              transition: "opacity 380ms ease, transform 380ms ease",
+            }}
+          >
+            <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="-ml-1" />
+                <Separator
+                  orientation="vertical"
+                  className="mr-2 data-vertical:h-4 data-vertical:self-auto"
+                />
+                <Breadcrumb>
+                  <BreadcrumbList>
+                    <BreadcrumbItem className="hidden md:block">
+                      Gradigo
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage className="text-primary text-lg font-semibold">
+                        Salary Calculator
+                      </BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </BreadcrumbList>
+                </Breadcrumb>
+              </div>
 
-            {!isAuthenticated ? (
-              <Button asChild variant="outline" className="h-10 rounded-md px-5 text-sm font-semibold text-primary">
-                <Link href="/login">Login / Signup</Link>
-              </Button>
-            ) : null}
-          </header>
+              {!isAuthenticated ? (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="h-10 rounded-md px-5 text-sm font-semibold text-primary"
+                >
+                  <Link href="/login">Login / Signup</Link>
+                </Button>
+              ) : null}
+            </header>
 
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="grid gap-4 xl:grid-cols-[minmax(420px,560px)_1fr]">
-              <SalaryInputCard
-                onCalculate={handleCalculate}
-                isCalculating={isCalculating}
-                calculationError={calculationError}
-              />
+            <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+              <div className="grid gap-4 xl:grid-cols-[minmax(420px,560px)_1fr]">
+                <SalaryInputCard
+                  onCalculate={handleCalculate}
+                  isCalculating={isCalculating}
+                  calculationError={calculationError}
+                />
 
-              <div className="grid gap-4 content-start">
-                <SalaryResultsCard result={result} />
-                <PayBreakdownTable result={result} />
+                <div className="grid gap-4 content-start">
+                  <SalaryResultsCard result={result} />
+                  <PayBreakdownTable result={result} />
+                </div>
               </div>
             </div>
           </div>
