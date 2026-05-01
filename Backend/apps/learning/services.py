@@ -1,5 +1,6 @@
 from django.db.models import Avg
 from .models import ArticleProgress, Answer, QuizAttempt, Article
+from django.db.models import Max
 
 PASS_MARK = 70
 
@@ -83,51 +84,45 @@ def submit_quiz(user, quiz, answers):
 
 
 def get_dashboard(user):
-    total_articles = Article.objects.count()
+    from .models import Quiz
 
+    total_articles = Article.objects.count()
     completed_articles = ArticleProgress.objects.filter(
         user=user, completed=True
     ).count()
 
-    attempts = QuizAttempt.objects.filter(user=user)
+    completed_article_ids = list(
+        ArticleProgress.objects.filter(user=user, completed=True).values_list(
+            "article_id", flat=True
+        )
+    )
 
-    quizzes_taken = attempts.count()
+    total_quizzes = Quiz.objects.count()
+
+    attempts = QuizAttempt.objects.filter(user=user)
+    completed_quizzes = attempts.filter(passed=True).count()
 
     avg_score = attempts.aggregate(Avg("score"))["score__avg"] or 0
 
-    easy_avg = (
-        attempts.filter(quiz__difficulty="easy").aggregate(Avg("score"))["score__avg"]
-        or 0
+    progress_percentage = (
+        (completed_quizzes / total_quizzes * 100) if total_quizzes > 0 else 0
     )
 
-    medium_avg = (
-        attempts.filter(quiz__difficulty="medium").aggregate(Avg("score"))["score__avg"]
-        or 0
+    latest_attempts = (
+        attempts.values("quiz_id")
+        .annotate(score=Max("score"))
+        .values("quiz_id", "score")
     )
 
-    hard_avg = (
-        attempts.filter(quiz__difficulty="hard").aggregate(Avg("score"))["score__avg"]
-        or 0
-    )
-
-    # store scores
-    difficulty_scores = {"easy": easy_avg, "medium": medium_avg, "hard": hard_avg}
-
-    if quizzes_taken == 0:
-        strongest = None
-        weakest = None
-    else:
-        strongest = max(difficulty_scores, key=difficulty_scores.get)
-        weakest = min(difficulty_scores, key=difficulty_scores.get)
+    quiz_scores = list(latest_attempts)
 
     return {
         "completed_articles": completed_articles,
         "total_articles": total_articles,
-        "quizzes_taken": quizzes_taken,
-        "average_score": avg_score,
-        "difficulty_breakdown": difficulty_scores,
-        "difficulty_insight": {
-            "strongest": strongest,
-            "weakest": weakest,
-        },
+        "completed_article_ids": completed_article_ids,
+        "completed_quizzes": completed_quizzes,
+        "total_quizzes": total_quizzes,
+        "progress_percentage": progress_percentage,
+        "average_score": round(avg_score, 1),
+        "quiz_scores": quiz_scores,
     }

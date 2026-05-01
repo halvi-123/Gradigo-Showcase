@@ -1,0 +1,76 @@
+{
+  "articles": [
+    {
+      "title": "Understanding Your Payslip",
+      "slug": "understanding-your-payslip",
+      "content": "",
+      "external_url": "https://www.gov.uk/understanding-your-pay"
+    },
+    {
+      "title": "How Income Tax Works in the UK",
+      "slug": "how-income-tax-works",
+      "content": "",
+      "external_url": "https://www.gov.uk/income-tax"
+    },
+    {
+      "title": "National Insurance Explained",
+      "slug": "national-insurance-explained",
+      "content": "",
+      "external_url": "https://www.gov.uk/national-insurance"
+    },
+    {
+      "title": "How to Start Saving Money",
+      "slug": "how-to-start-saving",
+      "content": "",
+      "external_url": "https://www.moneyhelper.org.uk/en/savings"
+    },
+    {
+      "title": "Beginner's Guide to Pensions",
+      "slug": "beginners-guide-to-pensions",
+      "content": "",
+      "external_url": "https://www.moneyhelper.org.uk/en/pensions-and-retirement"
+    },
+    {
+      "title": "Student Loan Repayments Explained",
+      "slug": "student-loan-repayments",
+      "content": "",
+      "external_url": "https://www.gov.uk/repaying-your-student-loan"
+    },
+    {
+      "title": "How to Build an Emergency Fund",
+      "slug": "emergency-fund",
+      "content": "",
+      "external_url": "https://www.moneyhelper.org.uk/en/savings/types-of-savings/emergency-savings-how-much-is-enough"
+    },
+    {
+      "title": "Understanding Your Tax Code",
+      "slug": "understanding-tax-code",
+      "content": "",
+      "external_url": "https://www.gov.uk/tax-codes"
+    },
+    {
+      "title": "What is Auto-Enrolment?",
+      "slug": "auto-enrolment",
+      "content": "",
+      "external_url": "https://www.moneyhelper.org.uk/en/pensions-and-retirement/auto-enrolment"
+    },
+    {
+      "title": "Renting for the First Time",
+      "slug": "renting-first-time",
+      "content": "",
+      "external_url": "https://www.gov.uk/private-renting"
+    },
+    {
+      "title": "How to Read a Job Offer",
+      "slug": "how-to-read-job-offer",
+      "content": "",
+      "external_url": "https://www.gov.uk/employment-contracts-and-conditions"
+    },
+    {
+      "title": "The 50/30/20 Budgeting Rule",
+      "slug": "50-30-20-rule",
+      "content": "",
+      "external_url": "https://www.moneyhelper.org.uk/en/everyday-money/budgeting"
+    }
+  ]
+}

@@ -177,15 +177,14 @@ class LearningServiceTests(TestCase):
 
         self.assertEqual(dashboard["completed_articles"], 1)
         self.assertEqual(dashboard["total_articles"], 2)
-        self.assertEqual(dashboard["quizzes_taken"], 2)
-        self.assertEqual(dashboard["average_score"], 70)
-        self.assertIn("difficulty_breakdown", dashboard)
-        self.assertIn("difficulty_insight", dashboard)
+        self.assertEqual(dashboard["completed_quizzes"], 1)
+        self.assertIn("quiz_scores", dashboard)
+        self.assertIn("progress_percentage", dashboard)
 
     def test_get_dashboard_returns_zero_average_when_no_attempts(self):
         dashboard = get_dashboard(self.user)
 
         self.assertEqual(dashboard["completed_articles"], 0)
         self.assertEqual(dashboard["total_articles"], 2)
-        self.assertEqual(dashboard["quizzes_taken"], 0)
+        self.assertEqual(dashboard["completed_quizzes"], 0)
         self.assertEqual(dashboard["average_score"], 0)
