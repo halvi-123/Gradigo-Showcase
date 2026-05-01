@@ -1,0 +1,54 @@
+{
+  "videos": [
+    {
+      "title": "How Pensions Work",
+      "youtube_url": "https://www.youtube.com/watch?v=1YkGQfkiJmo",
+      "description": "A beginner's guide to understanding pensions"
+    },
+    {
+      "title": "UK Tax System Explained",
+      "youtube_url": "https://www.youtube.com/watch?v=AwSzAL4EyTs",
+      "description": "Everything you need to know about UK taxes"
+    },
+    {
+      "title": "Budgeting for Beginners",
+      "youtube_url": "https://www.youtube.com/watch?v=sVKQn2I4HDM",
+      "description": "How to create and stick to a budget"
+    },
+    {
+      "title": "Understanding National Insurance",
+      "youtube_url": "https://www.youtube.com/watch?v=GJeZMRCCjpA",
+      "description": "What is NI and why do you pay it"
+    },
+    {
+      "title": "How to Save Money on a Low Income",
+      "youtube_url": "https://www.youtube.com/watch?v=7PwNFhPZdN8",
+      "description": "Practical tips for saving when money is tight"
+    },
+    {
+      "title": "Student Loans Explained",
+      "youtube_url": "https://www.youtube.com/watch?v=sh5KMnxFQFk",
+      "description": "Everything you need to know about student loan repayments"
+    },
+    {
+      "title": "First Job Financial Tips",
+      "youtube_url": "https://www.youtube.com/watch?v=HQzoZfc3GwQ",
+      "description": "Essential money tips for your first job"
+    },
+    {
+      "title": "How to Invest as a Beginner",
+      "youtube_url": "https://www.youtube.com/watch?v=gFQNPmLKj1k",
+      "description": "A simple introduction to investing your money"
+    },
+    {
+      "title": "Understanding Your Payslip",
+      "youtube_url": "https://www.youtube.com/watch?v=bxWdPSLVoaU",
+      "description": "How to read and understand your payslip"
+    },
+    {
+      "title": "Emergency Fund Explained",
+      "youtube_url": "https://www.youtube.com/watch?v=vftjBTjFlzI",
+      "description": "Why you need an emergency fund and how to build one"
+    }
+  ]
+}

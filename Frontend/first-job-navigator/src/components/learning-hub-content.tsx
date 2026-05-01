@@ -40,15 +40,17 @@ export function LearningHubContent() {
   const [dashboard, setDashboard] = useState<LearningDashboard>({
     completed_articles: 0,
     total_articles: 0,
+    completed_article_ids: [],
     completed_quizzes: 0,
     total_quizzes: 0,
     progress_percentage: 0,
+    average_score: 0,
     quiz_scores: [],
   })
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("easy")
   const [readArticleIds, setReadArticleIds] = useState<number[]>([])
-  const [completedQuizIds] = useState<number[]>([])
-  const [quizScores] = useState<Record<number, number>>({})
+  const [completedQuizIds, setCompletedQuizIds] = useState<number[]>([])
+  const [quizScores, setQuizScores] = useState<Record<number, number>>({})
   const [showLoginDialog, setShowLoginDialog] = useState(false)
 
   useEffect(() => {
@@ -62,6 +64,9 @@ export function LearningHubContent() {
         setArticles(articlesData.length > 0 ? articlesData : MOCK_ARTICLES)
         setVideos(videosData.length > 0 ? videosData : MOCK_VIDEOS)
         setDashboard(dashboardData)
+        setReadArticleIds(dashboardData.completed_article_ids)
+        setCompletedQuizIds(dashboardData.quiz_scores.map((qs: { quiz_id: number; score: number }) => qs.quiz_id))
+        setQuizScores(Object.fromEntries(dashboardData.quiz_scores.map((qs: { quiz_id: number; score: number }) => [qs.quiz_id, qs.score])))
       } catch {
         setArticles(MOCK_ARTICLES)
         setVideos(MOCK_VIDEOS)

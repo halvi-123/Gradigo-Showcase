@@ -50,8 +50,10 @@ export type QuizResult = {
 export type LearningDashboard = {
   completed_articles: number
   total_articles: number
+  completed_article_ids: number[]
   completed_quizzes: number
   total_quizzes: number
   progress_percentage: number
+  average_score: number
   quiz_scores: { quiz_id: number; score: number }[]
 }

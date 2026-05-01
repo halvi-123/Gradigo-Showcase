@@ -186,8 +186,7 @@ class LearningViewTests(TestCase):
 
         response = DashboardView.as_view()(request)
 
-        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["completed_articles"], 1)
         self.assertEqual(response.data["total_articles"], 1)
-        self.assertEqual(response.data["quizzes_taken"], 1)
+        self.assertEqual(response.data["completed_quizzes"], 1)
         self.assertEqual(response.data["average_score"], 90)

@@ -24,8 +24,8 @@ export function LearningHubQuizDashboard({
   quizScores,
 }: Props) {
   const progressPercent = dashboard.total_quizzes > 0
-    ? Math.round((dashboard.completed_quizzes / dashboard.total_quizzes) * 100)
-    : 0
+  ? Math.round((dashboard.completed_quizzes / dashboard.total_quizzes) * 100)
+  : 0
 
   return (
     <Card className="border border-border/60 bg-[#0d1321] text-white shadow-none h-full overflow-hidden">
@@ -46,7 +46,7 @@ export function LearningHubQuizDashboard({
         </div>
 
         <p className="text-xs text-[#f0ebd8]/50">
-          {dashboard.completed_quizzes} quizzes completed · Average score: {(dashboard.progress_percentage ?? 0).toFixed(1)}%
+          {dashboard.completed_quizzes} quizzes completed · Average score: {(dashboard.average_score ?? 0).toFixed(1)}%
         </p>
 
         <Tabs value={difficulty} onValueChange={(v) => onDifficultyChange(v as "easy" | "medium" | "hard")}>

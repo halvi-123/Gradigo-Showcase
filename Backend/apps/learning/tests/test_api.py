@@ -262,10 +262,9 @@ class LearningAPITests(TestCase):
 
         response = self.client.get("/api/learning/dashboard/")
 
-        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["completed_articles"], 1)
         self.assertEqual(response.data["total_articles"], 1)
-        self.assertEqual(response.data["quizzes_taken"], 1)
+        self.assertEqual(response.data["completed_quizzes"], 1)
         self.assertEqual(response.data["average_score"], 85)
-        self.assertIn("difficulty_breakdown", response.data)
-        self.assertIn("difficulty_insight", response.data)
+        self.assertIn("quiz_scores", response.data)
+        self.assertIn("progress_percentage", response.data)

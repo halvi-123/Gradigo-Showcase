@@ -21,7 +21,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getQuizzesByDifficulty, submitQuiz } from "@/lib/learning-hub/service"
 import { MOCK_QUIZZES } from "@/data/learning-hub.mock"
 import type { Quiz, QuizResult } from "@/lib/learning-hub/types"
-
 type Props = {
   quizId: number
 }
@@ -84,7 +83,9 @@ export function LearningHubQuizPage({ quizId }: Props) {
         const score = Math.round((Object.keys(answers).length / (quiz?.questions.length ?? 1)) * 100)
         setResult({ score, passed: score >= 70 })
       } else {
+        console.log("Submitting to quiz ID:", quizId, "with answers:", answers)
         const result = await submitQuiz(quizId, { answers })
+        console.log("Submitting to quiz ID:", quizId, "with answers:", answers)
         setResult(result)
       }
     } catch {
