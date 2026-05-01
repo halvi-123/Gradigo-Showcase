@@ -26,10 +26,13 @@ export async function getArticles(): Promise<Article[]> {
 }
 
 export async function markArticleComplete(articleId: number): Promise<void> {
-  const response = await fetch(`${getApiBaseUrl()}/api/learning/articles/${articleId}/complete/`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-  })
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/learning/articles/${articleId}/complete/`,
+    {
+      method: "POST",
+      headers: getAuthHeaders(),
+    }
+  )
   if (!response.ok) throw new Error("Failed to mark article as complete")
 }
 
@@ -41,38 +44,44 @@ export async function getVideos(): Promise<Video[]> {
   return response.json()
 }
 
-export async function getQuizzesByDifficulty(difficulty: "easy" | "medium" | "hard"): Promise<Quiz[]> {
-  const response = await fetch(`${getApiBaseUrl()}/api/learning/questions?difficulty=${difficulty}`, {
-    headers: getAuthHeaders(),
-  })
-  if (!response.ok) throw new Error("Failed to fetch questions")
-
-  const questions: Question[] = await response.json()
-
-  // Group flat questions by category into Quiz objects
-  const categoryMap = new Map<number, Quiz>()
-  questions.forEach((question) => {
-    const catId = question.category.id
-    if (!categoryMap.has(catId)) {
-      categoryMap.set(catId, {
-        id: catId,
-        title: question.category.name,
-        difficulty,
-        questions: [],
-      })
+export async function getQuizzesByDifficulty(
+  difficulty: "easy" | "medium" | "hard"
+): Promise<Quiz[]> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/learning/quizzes/difficulty/${difficulty}/`,
+    {
+      headers: getAuthHeaders(),
     }
-    categoryMap.get(catId)!.questions.push(question)
-  })
-
-  return Array.from(categoryMap.values())
+  )
+  if (!response.ok) throw new Error("Failed to fetch quizzes")
+  return response.json()
 }
 
-export async function submitQuiz(quizId: number, submission: QuizSubmission): Promise<QuizResult> {
-  const response = await fetch(`${getApiBaseUrl()}/api/learning/quizzes/${quizId}/submit/`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(submission),
-  })
+export async function getQuestionsByDifficulty(
+  difficulty: "easy" | "medium" | "hard"
+): Promise<Question[]> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/learning/questions/?difficulty=${difficulty}`,
+    {
+      headers: getAuthHeaders(),
+    }
+  )
+  if (!response.ok) throw new Error("Failed to fetch questions")
+  return response.json()
+}
+
+export async function submitQuiz(
+  quizId: number,
+  submission: QuizSubmission
+): Promise<QuizResult> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/learning/quizzes/${quizId}/submit/`,
+    {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(submission),
+    }
+  )
   if (!response.ok) throw new Error("Failed to submit quiz")
   return response.json()
 }
