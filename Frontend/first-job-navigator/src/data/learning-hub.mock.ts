@@ -94,8 +94,10 @@ export const MOCK_QUIZZES: Quiz[] = [
 export const MOCK_DASHBOARD: LearningDashboard = {
   completed_articles: 0,
   total_articles: 12,
+  completed_article_ids: [],
   completed_quizzes: 0,
   total_quizzes: 4,
   progress_percentage: 0,
+  average_score: 0,
   quiz_scores: [],
 }
