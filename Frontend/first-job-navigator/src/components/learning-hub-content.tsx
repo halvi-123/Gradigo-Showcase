@@ -123,7 +123,7 @@ export function LearningHubContent() {
           </header>
 
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <p className="text-sm text-[#f0ebd8]/70">
+            <p className="text-sm text-[#0D1321]/70">
               Explore articles, videos and quizzes to build your financial knowledge.
             </p>
 
