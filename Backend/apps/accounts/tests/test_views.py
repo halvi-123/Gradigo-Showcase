@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+VALID_PASSWORD = "Securepassword123!"
+
 
 @pytest.fixture
 def client():
@@ -16,7 +18,7 @@ def registered_user(db):
     return User.objects.create_user(
         email="test@example.com",
         full_name="Test User",
-        password="securepassword123",
+        password=VALID_PASSWORD,
     )
 
 
@@ -28,7 +30,7 @@ class TestRegisterView:
             {
                 "email": "new@example.com",
                 "full_name": "New User",
-                "password": "securepassword123",
+                "password": VALID_PASSWORD,
             },
             format="json",
         )
@@ -41,7 +43,7 @@ class TestRegisterView:
             {
                 "email": "test@example.com",
                 "full_name": "Another User",
-                "password": "securepassword123",
+                "password": VALID_PASSWORD,
             },
             format="json",
         )
@@ -53,7 +55,7 @@ class TestRegisterView:
             {
                 "email": "notanemail",
                 "full_name": "Test User",
-                "password": "securepassword123",
+                "password": VALID_PASSWORD,
             },
             format="json",
         )
@@ -67,7 +69,7 @@ class TestLoginView:
             reverse("accounts:login"),
             {
                 "email": "test@example.com",
-                "password": "securepassword123",
+                "password": VALID_PASSWORD,
             },
             format="json",
         )
@@ -102,16 +104,18 @@ class TestLogoutView:
             reverse("accounts:login"),
             {
                 "email": "test@example.com",
-                "password": "securepassword123",
+                "password": VALID_PASSWORD,
             },
             format="json",
         )
         refresh_token = login_response.data["refresh"]
+
         response = client.post(
             reverse("accounts:logout"),
             {"refresh": refresh_token},
             format="json",
         )
+
         assert response.status_code == 200
         assert response.data["message"] == "Logged out successfully"
 
@@ -131,13 +135,16 @@ class TestMeView:
             reverse("accounts:login"),
             {
                 "email": "test@example.com",
-                "password": "securepassword123",
+                "password": VALID_PASSWORD,
             },
             format="json",
         )
         access_token = login_response.data["access"]
+
         client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
         response = client.get(reverse("accounts:me"))
+
         assert response.status_code == 200
         assert response.data["email"] == "test@example.com"
         assert response.data["full_name"] == "Test User"
