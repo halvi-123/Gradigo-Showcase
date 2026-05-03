@@ -1,0 +1,352 @@
+{
+  "quizzes": [
+    {
+      "title": "Financial Basics",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "text": "What does 'gross pay' mean?",
+          "category": "payslip",
+          "explanation": "Gross pay is your total earnings before any deductions like tax or National Insurance.",
+          "tip": "Always check your gross pay against your contract to make sure you are being paid correctly.",
+          "answers": [
+            {"text": "Pay after tax", "is_correct": false},
+            {"text": "Total pay before deductions", "is_correct": true},
+            {"text": "Your bonus only", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is net pay?",
+          "category": "payslip",
+          "explanation": "Net pay is the amount you actually receive after all deductions have been taken.",
+          "tip": "Base your monthly budget on your net pay not your gross salary.",
+          "answers": [
+            {"text": "Your pay before tax", "is_correct": false},
+            {"text": "Your pay after all deductions", "is_correct": true},
+            {"text": "Your pension contribution", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is income tax used for?",
+          "category": "tax",
+          "explanation": "Income tax funds public services such as the NHS, schools and roads.",
+          "tip": "Understanding where your tax goes helps you appreciate the system.",
+          "answers": [
+            {"text": "To pay your employer", "is_correct": false},
+            {"text": "To fund public services", "is_correct": true},
+            {"text": "To increase your pension", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is a personal allowance?",
+          "category": "tax",
+          "explanation": "The personal allowance is the amount you can earn before you start paying income tax.",
+          "tip": "In the 2025/26 tax year the personal allowance is £12,570.",
+          "answers": [
+            {"text": "The amount you pay in tax each year", "is_correct": false},
+            {"text": "The amount you can earn before paying tax", "is_correct": true},
+            {"text": "A type of pension contribution", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is a pension?",
+          "category": "pension",
+          "explanation": "A pension is a long term savings plan designed to give you an income when you retire.",
+          "tip": "Start contributing to your pension as early as possible to benefit from compound growth.",
+          "answers": [
+            {"text": "A type of bank loan", "is_correct": false},
+            {"text": "A savings plan for retirement", "is_correct": true},
+            {"text": "A monthly bill", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is the first step when creating a personal budget?",
+          "category": "budgeting",
+          "explanation": "Knowing your income and expenses is the foundation of any budget.",
+          "tip": "Write down everything you spend for one week to get a clear picture of your habits.",
+          "answers": [
+            {"text": "Open a savings account", "is_correct": false},
+            {"text": "Calculate your income and list your expenses", "is_correct": true},
+            {"text": "Cut up your credit cards", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What does NI stand for on your payslip?",
+          "category": "payslip",
+          "explanation": "National Insurance contributions fund state benefits including the NHS and state pension.",
+          "tip": "Your NI number is unique to you and stays with you for life.",
+          "answers": [
+            {"text": "Net Income", "is_correct": false},
+            {"text": "National Insurance", "is_correct": true},
+            {"text": "New Investment", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What does it mean to save money?",
+          "category": "savings",
+          "explanation": "Saving means setting aside a portion of your income rather than spending it immediately.",
+          "tip": "Try to save a little each month even if it is a small amount.",
+          "answers": [
+            {"text": "Spending less on food", "is_correct": false},
+            {"text": "Setting aside money for the future", "is_correct": true},
+            {"text": "Borrowing money from a bank", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is an employer pension contribution?",
+          "category": "pension",
+          "explanation": "Your employer adds money to your pension on top of your own contributions.",
+          "tip": "Always contribute enough to get the full employer match as it is essentially free money.",
+          "answers": [
+            {"text": "Money your employer deducts from your salary", "is_correct": false},
+            {"text": "Money your employer adds to your pension", "is_correct": true},
+            {"text": "A government pension payment", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is an emergency fund?",
+          "category": "savings",
+          "explanation": "An emergency fund is money set aside to cover unexpected costs like car repairs or job loss.",
+          "tip": "Aim to save three to six months of expenses in your emergency fund.",
+          "answers": [
+            {"text": "Money you spend on holidays", "is_correct": false},
+            {"text": "Savings set aside for unexpected expenses", "is_correct": true},
+            {"text": "A government grant", "is_correct": false}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Building Financial Knowledge",
+      "difficulty": "medium",
+      "questions": [
+        {
+          "text": "You earn £30,000 a year. How much of your income is within the basic rate tax band?",
+          "category": "tax",
+          "explanation": "After the personal allowance of £12,570 you pay 20% tax on the remaining £17,430.",
+          "tip": "Use the Gradigo salary simulator to see exactly how much tax you pay.",
+          "answers": [
+            {"text": "£30,000", "is_correct": false},
+            {"text": "£17,430", "is_correct": true},
+            {"text": "£12,570", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is the 50/30/20 budgeting rule?",
+          "category": "budgeting",
+          "explanation": "The rule suggests spending 50% on needs, 30% on wants and saving 20% of your income.",
+          "tip": "This is a guideline not a strict rule — adjust it to suit your own situation.",
+          "answers": [
+            {"text": "50% savings, 30% bills, 20% food", "is_correct": false},
+            {"text": "50% needs, 30% wants, 20% savings", "is_correct": true},
+            {"text": "50% tax, 30% rent, 20% pension", "is_correct": false}
+          ]
+        },
+        {
+          "text": "Why does starting your pension early matter?",
+          "category": "pension",
+          "explanation": "The earlier you start the more time compound interest has to grow your pension pot.",
+          "tip": "Even contributing a small amount in your twenties can make a huge difference by retirement.",
+          "answers": [
+            {"text": "You pay less tax immediately", "is_correct": false},
+            {"text": "Your money has more time to grow through compound interest", "is_correct": true},
+            {"text": "Your employer pays more", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What happens if you overspend your budget each month?",
+          "category": "budgeting",
+          "explanation": "Consistently spending more than you earn leads to debt and financial stress.",
+          "tip": "Review your spending categories and identify where you can make small cuts.",
+          "answers": [
+            {"text": "Your salary increases automatically", "is_correct": false},
+            {"text": "You accumulate debt over time", "is_correct": true},
+            {"text": "Your tax goes down", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is compound interest?",
+          "category": "savings",
+          "explanation": "Compound interest means you earn interest on both your original savings and the interest already earned.",
+          "tip": "The longer you leave money saved the more powerful compound interest becomes.",
+          "answers": [
+            {"text": "Interest only on your original deposit", "is_correct": false},
+            {"text": "Interest earned on both savings and previously earned interest", "is_correct": true},
+            {"text": "A fixed monthly payment from your bank", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is a tax code and why does it matter?",
+          "category": "tax",
+          "explanation": "A tax code tells your employer how much tax to deduct from your salary each month.",
+          "tip": "If your tax code is wrong you could be overpaying or underpaying tax so always check it.",
+          "answers": [
+            {"text": "A code that increases your salary", "is_correct": false},
+            {"text": "A code that determines how much tax is deducted from your pay", "is_correct": true},
+            {"text": "A code that unlocks pension benefits", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is automatic enrolment?",
+          "category": "pension",
+          "explanation": "Automatic enrolment means eligible workers are automatically enrolled into a workplace pension.",
+          "tip": "You can opt out but it is usually beneficial to stay enrolled especially if your employer contributes.",
+          "answers": [
+            {"text": "A scheme where you manually apply for a pension", "is_correct": false},
+            {"text": "A scheme where eligible workers are automatically enrolled into a pension", "is_correct": true},
+            {"text": "A government savings bonus", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is the difference between a fixed and variable expense?",
+          "category": "budgeting",
+          "explanation": "Fixed expenses stay the same each month like rent while variable expenses change like food shopping.",
+          "tip": "Variable expenses are usually easier to reduce when you need to cut back.",
+          "answers": [
+            {"text": "Fixed expenses change monthly while variable stay the same", "is_correct": false},
+            {"text": "Fixed expenses stay the same while variable expenses change each month", "is_correct": true},
+            {"text": "There is no difference", "is_correct": false}
+          ]
+        },
+        {
+          "text": "Why is it important to check your payslip each month?",
+          "category": "payslip",
+          "explanation": "Checking your payslip helps you spot errors in tax deductions or payments before they become bigger problems.",
+          "tip": "Keep a copy of each payslip so you can compare them month to month.",
+          "answers": [
+            {"text": "To impress your manager", "is_correct": false},
+            {"text": "To spot errors and understand your deductions", "is_correct": true},
+            {"text": "It is required by law", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is an ISA?",
+          "category": "savings",
+          "explanation": "An ISA is an Individual Savings Account where you can save or invest money without paying tax on the returns.",
+          "tip": "In the 2025/26 tax year you can save up to £20,000 in an ISA.",
+          "answers": [
+            {"text": "A type of pension", "is_correct": false},
+            {"text": "A tax free savings account", "is_correct": true},
+            {"text": "A government loan scheme", "is_correct": false}
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Advanced Financial Planning",
+      "difficulty": "hard",
+      "questions": [
+        {
+          "text": "You earn £50,000 a year. How much income tax do you pay in total?",
+          "category": "tax",
+          "explanation": "You pay 0% on the first £12,570, 20% on £12,571 to £50,270 which is £7,540, and 40% on the remaining £730 which is £292. Total tax is approximately £7,832.",
+          "tip": "Use the Gradigo salary simulator to check exact figures for your situation.",
+          "answers": [
+            {"text": "£10,000", "is_correct": false},
+            {"text": "£7,832", "is_correct": true},
+            {"text": "£5,000", "is_correct": false}
+          ]
+        },
+        {
+          "text": "You contribute 5% of your £2,400 monthly salary to your pension and your employer matches 3%. How much goes into your pension each month?",
+          "category": "pension",
+          "explanation": "5% of £2,400 is £120 and 3% is £72 so £192 total goes into your pension each month.",
+          "tip": "Use simple percentage calculations to stay on top of your pension contributions.",
+          "answers": [
+            {"text": "£120", "is_correct": false},
+            {"text": "£192", "is_correct": true},
+            {"text": "£72", "is_correct": false}
+          ]
+        },
+        {
+          "text": "Your monthly income is £2,000. Fixed costs are £1,200 and variable spending is £700. What percentage of your income is left over?",
+          "category": "budgeting",
+          "explanation": "£2,000 minus £1,900 leaves £100 which is 5% of your income — a very small financial buffer.",
+          "tip": "Aim for at least a 10 to 20 percent buffer each month to build financial resilience.",
+          "answers": [
+            {"text": "20%", "is_correct": false},
+            {"text": "5%", "is_correct": true},
+            {"text": "10%", "is_correct": false}
+          ]
+        },
+        {
+          "text": "You receive a £6,000 bonus on top of your £34,000 salary. How much of the bonus is taxed at the higher rate of 40%?",
+          "category": "tax",
+          "explanation": "The higher rate starts at £50,270. Your salary plus bonus is £40,000 which is still below that threshold so none of the bonus is taxed at 40%.",
+          "tip": "Being pushed into a higher band only affects the income above the threshold not all of your earnings.",
+          "answers": [
+            {"text": "All £6,000", "is_correct": false},
+            {"text": "None of it", "is_correct": true},
+            {"text": "£2,700", "is_correct": false}
+          ]
+        },
+        {
+          "text": "You save £200 per month at 4% annual compound interest. Approximately how much will you have after 10 years?",
+          "category": "savings",
+          "explanation": "With compound interest your savings grow faster over time. After 10 years you would have approximately £29,500.",
+          "tip": "Online compound interest calculators can help you visualise long term savings growth.",
+          "answers": [
+            {"text": "£24,000", "is_correct": false},
+            {"text": "£29,500", "is_correct": true},
+            {"text": "£20,000", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is the difference between defined benefit and defined contribution pensions?",
+          "category": "pension",
+          "explanation": "A defined benefit pension pays a set income in retirement based on salary and years worked. A defined contribution pension depends on how much was contributed and investment performance.",
+          "tip": "Most modern workplace pensions are defined contribution so your retirement income depends on your contributions.",
+          "answers": [
+            {"text": "They are the same thing", "is_correct": false},
+            {"text": "Defined benefit guarantees an income while defined contribution depends on contributions and investments", "is_correct": true},
+            {"text": "Defined contribution guarantees an income", "is_correct": false}
+          ]
+        },
+        {
+          "text": "Your payslip shows a student loan deduction. You are on Plan 2. At what income threshold do repayments start?",
+          "category": "payslip",
+          "explanation": "Plan 2 student loan repayments begin when you earn over £28,470 per year in the 2025/26 tax year.",
+          "tip": "Repayments are automatically deducted through PAYE so you do not need to do anything manually.",
+          "answers": [
+            {"text": "£25,000", "is_correct": false},
+            {"text": "£28,470", "is_correct": true},
+            {"text": "£21,000", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What is the lifetime allowance for pension savings?",
+          "category": "pension",
+          "explanation": "The lifetime allowance was abolished in April 2024 meaning there is no longer a limit on how much you can save in a pension without a tax charge.",
+          "tip": "Always check current HMRC guidance as pension rules can change.",
+          "answers": [
+            {"text": "£1,073,100", "is_correct": false},
+            {"text": "It was abolished in April 2024", "is_correct": true},
+            {"text": "£500,000", "is_correct": false}
+          ]
+        },
+        {
+          "text": "You have £5,000 in savings earning 2% interest and £3,000 in credit card debt at 20% interest. What is the most financially smart move?",
+          "category": "savings",
+          "explanation": "The interest you pay on the debt is much higher than what you earn on savings so paying off the debt first saves more money overall.",
+          "tip": "High interest debt almost always costs more than savings earn so prioritise paying it off.",
+          "answers": [
+            {"text": "Keep saving and ignore the debt", "is_correct": false},
+            {"text": "Pay off the high interest debt first", "is_correct": true},
+            {"text": "Split your savings equally between debt and savings", "is_correct": false}
+          ]
+        },
+        {
+          "text": "What does it mean to be in a higher tax band?",
+          "category": "tax",
+          "explanation": "Only the income above the threshold for the higher band is taxed at the higher rate. Your income below the threshold is still taxed at lower rates.",
+          "tip": "Earning more is always beneficial even if it pushes you into a higher tax band.",
+          "answers": [
+            {"text": "All of your income is taxed at the higher rate", "is_correct": false},
+            {"text": "Only income above the threshold is taxed at the higher rate", "is_correct": true},
+            {"text": "You stop receiving a personal allowance", "is_correct": false}
+          ]
+        }
+      ]
+    }
+  ]
+}

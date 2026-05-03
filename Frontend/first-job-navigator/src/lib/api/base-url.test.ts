@@ -3,7 +3,7 @@ import { getApiBaseUrl } from "@/lib/api/base-url"
 describe("getApiBaseUrl", () => {
   const mutableEnv = process.env as Record<string, string | undefined>
   const originalNodeEnv = mutableEnv.NODE_ENV
-  const originalApiBaseUrl = mutableEnv.NEXT_PUBLIC_API_BASE_URL
+  const originalApiBaseUrl = mutableEnv.NEXT_PUBLIC_API_URL
 
   function setNodeEnv(value: string | undefined) {
     mutableEnv.NODE_ENV = value
@@ -11,11 +11,11 @@ describe("getApiBaseUrl", () => {
 
   function setApiBaseUrl(value: string | undefined) {
     if (value === undefined) {
-      delete mutableEnv.NEXT_PUBLIC_API_BASE_URL
+      delete mutableEnv.NEXT_PUBLIC_API_URL
       return
     }
 
-    mutableEnv.NEXT_PUBLIC_API_BASE_URL = value
+    mutableEnv.NEXT_PUBLIC_API_URL = value
   }
 
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe("getApiBaseUrl", () => {
     setApiBaseUrl(originalApiBaseUrl)
   })
 
-  it("returns the configured API base URL when NEXT_PUBLIC_API_BASE_URL variable is set", () => {
+  it("returns the configured API base URL when NEXT_PUBLIC_API_URL variable is set", () => {
     setApiBaseUrl("https://api.firstjobnavigator.com")
 
     expect(getApiBaseUrl()).toBe("https://api.firstjobnavigator.com")
@@ -52,7 +52,7 @@ describe("getApiBaseUrl", () => {
     setApiBaseUrl(undefined)
 
     expect(() => getApiBaseUrl()).toThrow(
-      "Missing NEXT_PUBLIC_API_BASE_URL for non-development environment",
+      "Missing NEXT_PUBLIC_API_URL for non-development environment",
     )
   })
 })

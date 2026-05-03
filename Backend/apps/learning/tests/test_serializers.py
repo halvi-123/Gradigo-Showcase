@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.learning.models import Article, Quiz, Question, Answer, Video
+from apps.learning.models import Article, Quiz, Question, Answer, Video, Category
 from apps.learning.serializers import (
     AnswerSerializer,
     QuestionSerializer,
@@ -13,6 +13,8 @@ from apps.learning.serializers import (
 
 class LearningSerializerTests(TestCase):
     def setUp(self):
+        self.category = Category.objects.create(name="budgeting")
+
         self.article = Article.objects.create(
             title="Article 1",
             slug="article-1",
@@ -30,6 +32,10 @@ class LearningSerializerTests(TestCase):
         self.question = Question.objects.create(
             quiz=self.quiz,
             text="What is budgeting?",
+            difficulty="easy",
+            category=self.category,
+            explanation="Budgeting helps manage money.",
+            tip="Track spending regularly.",
         )
         self.answer1 = Answer.objects.create(
             question=self.question,
@@ -52,6 +58,8 @@ class LearningSerializerTests(TestCase):
         data = QuestionSerializer(self.question).data
 
         self.assertEqual(data["text"], "What is budgeting?")
+        self.assertEqual(data["difficulty"], "easy")
+        self.assertEqual(data["category"]["name"], "budgeting")
         self.assertEqual(len(data["answers"]), 2)
         self.assertIn("id", data["answers"][0])
         self.assertIn("text", data["answers"][0])
@@ -63,6 +71,11 @@ class LearningSerializerTests(TestCase):
         self.assertEqual(data["difficulty"], "easy")
         self.assertEqual(len(data["questions"]), 1)
         self.assertEqual(data["questions"][0]["text"], "What is budgeting?")
+        self.assertEqual(data["questions"][0]["difficulty"], "easy")
+        self.assertEqual(
+            data["questions"][0]["category"]["name"],
+            "budgeting",
+        )
         self.assertEqual(len(data["questions"][0]["answers"]), 2)
 
     def test_article_serializer_returns_all_fields(self):
@@ -86,6 +99,15 @@ class LearningSerializerTests(TestCase):
             "total_articles": 5,
             "quizzes_taken": 2,
             "average_score": 82.5,
+            "difficulty_breakdown": {
+                "easy": 90,
+                "medium": 75,
+                "hard": 60,
+            },
+            "difficulty_insight": {
+                "strongest": "easy",
+                "weakest": "hard",
+            },
         }
 
         serializer = DashboardSerializer(data=payload)

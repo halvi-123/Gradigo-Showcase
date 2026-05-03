@@ -4,9 +4,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Article, Quiz, Video
-from .serializers import ArticleSerializer, QuizSerializer, VideoSerializer
+from .models import Article, Question, Quiz, Video
+from .serializers import (
+    ArticleSerializer,
+    QuestionSerializer,
+    QuizSerializer,
+    VideoSerializer,
+)
 from .services import get_dashboard, mark_article_complete, submit_quiz
+
+from django.shortcuts import get_object_or_404
 
 
 class StatusResponseSerializer(serializers.Serializer):
@@ -18,8 +25,10 @@ class QuizSubmitRequestSerializer(serializers.Serializer):
 
 
 class QuizSubmitResponseSerializer(serializers.Serializer):
-    score = serializers.IntegerField()
+    attempt_id = serializers.IntegerField()
+    score = serializers.FloatField()
     passed = serializers.BooleanField()
+    results = serializers.ListField()
 
 
 class DashboardResponseSerializer(serializers.Serializer):
@@ -73,6 +82,36 @@ class QuizByDifficultyView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
 
+class QuestionsByFilterView(APIView):
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("category", str),
+            OpenApiParameter("difficulty", str),
+        ],
+        responses={200: QuestionSerializer(many=True)},
+        tags=["learning"],
+    )
+    def get(self, request):
+        category = request.query_params.get("category")
+        difficulty = request.query_params.get("difficulty")
+
+        questions = Question.objects.all()
+
+        if category:
+            questions = questions.filter(category__name__iexact=category)
+
+        valid_difficulties = ["easy", "medium", "hard"]
+
+        if difficulty:
+            if difficulty not in valid_difficulties:
+                return Response({"error": "Invalid difficulty"}, status=400)
+
+            questions = questions.filter(difficulty=difficulty)
+
+        return Response(QuestionSerializer(questions, many=True).data)
+
+
 class CompleteArticleView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -84,10 +123,18 @@ class CompleteArticleView(APIView):
         tags=["learning"],
     )
     def post(self, request, pk):
-        article = Article.objects.get(pk=pk)
-        mark_article_complete(request.user, article)
+        # get the article or return 404 if not found
+        article = get_object_or_404(Article, pk=pk)
 
-        return Response({"status": "completed"})
+        _, created = mark_article_complete(request.user, article)
+
+        return Response(
+            {
+                "status": "completed",
+                "already_completed": not created,
+                "article_id": article.id,
+            }
+        )
 
 
 class SubmitQuizView(APIView):
@@ -102,12 +149,20 @@ class SubmitQuizView(APIView):
         tags=["learning"],
     )
     def post(self, request, pk):
-        quiz = Quiz.objects.get(pk=pk)
+        quiz = get_object_or_404(Quiz, pk=pk)
+
         answers = request.data.get("answers", {})
 
-        attempt = submit_quiz(request.user, quiz, answers)
+        attempt, results = submit_quiz(request.user, quiz, answers)
 
-        return Response({"score": attempt.score, "passed": attempt.passed})
+        return Response(
+            {
+                "attempt_id": attempt.id,
+                "score": attempt.score,
+                "passed": attempt.passed,
+                "results": results,
+            }
+        )
 
 
 class DashboardView(APIView):

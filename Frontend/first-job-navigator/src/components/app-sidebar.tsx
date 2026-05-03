@@ -43,19 +43,16 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props} className="text-sidebar-foreground">
       <SidebarHeader className="px-5 pt-8 pb-6 group-data-[collapsible=icon]:px-2">
-        <div className="flex flex-col items-center gap-4 text-center group-data-[collapsible=icon]:gap-0">
+        <Link href="/" className="flex flex-col items-center gap-4 text-center group-data-[collapsible=icon]:gap-0 hover:opacity-80 transition-opacity">
           <div className="flex size-14 items-center justify-center rounded-2xl bg-sidebar-primary shadow-sm text-sidebar-primary-foreground">
             <TbNavigationDollar className="size-8" />
           </div>
           <div className="group-data-[collapsible=icon]:hidden">
             <p className="font-heading text-3xl leading-none font-semibold tracking-tight text-sidebar-foreground">
-              First Job
-            </p>
-            <p className="mt-1 font-heading text-3xl leading-none font-semibold tracking-tight text-sidebar-foreground">
-              Navigator
+              Gradigo
             </p>
           </div>
-        </div>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent className="px-3 pb-4">

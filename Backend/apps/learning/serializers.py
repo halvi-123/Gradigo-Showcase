@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Answer, Question, Quiz, Article, Video
+from .models import Answer, Question, Quiz, Article, Video, Category
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["id", "name"]
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -10,10 +16,11 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True)
+    category = CategorySerializer()
 
     class Meta:
         model = Question
-        fields = ["id", "text", "answers"]
+        fields = ["id", "text", "difficulty", "category", "answers"]
 
 
 class QuizSerializer(serializers.ModelSerializer):
@@ -41,3 +48,5 @@ class DashboardSerializer(serializers.Serializer):
     total_articles = serializers.IntegerField()
     quizzes_taken = serializers.IntegerField()
     average_score = serializers.FloatField()
+    difficulty_breakdown = serializers.DictField()
+    difficulty_insight = serializers.DictField()

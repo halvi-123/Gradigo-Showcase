@@ -1,18 +1,20 @@
-from django.utils import timezone
 from django.db.models import Avg
 from .models import ArticleProgress, Answer, QuizAttempt, Article
+from django.db.models import Max
 
 PASS_MARK = 70
 
 
 def mark_article_complete(user, article):
-    progress, _ = ArticleProgress.objects.get_or_create(user=user, article=article)
+    progress, created = ArticleProgress.objects.get_or_create(
+        user=user, article=article
+    )
 
-    progress.completed = True
-    progress.completed_at = timezone.now()
-    progress.save()
+    if not progress.completed:
+        progress.completed = True
+        progress.save()
 
-    return progress
+    return progress, created
 
 
 def calculate_quiz_score(quiz, submitted_answers):
@@ -35,34 +37,92 @@ def calculate_quiz_score(quiz, submitted_answers):
 
 
 def submit_quiz(user, quiz, answers):
-    score = calculate_quiz_score(quiz, answers)
+    questions = quiz.questions.all()
 
-    passed = score >= PASS_MARK
+    total = 0
+    correct = 0
+    results = []
 
-    return QuizAttempt.objects.create(
+    for question in questions:
+        selected_id = answers.get(str(question.id))
+        correct_answer = question.answers.filter(is_correct=True).first()
+
+        # skip if no correct answer defined
+        if not correct_answer:
+            continue
+
+        total += 1
+
+        is_correct = False
+        if selected_id is not None and str(selected_id) == str(correct_answer.id):
+            is_correct = True
+
+        if is_correct:
+            correct += 1
+
+        results.append(
+            {
+                "question": question.text,
+                "correct": is_correct,
+                "correct_answer": correct_answer.text,
+                "explanation": question.explanation,
+            }
+        )
+
+    score = 0
+    if total > 0:
+        score = (correct / total) * 100
+
+    attempt = QuizAttempt.objects.create(
         user=user,
         quiz=quiz,
         score=score,
-        passed=passed,
+        passed=score >= PASS_MARK,
     )
+
+    return attempt, results
 
 
 def get_dashboard(user):
-    total_articles = Article.objects.count()
+    from .models import Quiz
 
+    total_articles = Article.objects.count()
     completed_articles = ArticleProgress.objects.filter(
         user=user, completed=True
     ).count()
 
-    quizzes_taken = QuizAttempt.objects.filter(user=user).count()
-
-    avg_score = (
-        QuizAttempt.objects.filter(user=user).aggregate(Avg("score"))["score__avg"] or 0
+    completed_article_ids = list(
+        ArticleProgress.objects.filter(user=user, completed=True).values_list(
+            "article_id", flat=True
+        )
     )
+
+    total_quizzes = Quiz.objects.count()
+
+    attempts = QuizAttempt.objects.filter(user=user)
+    completed_quizzes = attempts.filter(passed=True).count()
+
+    avg_score = attempts.aggregate(Avg("score"))["score__avg"] or 0
+
+    progress_percentage = (
+        (completed_quizzes / total_quizzes * 100) if total_quizzes > 0 else 0
+    )
+
+    latest_attempts = (
+        attempts.values("quiz_id")
+        .annotate(score=Max("score"))
+        .values("quiz_id", "score")
+    )
+
+    quiz_scores = list(latest_attempts)
 
     return {
         "completed_articles": completed_articles,
         "total_articles": total_articles,
-        "quizzes_taken": quizzes_taken,
-        "average_score": avg_score,
+        "completed_article_ids": completed_article_ids,
+        "completed_quizzes": completed_quizzes,
+        "total_quizzes": total_quizzes,
+        "progress_percentage": progress_percentage,
+        "average_score": round(avg_score, 1),
+        "quiz_scores": quiz_scores,
     }

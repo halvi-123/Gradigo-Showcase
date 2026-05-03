@@ -5,6 +5,16 @@ import type { ReactNode } from "react"
 import { MoveOutReadinessMapCard } from "@/components/move-out-readiness-map-card"
 import type { MoveOutReadinessPlan } from "@/lib/move-out-readiness/types"
 import type { UseMoveOutReadinessMapCardResult } from "@/hooks/use-move-out-readiness-map-card"
+// Mocked `buildStaticMapUrl` for these tests so we don't rely on env vars.
+jest.mock("@/lib/mapbox/client", () => ({
+  buildStaticMapUrl: jest.fn((params: { longitude?: number; latitude?: number; zoom?: number }) => {
+    const lng = params.longitude ?? ""
+    const lat = params.latitude ?? ""
+    const zoom = params.zoom ?? "13"
+    return `/api/mapbox/static?lng=${lng}&lat=${lat}&zoom=${zoom}`
+  }),
+}))
+import { buildStaticMapUrl } from "@/lib/mapbox/client"
 
 const mockUseMoveOutReadinessMapCard = jest.fn()
 
@@ -62,7 +72,7 @@ function defaultHookResult(): UseMoveOutReadinessMapCardResult {
       latitude: 55.9533,
       placeName: "Edinburgh",
     },
-    mapImageUrl: "/api/mapbox/static?lng=-3.1883&lat=55.9533&zoom=13",
+    mapImageUrl: buildStaticMapUrl({ longitude: -3.1883, latitude: 55.9533, zoom: 13 }),
     showLoadingState: false,
     activeLayer: {
       label: "Crime: Moderate",

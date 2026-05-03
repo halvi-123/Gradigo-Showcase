@@ -514,7 +514,7 @@ describe("salary service", () => {
 
   it("maps getApiBaseUrl failures to connectivity message and does not call fetch", async () => {
     mockGetApiBaseUrl.mockImplementation(() => {
-      throw new Error("Missing NEXT_PUBLIC_API_BASE_URL for non-development environment")
+      throw new Error("Missing NEXT_PUBLIC_API_URL for non-development environment")
     })
 
     await expect(

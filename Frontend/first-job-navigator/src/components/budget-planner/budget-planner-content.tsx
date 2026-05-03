@@ -120,7 +120,7 @@ export function BudgetPlannerContent() {
               <Separator orientation="vertical" className="mr-2 h-4" />
               <Breadcrumb>
                 <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">First Job Navigator</BreadcrumbItem>
+                  <BreadcrumbItem className="hidden md:block">Gradigo</BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
                     <BreadcrumbPage className="text-primary text-lg font-semibold">Budget Planner</BreadcrumbPage>
