@@ -76,3 +76,14 @@ class ResetPasswordSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["full_name"]
+
+    def validate_full_name(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Full name cannot be empty")
+        return value
