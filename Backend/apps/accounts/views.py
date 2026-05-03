@@ -15,6 +15,7 @@ from .serializers import (
     ForgotPasswordSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
+    UpdateProfileSerializer,
 )
 
 User = get_user_model()
@@ -43,7 +44,7 @@ class LogoutRequestSerializer(serializers.Serializer):
 
 
 class MeResponseSerializer(serializers.Serializer):
-    user_id = serializers.UUIDField()
+    user_id = serializers.IntegerField()
     email = serializers.EmailField()
     full_name = serializers.CharField()
     created_at = serializers.DateTimeField()
@@ -160,6 +161,53 @@ class MeView(APIView):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        request=UpdateProfileSerializer,
+        responses={
+            200: MeResponseSerializer,
+            400: ErrorResponseSerializer,
+            401: ErrorResponseSerializer,
+        },
+        tags=["accounts"],
+    )
+    def patch(self, request):
+        serializer = UpdateProfileSerializer(
+            request.user,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            user = request.user
+            return Response(
+                {
+                    "user_id": user.user_id,
+                    "email": user.email,
+                    "full_name": user.full_name,
+                    "created_at": user.created_at,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        responses={
+            200: MessageResponseSerializer,
+            401: ErrorResponseSerializer,
+        },
+        tags=["accounts"],
+    )
+    def delete(self, request):
+        request.user.delete()
+
+        return Response(
+            {"message": "Account deleted successfully"},
+            status=status.HTTP_200_OK,
+        )
+
 
 class ForgotPasswordView(APIView):
     @extend_schema(
@@ -182,9 +230,14 @@ class ForgotPasswordView(APIView):
             reset_url = f"{settings.FRONTEND_URL}/reset-password/{uidb64}/{token}"
 
             send_mail(
-                subject="Reset your password",
+                subject="Reset your Gradigo password",
                 message=(
-                    "Use the link below to reset your password:\n\n" f"{reset_url}"
+                    "Hi,\n\n"
+                    "We received a request to reset your Gradigo password.\n\n"
+                    f"Reset your password here:\n{reset_url}\n\n"
+                    "If you did not request this, you can safely ignore this email.\n\n"
+                    "Thanks,\n"
+                    "The Gradigo Team"
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],

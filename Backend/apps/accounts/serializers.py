@@ -1,10 +1,25 @@
+import re
+from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
+def validate_password_strength(value):
+    if not re.search(r"[A-Z]", value):
+        raise serializers.ValidationError(
+            "Password must contain at least one capital letter."
+        )
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-+=\[\]\\;/`~]", value):
+        raise serializers.ValidationError(
+            "Password must contain at least one special character."
+        )
+
+    return value
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -26,6 +41,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Full name cannot be empty")
         return value
 
+    def validate_password(self, value):
+        return validate_password_strength(value)
+
     def create(self, validated_data):
         return User.objects.create_user(
             email=validated_data["email"],
@@ -43,6 +61,9 @@ class ResetPasswordSerializer(serializers.Serializer):
     token = serializers.CharField()
     password = serializers.CharField(write_only=True, min_length=8)
 
+    def validate_password(self, value):
+        return validate_password_strength(value)
+
     def validate(self, attrs):
         try:
             uid = force_str(urlsafe_base64_decode(attrs["uidb64"]))
@@ -55,3 +76,14 @@ class ResetPasswordSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["full_name"]
+
+    def validate_full_name(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Full name cannot be empty")
+        return value
