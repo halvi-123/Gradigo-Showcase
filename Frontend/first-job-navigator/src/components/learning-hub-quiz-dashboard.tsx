@@ -23,9 +23,10 @@ export function LearningHubQuizDashboard({
   completedQuizIds,
   quizScores,
 }: Props) {
-  const progressPercent = dashboard.total_quizzes > 0
-  ? Math.round((dashboard.completed_quizzes / dashboard.total_quizzes) * 100)
-  : 0
+  const completedInDifficulty = quizzes.filter(q => completedQuizIds.includes(q.id)).length
+  const progressPercent = quizzes.length > 0
+    ? Math.round((completedInDifficulty / quizzes.length) * 100)
+    : 0
 
   return (
     <Card className="border border-border/60 bg-[#0d1321] text-white shadow-none h-full overflow-hidden">
