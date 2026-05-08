@@ -33,7 +33,7 @@ const featureLinks = [
   { label: "Pension", href: "/pension", icon: PiggyBankIcon },
   { label: "Learning Hub", href: "/learning-hub", icon: BookOpenIcon },
   { label: "Ready to Move Out?", href: "/move-out-readiness", icon: CompassIcon },
-  { label: "Profile & Progress", href: "/profile-progress", icon: ShieldCheckIcon },
+  { label: "Profile & Progress", href: "/profile", icon: ShieldCheckIcon },
 ]
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
