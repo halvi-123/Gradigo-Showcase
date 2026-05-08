@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar"
 import { LearningHubArticlesGrid } from "@/components/learning-hub-articles-grid"
 import { LearningHubVideosGrid } from "@/components/learning-hub-videos-grid"
-import { getArticles, getVideos } from "@/lib/learning-hub/service"
+import { getArticles, getVideos, getDashboard, markArticleComplete } from "@/lib/learning-hub/service"
 import { MOCK_ARTICLES, MOCK_VIDEOS } from "@/data/learning-hub.mock"
 import type { Article, Video } from "@/lib/learning-hub/types"
 
@@ -30,12 +30,14 @@ export function LearningHubContentPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [articlesData, videosData] = await Promise.all([
+        const [articlesData, videosData, dashboardData] = await Promise.all([
           getArticles(),
           getVideos(),
+          getDashboard(),
         ])
         setArticles(articlesData.length > 0 ? articlesData : MOCK_ARTICLES)
         setVideos(videosData.length > 0 ? videosData : MOCK_VIDEOS)
+        setReadArticleIds(dashboardData.completed_article_ids)
       } catch {
         setArticles(MOCK_ARTICLES)
         setVideos(MOCK_VIDEOS)
@@ -44,8 +46,14 @@ export function LearningHubContentPage() {
     loadData()
   }, [])
 
-  function handleArticleRead(articleId: number) {
-    setReadArticleIds((prev) => [...prev, articleId])
+  async function handleArticleRead(articleId: number) {
+    if (readArticleIds.includes(articleId)) return
+    try {
+      await markArticleComplete(articleId)
+      setReadArticleIds((prev) => [...prev, articleId])
+    } catch {
+      // silently fail
+    }
   }
 
   return (

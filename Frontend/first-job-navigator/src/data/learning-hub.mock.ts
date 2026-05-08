@@ -16,15 +16,15 @@ export const MOCK_ARTICLES: Article[] = [
 ]
 
 export const MOCK_VIDEOS: Video[] = [
-  { id: 1, title: "How Pensions Work", youtube_url: "https://www.youtube.com/watch?v=1YkGQfkiJmo", description: "A beginner's guide to understanding pensions" },
-  { id: 2, title: "UK Tax System Explained", youtube_url: "https://www.youtube.com/watch?v=AwSzAL4EyTs", description: "Everything you need to know about UK taxes" },
+  { id: 1, title: "How Pensions Work", youtube_url: "https://www.youtube.com/watch?v=E2RDvUiRRG8", description: "A beginner's guide to understanding pensions" },
+  { id: 2, title: "UK Tax System Explained", youtube_url: "https://www.youtube.com/watch?v=YKBXwIChgzE", description: "Everything you need to know about UK taxes" },
   { id: 3, title: "Budgeting for Beginners", youtube_url: "https://www.youtube.com/watch?v=sVKQn2I4HDM", description: "How to create and stick to a budget" },
-  { id: 4, title: "Understanding National Insurance", youtube_url: "https://www.youtube.com/watch?v=GJeZMRCCjpA", description: "What is NI and why do you pay it" },
-  { id: 5, title: "How to Save Money on a Low Income", youtube_url: "https://www.youtube.com/watch?v=7PwNFhPZdN8", description: "Practical tips for saving when money is tight" },
-  { id: 6, title: "Student Loans Explained", youtube_url: "https://www.youtube.com/watch?v=sh5KMnxFQFk", description: "Everything you need to know about student loan repayments" },
+  { id: 4, title: "Understanding National Insurance", youtube_url: "https://www.youtube.com/watch?v=yVjd5cYuCrM", description: "What is NI and why do you pay it" },
+  { id: 5, title: "How to Save Money on a Low Income", youtube_url: "https://www.youtube.com/watch?v=HEspU5t5am4", description: "Practical tips for saving when money is tight" },
+  { id: 6, title: "Student Loans Explained", youtube_url: "https://www.youtube.com/watch?v=vd70D9pJjlM", description: "Everything you need to know about student loan repayments" },
   { id: 7, title: "First Job Financial Tips", youtube_url: "https://www.youtube.com/watch?v=HQzoZfc3GwQ", description: "Essential money tips for your first job" },
   { id: 8, title: "How to Invest as a Beginner", youtube_url: "https://www.youtube.com/watch?v=gFQNPmLKj1k", description: "A simple introduction to investing your money" },
-  { id: 9, title: "Understanding Your Payslip", youtube_url: "https://www.youtube.com/watch?v=bxWdPSLVoaU", description: "How to read and understand your payslip" },
+  { id: 9, title: "Understanding Your Payslip", youtube_url: "https://www.youtube.com/watch?v=nQQRmej2B3k", description: "How to read and understand your payslip" },
   { id: 10, title: "Emergency Fund Explained", youtube_url: "https://www.youtube.com/watch?v=vftjBTjFlzI", description: "Why you need an emergency fund and how to build one" },
 ]
 
