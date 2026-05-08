@@ -18,12 +18,15 @@ DATABASES = {
     }
 }
 
+SECRET_KEY = "test-secret-key-for-gradigo-jwt-tests-minimum-32-characters-long"
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "user_id",
     "USER_ID_CLAIM": "user_id",
+    "SIGNING_KEY": SECRET_KEY,
 }
 
 REST_FRAMEWORK = {
