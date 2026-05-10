@@ -15,6 +15,9 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog"
 import { useAuthSessionState } from "@/hooks/use-auth-session-state"
 import { getStoredAuthSession, buildBearerAuthHeaders } from "@/lib/auth/session"
 import { getApiBaseUrl } from "@/lib/api/base-url"
@@ -51,22 +54,30 @@ function getInitials(name: string): string {
 export function ProfileContent() {
   const { isAuthenticated, logoutUser } = useAuthSessionState()
   const session = getStoredAuthSession()
-  const email = session?.email ?? ""
 
-  const [displayName, setDisplayName] = useState(session?.fullName ?? "")
-  const [name, setName] = useState(session?.fullName ?? "")
+  const [displayName, setDisplayName] = useState(isAuthenticated ? (session?.fullName ?? "") : "")
+  const [name, setName] = useState(isAuthenticated ? (session?.fullName ?? "") : "")
+  const email = isAuthenticated ? (session?.email ?? "") : ""
   const [saving, setSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [memberSince, setMemberSince] = useState<string | null>(null)
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
 
   const [dashboard, setDashboard] = useState<LearningDashboard | null>(null)
   const [loadingDashboard, setLoadingDashboard] = useState(false)
 
   useEffect(() => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated) {
+      setDisplayName("")
+      setName("")
+      setMemberSince(null)
+      setDashboard(null)
+      setShowLoginDialog(true)
+      return
+    }
     const load = async () => {
       setLoadingDashboard(true)
       try {
@@ -128,6 +139,33 @@ export function ProfileContent() {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset className="min-w-0">
+
+          {/* Login prompt dialog — shown automatically when not logged in */}
+          <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+            <DialogContent className="bg-[#0d1321] border border-border/60 text-white sm:max-w-md">
+              <DialogHeader className="space-y-3">
+                <DialogTitle className="text-white text-center text-xl">Sign in to your account</DialogTitle>
+                <DialogDescription className="text-white/60 text-center text-sm leading-relaxed">
+                  Log in to manage your profile, track your Learning Hub quiz progress and access all your account details.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-2">
+                <Button asChild className="flex-1 bg-[#3e5c76] hover:bg-[#1d2d44] text-white border-none">
+                  <Link href="/login">Log in</Link>
+                </Button>
+                <Button asChild variant="outline" className="flex-1 bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white">
+                  <Link href="/register">Create account</Link>
+                </Button>
+              </DialogFooter>
+              <button
+                onClick={() => setShowLoginDialog(false)}
+                className="text-xs text-white/30 hover:text-white/60 text-center w-full mt-1 transition-colors"
+              >
+                Continue as guest
+              </button>
+            </DialogContent>
+          </Dialog>
+
           <header className="flex h-16 items-center justify-between gap-2 px-4">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
@@ -160,24 +198,20 @@ export function ProfileContent() {
               <Separator className="bg-border/40 mb-4 mx-6" />
               <CardContent className="space-y-6">
 
-                {/* Avatar + fields */}
                 <div className="flex flex-col sm:flex-row gap-6">
-
-                  {/* Avatar column */}
                   <div className="flex flex-row sm:flex-col items-center gap-4 sm:gap-3 sm:w-48 shrink-0">
                     <div className="w-20 h-20 rounded-full bg-[#1d2d44] flex items-center justify-center text-white font-bold text-2xl border border-white/10 shrink-0">
                       {getInitials(displayName) || "?"}
                     </div>
                     <div className="sm:text-center min-w-0">
                       <p className="text-sm font-medium text-white truncate">{displayName || "No name set"}</p>
-                      <p className="text-xs text-white/50 mt-0.5 truncate">{email}</p>
+                      <p className="text-xs text-white/50 mt-0.5 truncate">{email || "Not logged in"}</p>
                       {memberSince && (
                         <p className="text-xs text-white/30 mt-1">Member since {memberSince}</p>
                       )}
                     </div>
                   </div>
 
-                  {/* Fields column */}
                   <div className="flex-1 space-y-4 min-w-0">
                     <div className="space-y-1.5">
                       <Label className="text-sm text-white/70">Full name</Label>
@@ -212,12 +246,16 @@ export function ProfileContent() {
                         <Link href="/forgot-password">Change password</Link>
                       </Button>
                     ) : (
-                      <p className="text-xs text-white/40">Log in to make changes to your account.</p>
+                      <button
+                        onClick={() => setShowLoginDialog(true)}
+                        className="text-sm text-[#a8c4d8] hover:text-white underline underline-offset-2 transition-colors"
+                      >
+                        Log in to make changes to your account
+                      </button>
                     )}
                   </div>
                 </div>
 
-                {/* Danger zone */}
                 <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
@@ -271,23 +309,17 @@ export function ProfileContent() {
               <CardContent className="space-y-4">
 
                 {!isAuthenticated ? (
-                  <div className="py-4 space-y-2">
-                    <p className="text-sm text-white/50">Log in to see your quiz progress.</p>
-                    <Button asChild variant="outline" size="sm" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-                      <Link href="/login">Log in</Link>
-                    </Button>
+                  <div className="py-4 space-y-3">
+                    <button
+                      onClick={() => setShowLoginDialog(true)}
+                      className="text-sm text-[#a8c4d8] hover:text-white underline underline-offset-2 transition-colors"
+                    >
+                      Log in to view your quiz progress
+                    </button>
                   </div>
                 ) : loadingDashboard ? (
                   <p className="text-sm text-white/50 animate-pulse">Loading progress...</p>
-                ) : !hasQuizData ? (
-                  <div className="py-4 space-y-2">
-                    <p className="text-sm text-white/50">No quiz progress yet.</p>
-                    <p className="text-xs text-white/30">Complete quizzes in the Learning Hub to track your progress here.</p>
-                    <Button asChild size="sm" className="bg-[#3e5c76] hover:bg-[#1d2d44] text-white border-none mt-1">
-                      <Link href="/learning-hub">Go to Learning Hub</Link>
-                    </Button>
-                  </div>
-                ) : (
+                ) : hasQuizData ? (
                   <>
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-sm">
@@ -304,28 +336,28 @@ export function ProfileContent() {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      <div className="rounded-lg bg-[#0d1b2a] px-4 py-3 text-center border border-white/5">
+                      <div className="rounded-lg bg-[#1b263b] px-4 py-3 text-center border border-white/5">
                         <p className="text-xs text-white/50 mb-1 uppercase tracking-wide">Quizzes done</p>
                         <p className="text-2xl font-bold text-white">{dashboard.completed_quizzes}</p>
                       </div>
-                      <div className="rounded-lg bg-[#1b263b] px-4 py-3 text-center border border-white/5">
+                      <div className="rounded-lg bg-[#415a77] px-4 py-3 text-center border border-white/5">
                         <p className="text-xs text-white/50 mb-1 uppercase tracking-wide">Average score</p>
                         <p className="text-2xl font-bold text-white">{(dashboard.average_score ?? 0).toFixed(1)}%</p>
                       </div>
-                      <div className="rounded-lg bg-[#415a77] px-4 py-3 text-center border border-white/5 col-span-2 sm:col-span-1">
-                        <p className="text-xs text-white/50 mb-1 uppercase tracking-wide">Overall progress</p>
-                        <p className="text-2xl font-bold text-white">{progressPercent}%</p>
+                      <div className="rounded-lg bg-[#e0e1dd] px-4 py-3 text-center border border-white/5 col-span-2 sm:col-span-1">
+                        <p className="text-xs text-[#1d2d44]/70 mb-1 uppercase tracking-wide">Overall progress</p>
+                        <p className="text-2xl font-bold text-[#0d1321]">{progressPercent}%</p>
                       </div>
                     </div>
 
                     {dashboard.quiz_scores && dashboard.quiz_scores.length > 0 && (
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-white">Quiz scores</p>
-                        {dashboard.quiz_scores.map((qs: { quiz_id: number; score: number }) => {
+                        {dashboard.quiz_scores.map((qs: { quiz_id: number; score: number }, i: number) => {
                           const passed = qs.score >= 70
                           return (
                             <div key={qs.quiz_id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-2.5">
-                              <span className="text-sm text-white/60">Quiz {qs.quiz_id}</span>
+                              <span className="text-sm text-white/60">Quiz {i + 1}</span>
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-medium text-white">{qs.score}%</span>
                                 <span className={`text-xs px-2 py-0.5 rounded-full ${passed ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
@@ -344,6 +376,14 @@ export function ProfileContent() {
                       </Button>
                     </div>
                   </>
+                ) : (
+                  <div className="py-4 space-y-2">
+                    <p className="text-sm text-white/50">No quiz progress yet.</p>
+                    <p className="text-xs text-white/30">Complete quizzes in the Learning Hub to track your progress here.</p>
+                    <Button asChild size="sm" className="bg-[#3e5c76] hover:bg-[#1d2d44] text-white border-none mt-1">
+                      <Link href="/learning-hub">Go to Learning Hub</Link>
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>
