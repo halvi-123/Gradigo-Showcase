@@ -14,15 +14,21 @@ import {
   AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { AddCategoryDialog } from "./budget-add-category"
-import { validateMoney, MAX_MONEY, MONEY_STEP } from "@/lib/budget-planner/validation"
+import { validateMoney, MAX_MONEY, MONEY_STEP, blockNegativeInput } from "@/lib/budget-planner/validation"
 import type { CategoryBreakdown, EditCategoryInput, AddCategoryInput } from "@/lib/budget-planner/types"
 
 const COLORS = [
   "#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff",
-  "#ff922b", "#cc5de8", "#20c997", "#f06595",
+  "#ff922b", "#cc5de8", "#ffa94d", "#f06595",
+  "#a9e34b", "#74c0fc", "#e599f7", "#20c997",
 ]
 
 const DEFAULT_CATEGORIES = ["Rent", "Bills", "Groceries", "Entertainment", "Subscriptions", "Transport"]
+
+function getCategoryColor(id: number): string {
+  const hash = (id * 2654435761) >>> 0
+  return COLORS[hash % COLORS.length]
+}
 
 interface Props {
   breakdown: CategoryBreakdown[]
@@ -61,11 +67,11 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
   const [saving, setSaving] = useState(false)
 
   const hasSpending = breakdown.some(c => c.spent_amount > 0)
-  const data = breakdown.filter(c => c.spent_amount > 0).map(c => ({ name: c.category_name, value: c.spent_amount }))
+  const data = breakdown.filter(c => c.spent_amount > 0).map(c => ({ name: c.category_name, value: c.spent_amount, id: c.id }))
   const chartConfig = Object.fromEntries(
-    breakdown.map((c, i) => [c.category_name, {
+    breakdown.map((c) => [c.category_name, {
       label: `${c.category_name} (${total > 0 ? Math.round((c.spent_amount / total) * 100) : 0}%)`,
-      color: COLORS[i % COLORS.length],
+      color: getCategoryColor(c.id),
     }])
   )
 
@@ -106,8 +112,8 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
               <ChartContainer config={chartConfig} className="h-[200px] sm:h-[320px] w-full">
                 <PieChart>
                   <Pie data={data} dataKey="value" nameKey="name">
-                    {data.map((entry, i) => (
-                      <Cell key={i} fill={COLORS[breakdown.findIndex(c => c.category_name === entry.name) % COLORS.length]} />
+                    {data.map((entry) => (
+                      <Cell key={entry.id} fill={getCategoryColor(entry.id)} />
                     ))}
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
@@ -126,7 +132,6 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
                 </PieChart>
               </ChartContainer>
             ) : (
-              
               <div className="flex flex-col items-center justify-center h-[200px] sm:h-[320px] gap-3">
                 <svg viewBox="0 0 128 128" className="w-32 h-32 opacity-20">
                   <circle cx="64" cy="64" r="52" fill="none" stroke="white" strokeWidth="20" strokeDasharray="326" strokeDashoffset="0" />
@@ -140,10 +145,11 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
           {/* RIGHT — Category bars + insight */}
           <div className="flex flex-col gap-4">
             <div className="space-y-4">
-              {breakdown.map((c, i) => {
+              {breakdown.map((c) => {
                 const limitPct = c.limit_amount && c.limit_amount > 0 ? Math.min(100, (c.spent_amount / c.limit_amount) * 100) : 0
                 const isOver = c.limit_amount !== null && c.spent_amount >= c.limit_amount
                 const isEditing = editingId === c.id
+                const categoryColor = getCategoryColor(c.id)
 
                 return (
                   <div key={c.id} className="space-y-2">
@@ -153,6 +159,7 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
                         <div className="space-y-1">
                           <p className="text-xs text-white/50">Spending limit (£)</p>
                           <Input type="number" min={0} step={MONEY_STEP} max={MAX_MONEY} value={editLimit}
+                            onKeyDown={blockNegativeInput}
                             onChange={e => { setEditLimit(e.target.value); setEditError(null) }}
                             placeholder="No limit"
                             className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-8 text-sm" />
@@ -170,11 +177,11 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
                     ) : (
                       <>
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                            <span className="text-sm font-medium text-white">{c.category_name}</span>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: categoryColor }} />
+                            <span className="text-sm font-medium text-white break-words min-w-0">{c.category_name}</span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 shrink-0">
                             <span className="text-sm text-white">£{c.spent_amount}</span>
                             {c.limit_amount !== null && <span className="text-xs text-muted-foreground">/ £{c.limit_amount}</span>}
                             {isOver && <Badge variant="destructive" className="text-xs px-1.5 py-0">Over</Badge>}
@@ -204,7 +211,7 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
                         </div>
                         <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
                           <div className="h-full rounded-full transition-all duration-500"
-                            style={{ width: `${limitPct}%`, backgroundColor: isOver ? "#ef4444" : "#1b263b" }} />
+                            style={{ width: `${limitPct}%`, backgroundColor: isOver ? "#ef4444" : "#3e5c76" }} />
                         </div>
                         <p className="text-xs text-muted-foreground">
                           {c.limit_amount ? `${limitPct.toFixed(0)}% of limit used` : `${c.percentage.toFixed(0)}% of total spending`}
@@ -216,7 +223,6 @@ export function BudgetBreakdown({ breakdown, onAdd, onEdit, onDelete, netIncome 
               })}
             </div>
 
-            {/* Spending insight */}
             {insight && (
               <div className="rounded-lg border border-white/10 bg-white/5 p-3">
                 <div className="flex items-start gap-2">

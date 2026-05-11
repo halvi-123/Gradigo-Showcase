@@ -59,20 +59,22 @@ function generateInsight(data: BudgetDashboard): string {
   if (data.remaining_income < 0)
     return `You are over budget this month. Consider reviewing your spending categories to bring things back on track.`
   if (data.financial_snapshot_score >= 80)
-    return `Your spending looks healthy — you've used ${spentPct}% of your income this month. You have £${data.remaining_income.toFixed(0)} remaining.`
+    return `Your spending looks healthy. You've used ${spentPct}% of your income this month. You have £${data.remaining_income.toFixed(0)} remaining.`
   if (data.financial_snapshot_score >= 50)
     return `You've used ${spentPct}% of your income on spending this month. Check the Spending tab to see which categories are close to their limits.`
-  return `Your budget needs attention — you've spent ${spentPct}% of your income. Review your category limits in the Spending tab and consider reducing discretionary spending.`
+  return `Your budget needs attention. You've spent ${spentPct}% of your income. Review your category limits in the Spending tab and consider reducing discretionary spending.`
 }
 
 const AUTH_ERROR = "Please log in or sign up to use this feature."
 
 export function BudgetPlannerContent() {
   const { isAuthenticated } = useAuthSessionState()
-  const firstName = isAuthenticated ? (getStoredAuthSession()?.fullName?.split(" ")[0] ?? "") : ""
   const [data, setData] = useState<BudgetDashboard | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [authError, setAuthError] = useState<string | null>(null)
+
+  // Read firstName fresh on every render so it updates immediately after profile name change
+  const firstName = isAuthenticated ? (getStoredAuthSession()?.fullName?.split(" ")[0] ?? "") : ""
 
   const refresh = useCallback(async () => {
     if (!isAuthenticated) {
@@ -85,10 +87,10 @@ export function BudgetPlannerContent() {
     setTransactions(txs)
   }, [isAuthenticated])
 
-    useEffect(() => {
-      const load = async () => { await refresh() }
-      load().catch(console.error)
-    }, [refresh])
+  useEffect(() => {
+    const load = async () => { await refresh() }
+    load().catch(console.error)
+  }, [refresh])
 
   function requireAuth<T extends unknown[]>(fn: (...args: T) => Promise<void>) {
     return async (...args: T) => {
@@ -98,15 +100,15 @@ export function BudgetPlannerContent() {
     }
   }
 
-  const handleUpdateIncome    = requireAuth(async (n: number) => { await updateBudget({ net_income: n }); await refresh() })
-  const handleAddCategory     = requireAuth(async (i: AddCategoryInput) => { await addCategory(i); await refresh() })
-  const handleEditCategory    = requireAuth(async (i: EditCategoryInput) => { await editCategory(i); await refresh() })
-  const handleDeleteCategory  = requireAuth(async (id: number) => { await deleteCategory(id); await refresh() })
-  const handleAddGoal         = requireAuth(async (i: AddSavingsGoalInput) => { await addSavingsGoal(i); await refresh() })
-  const handleEditGoal        = requireAuth(async (i: EditSavingsGoalInput) => { await editSavingsGoal(i); await refresh() })
-  const handleDeleteGoal      = requireAuth(async (id: number) => { await deleteSavingsGoal(id); await refresh() })
-  const handleAddTransaction  = requireAuth(async (i: AddTransactionInput) => { await addTransaction(i); await refresh() })
-  const handleEditTransaction = requireAuth(async (i: EditTransactionInput) => { await editTransaction(i); await refresh() })
+  const handleUpdateIncome      = requireAuth(async (n: number) => { await updateBudget({ net_income: n }); await refresh() })
+  const handleAddCategory       = requireAuth(async (i: AddCategoryInput) => { await addCategory(i); await refresh() })
+  const handleEditCategory      = requireAuth(async (i: EditCategoryInput) => { await editCategory(i); await refresh() })
+  const handleDeleteCategory    = requireAuth(async (id: number) => { await deleteCategory(id); await refresh() })
+  const handleAddGoal           = requireAuth(async (i: AddSavingsGoalInput) => { await addSavingsGoal(i); await refresh() })
+  const handleEditGoal          = requireAuth(async (i: EditSavingsGoalInput) => { await editSavingsGoal(i); await refresh() })
+  const handleDeleteGoal        = requireAuth(async (id: number) => { await deleteSavingsGoal(id); await refresh() })
+  const handleAddTransaction    = requireAuth(async (i: AddTransactionInput) => { await addTransaction(i); await refresh() })
+  const handleEditTransaction   = requireAuth(async (i: EditTransactionInput) => { await editTransaction(i); await refresh() })
   const handleDeleteTransaction = requireAuth(async (id: number) => { await deleteTransaction(id); await refresh() })
 
   return (
@@ -128,7 +130,6 @@ export function BudgetPlannerContent() {
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
-
             {!isAuthenticated ? (
               <Button asChild variant="outline" className="h-10 rounded-md px-5 text-sm font-semibold text-primary">
                 <Link href="/login">Login / Signup</Link>
@@ -136,7 +137,7 @@ export function BudgetPlannerContent() {
             ) : null}
           </header>
 
-          <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-0 max-w-6xl mx-auto w-full">
+          <div className="flex flex-1 flex-col gap-4 p-3 sm:p-4 pt-0 w-full">
             {authError && (
               <div className="sticky top-4 z-50 flex items-center justify-between rounded-lg bg-amber-900/80 border border-amber-500/50 px-4 py-3 shadow-lg">
                 <div className="flex items-center gap-2">
