@@ -1,6 +1,21 @@
-# First Job Navigator
+# Gradigo
 
-A full stack web application designed to help young adults navigate key life decisions including budgeting, pensions, moving out, learning resources, and career readiness.
+## Description
+
+The transition from university to full-time employment introduces financial responsibilities that many graduates are not fully prepared for. Concepts such as taxation, budgeting, pension contributions, and regional cost-of-living differences can be difficult to interpret, particularly for individuals managing their finances independently for the first time. Although information on these topics is widely available, it is often fragmented and not presented in a way that supports practical decision-making. This project proposes the development of Gradigo, a web-based platform designed to support early-career professionals in navigating these challenges. The platform integrates financial simulations, budgeting tools, and educational resources within a single interface, providing users with a structured way to engage with their finances.
+
+## Team
+
+The project is delivered by Team Sharkey, consisting of the following members: 
+
+- Hassaan Alvi (Project Manager | DevOps Lead)
+- Abdul Moiz Malik (Lead Backend Engineer | Solutions Architect)
+- Mohammad Jafari-Fini (Full-stack Engineer | AI Integration Specialist)
+- Mohamed Kordofani (Lead Backend Engineer | Solutions Architect |  DevOps Engineer (Deployment Strategies))
+- Awab Ahmed  (Frontend Engineer | QA Tester)
+- Sai Raghavan Commandur (Lead Frontend Engineer | Solutions Architect | QA Tester)
+
+Each team member contributes has responsibilities are distributed based on technical focus areas such as frontend development, backend development, system architecture, documentation and infrastructure. 
 
 ## Tech Stack
 
@@ -188,3 +203,8 @@ GitLab pipeline stages:
 * `.env` is gitignored and should never be committed.
 * Use `.env.example` as the template.
 * Optional third-party API features may require keys.
+
+
+## Credits
+
+Thank you to [ESBF](https://esbf.org.uk/about-esbf/) & Andrew Crossan for hosting this competition. Special thanks to Dr Dany Varghese for being our project sponsor and reviewing our project at every stage when we went from concept -> production.
