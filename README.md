@@ -1,4 +1,8 @@
-# Gradigo
+# Gradigo - Financial Readiness Platform
+
+🏆 1st Place ([ESBF](https://esbf.org.uk/about-esbf/) Green Tech Jam) -> https://esbf.org.uk/university-competitions/2026/green-tech-jam/
+
+Special thank you to Andrew Crossan for hosting this competition and to Dr Dany Varghese for being our project sponsor and reviewing our project at every stage when we went from concept -> production.
 
 ## Description
 
@@ -15,7 +19,15 @@ The project is delivered by Team Sharkey, consisting of the following members:
 - Awab Ahmed  (Frontend Engineer | QA Tester)
 - Sai Raghavan Commandur (Lead Frontend Engineer | Solutions Architect | QA Tester)
 
-Each team member contributes has responsibilities are distributed based on technical focus areas such as frontend development, backend development, system architecture, documentation and infrastructure. 
+Each team member contributes has responsibilities are distributed based on technical focus areas such as frontend development, backend development, system architecture, documentation and infrastructure.
+
+## My Work
+
+I contributed to Gradigo as Project Manager within the six-person team during the ESBF Green Tech Jam 2026, helping coordinate the development process while also contributing directly to the technical implementation. I helped organise the team's workflow, coordinate tasks and meetings, and keep development aligned with the project's objectives. Alongside project management, I contributed to technical discussions around the application's architecture, feature design, development priorities, and overall implementation.
+
+My main technical contributions included the Learning Hub, Budget Planner, and CI/CD pipeline. I worked on the Learning Hub, which provides students with educational resources and interactive content designed to support their transition into university and independent living. I also contributed to the Budget Planner, helping implement functionality that allows students to understand and plan their finances. On the development side, I worked on the project's GitLab CI/CD pipeline, helping automate the build, testing, and deployment workflow so that changes could be integrated and delivered more reliably.
+
+I also contributed to the wider project through technical documentation, team coordination, testing, and discussions around implementation decisions. As Project Manager, I helped connect the technical work across the team with the project's overall goals, ensuring that features were developed cohesively and that the team could make progress within the constraints of the Green Tech Jam.
 
 ## Tech Stack
 
@@ -203,8 +215,3 @@ GitLab pipeline stages:
 * `.env` is gitignored and should never be committed.
 * Use `.env.example` as the template.
 * Optional third-party API features may require keys.
-
-
-## Credits
-
-Thank you to [ESBF](https://esbf.org.uk/about-esbf/) & Andrew Crossan for hosting this competition. Special thanks to Dr Dany Varghese for being our project sponsor and reviewing our project at every stage when we went from concept -> production.
